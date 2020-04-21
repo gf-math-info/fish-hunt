@@ -15,11 +15,9 @@ public class EtoileMer extends Poisson{
      * @param y         La position verticale.
      * @param vx        La vitesse horizontale.
      * @param vy        La vitesse verticale.
-     * @param ax        L'accélération horizontale.
-     * @param ay        L'accélération verticale.
      */
     public EtoileMer(double largeur, double hauteur, double x, double y,
-                     double vx, double vy, double ax, double ay) {
-        super(largeur, hauteur, x, y, vx, vy, ax, ay);
+                     double vx, double vy) {
+        super(largeur, hauteur, x, y, vx, vy);
     }
 }

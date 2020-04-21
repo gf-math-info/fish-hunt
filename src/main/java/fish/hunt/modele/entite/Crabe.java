@@ -7,6 +7,13 @@ package fish.hunt.modele.entite;
  */
 public class Crabe extends Poisson {
 
+    private final static double
+            DELTA_TEMPS_AVANCE = 0.5,
+            DELTA_TEMPS_RECULE = 0.25;
+
+    private double tempsAvance, tempsRecule;
+    private boolean avance;
+
     /**
      * Construit un crabe avec tous les paramètre.
      * @param largeur   La largeur.
@@ -14,15 +21,14 @@ public class Crabe extends Poisson {
      * @param x         La position horizontale.
      * @param y         La position verticale.
      * @param vx        La vitesse horizontale.
-     * @param vy        La vitesse verticale.
-     * @param ax        L'accélération horizontale.
-     * @param ay        L'accélération verticale.
      */
-    public Crabe(double largeur, double hauteur, double x,
-                 double y, double vx, double vy, double ax, double ay) {
-        super(largeur, hauteur, x, y, vx, vy, ax, ay);
+    public Crabe(double largeur, double hauteur, double x, double y,
+                 double vx) {
+        super(largeur, hauteur, x, y, vx, 0);
+        avance = true;
     }
 
+    //TODO : Implémenter les tests de Crabe.actualiser(double)
     /**
      * Actualise le déplacement de l'entité selon l'intervalle de temps depuis
      * la dernière actualisation.
@@ -31,6 +37,25 @@ public class Crabe extends Poisson {
     @Override
     public void actualiser(double deltaTemps) {
         super.actualiser(deltaTemps);
-        //TODO : Redéfinir Crabe.actualiser(double)
+
+        if(avance) {
+
+            tempsAvance += deltaTemps;
+            if(tempsAvance >= DELTA_TEMPS_AVANCE) {
+                vy = -vy;
+                avance = false;
+                tempsAvance = 0;
+            }
+
+        } else {
+
+            tempsRecule += deltaTemps;
+            if(tempsRecule >= DELTA_TEMPS_RECULE) {
+                vy = -vy;
+                avance = true;
+                tempsRecule = 0;
+            }
+
+        }
     }
 }
