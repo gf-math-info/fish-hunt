@@ -2,7 +2,6 @@ package fish.hunt.modele.entite;
 
 /**
  * Cette classe représente un poisson dit normal.
- *
  * @author Fortin-Leblanc, Gabriel
  * @author Colson-Ratelle, Antoine
  */
