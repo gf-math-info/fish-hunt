@@ -22,4 +22,15 @@ public class Crabe extends Poisson {
                  double y, double vx, double vy, double ax, double ay) {
         super(largeur, hauteur, x, y, vx, vy, ax, ay);
     }
+
+    /**
+     * Actualise le déplacement de l'entité selon l'intervalle de temps depuis
+     * la dernière actualisation.
+     * @param deltaTemps    L'intervalle de temps.
+     */
+    @Override
+    public void actualiser(double deltaTemps) {
+        super.actualiser(deltaTemps);
+        //TODO : Redéfinir Crabe.actualiser(double)
+    }
 }
