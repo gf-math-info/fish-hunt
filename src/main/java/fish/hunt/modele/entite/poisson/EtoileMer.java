@@ -18,11 +18,10 @@ public class EtoileMer extends Poisson {
      * @param x         La position horizontale.
      * @param y         La position verticale.
      * @param vx        La vitesse horizontale.
-     * @param vy        La vitesse verticale.
      */
     public EtoileMer(double largeur, double hauteur, double x, double y,
-                     double vx, double vy) {
-        super(largeur, hauteur, x, y, vx, vy);
+                     double vx) {
+        super(largeur, hauteur, x, y, vx, 0);
         yInit = y;
         ay = 0;
     }
