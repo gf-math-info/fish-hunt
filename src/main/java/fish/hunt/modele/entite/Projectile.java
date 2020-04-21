@@ -1,5 +1,10 @@
 package fish.hunt.modele.entite;
 
+/**
+ * Cette classe représente un projectile à lancer.
+ * @author Fortin-Leblanc, Gabriel
+ * @author Colson-Ratelle, Antoine
+ */
 public class Projectile extends Entite {
 
     private boolean aNiveau;
