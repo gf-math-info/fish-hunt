@@ -1,4 +1,6 @@
-package fish.hunt.modele.entite;
+package fish.hunt.modele.entite.poisson;
+
+import fish.hunt.modele.entite.Entite;
 
 /**
  * Cette classe représente un poisson dit normal.
@@ -9,7 +11,7 @@ public class Poisson extends Entite {
 
     private final static double ACCELERATION_VERTICALE_DEFAUT = 100;
 
-    private double ay;
+    protected double ay;
 
     /**
      * Construit un poisson avec tous les paramètres.

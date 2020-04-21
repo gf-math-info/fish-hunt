@@ -1,5 +1,7 @@
 package fish.hunt.modele.entite;
 
+import fish.hunt.modele.entite.poisson.Poisson;
+
 /**
  * Cette classe représente un projectile à lancer.
  * @author Fortin-Leblanc, Gabriel

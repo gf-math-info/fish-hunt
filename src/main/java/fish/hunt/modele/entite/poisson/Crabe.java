@@ -1,4 +1,4 @@
-package fish.hunt.modele.entite;
+package fish.hunt.modele.entite.poisson;
 
 /**
  * Cette classe représente un crabe.
@@ -25,18 +25,19 @@ public class Crabe extends Poisson {
     public Crabe(double largeur, double hauteur, double x, double y,
                  double vx) {
         super(largeur, hauteur, x, y, vx, 0);
+        ay = 0;
         avance = true;
     }
 
     //TODO : Implémenter les tests de Crabe.actualiser(double)
     /**
-     * Actualise le déplacement de l'entité selon l'intervalle de temps depuis
+     * Actualise le déplacement du crabe selon l'intervalle de temps depuis
      * la dernière actualisation.
      * @param deltaTemps    L'intervalle de temps.
      */
     @Override
     public void actualiser(double deltaTemps) {
-        super.actualiser(deltaTemps);
+        x += vx * deltaTemps;
 
         if(avance) {
 
