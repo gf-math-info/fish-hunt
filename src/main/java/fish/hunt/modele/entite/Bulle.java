@@ -1,5 +1,10 @@
 package fish.hunt.modele.entite;
 
+/**
+ * Cette classe représente les bulles.
+ * @author Fortin-Leblanc, Gabriel
+ * @author Colson-Ratelle, Antoine
+ */
 public class Bulle extends Entite {
 
     /**
@@ -13,6 +18,7 @@ public class Bulle extends Entite {
         super(rayon, rayon, x, y, 0, vy, 0, 0);
     }
 
+    //TODO : Implémentation des tests de Bulle.actualiser(double)
     /**
      * Actualise le déplacement de la bulle selon l'intervalle de temps depuis
      * la dernière actualisation.
@@ -20,6 +26,6 @@ public class Bulle extends Entite {
      */
     @Override
     public void actualiser(double deltaTemps) {
-        //TODO : Implémenter Bulle.actualiser(double)
+        y += vy * deltaTemps;
     }
 }
