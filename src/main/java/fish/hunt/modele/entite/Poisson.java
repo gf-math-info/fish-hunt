@@ -7,6 +7,10 @@ package fish.hunt.modele.entite;
  */
 public class Poisson extends Entite {
 
+    private final static double ACCELERATION_VERTICALE_DEFAUT = 100;
+
+    private double ay;
+
     /**
      * Construit un poisson avec tous les paramètres.
      * @param largeur   La largeur.
@@ -15,12 +19,11 @@ public class Poisson extends Entite {
      * @param y         La position verticale.
      * @param vx        La vitesse horizontale.
      * @param vy        La vitesse verticale.
-     * @param ax        L'accélération horizontale.
-     * @param ay        L'accélération verticale.
      */
     public Poisson(double largeur, double hauteur, double x, double y,
-                   double vx, double vy, double ax, double ay) {
-        super(largeur, hauteur, x, y, vx, vy, ax, ay);
+                   double vx, double vy) {
+        super(largeur, hauteur, x, y, vx, vy);
+        ay = ACCELERATION_VERTICALE_DEFAUT;
     }
 
 
@@ -31,6 +34,8 @@ public class Poisson extends Entite {
      */
     @Override
     public void actualiser(double deltaTemps) {
-        //TODO : Implémenter Poisson.actualiser(double)
+        vy += ay * deltaTemps;
+        x += vx * deltaTemps;
+        y += vy * deltaTemps;
     }
 }

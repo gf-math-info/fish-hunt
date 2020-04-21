@@ -13,8 +13,6 @@ public abstract class Entite {
     protected double y;
     protected double vx;
     protected double vy;
-    protected double ax;
-    protected double ay;
 
     /**
      * Construit une entité avec tous les paramètres d'une entité.
@@ -24,19 +22,15 @@ public abstract class Entite {
      * @param y         La position verticale.
      * @param vx        La vitesse horizontale.
      * @param vy        La vitesse verticale.
-     * @param ax        L'accélération horizontale.
-     * @param ay        L'accélération verticale.
      */
     public Entite(double largeur, double hauteur, double x, double y,
-                  double vx,double vy, double ax, double ay) {
+                  double vx,double vy) {
         this.largeur = largeur;
         this.hauteur = hauteur;
         this.x = x;
         this.y = y;
         this.vx = vx;
         this.vy = vy;
-        this.ax = ax;
-        this.ay = ay;
     }
 
     /**
@@ -92,21 +86,5 @@ public abstract class Entite {
      */
     public double getVy() {
         return vy;
-    }
-
-    /**
-     * Accesseur de l'accélération horizontale.
-     * @return  L'accélétation horizontale.
-     */
-    public double getAx() {
-        return ax;
-    }
-
-    /**
-     * Accesseur de l'accélération verticale.
-     * @return  L'accélération verticale.
-     */
-    public double getAy() {
-        return ay;
     }
 }

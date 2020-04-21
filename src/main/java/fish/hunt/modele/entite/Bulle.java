@@ -15,7 +15,7 @@ public class Bulle extends Entite {
      * @param vy    La vitesse horizontale.
      */
     public Bulle(double rayon, double x, double y, double vy) {
-        super(rayon, rayon, x, y, 0, vy, 0, 0);
+        super(rayon, rayon, x, y, 0, vy);
     }
 
     //TODO : Implémentation des tests de Bulle.actualiser(double)

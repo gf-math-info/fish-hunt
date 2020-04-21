@@ -18,7 +18,7 @@ public class Projectile extends Entite {
      * @param y La position verticale.
      */
     public Projectile(double x, double y) {
-        super(GRANDEUR_DEFAUT, GRANDEUR_DEFAUT, x, y, 0, 0, 0, 0);
+        super(GRANDEUR_DEFAUT, GRANDEUR_DEFAUT, x, y, 0, 0);
     }
 
     //TODO : Implémenter les tests de Projectile.intersecte(Poisson)
