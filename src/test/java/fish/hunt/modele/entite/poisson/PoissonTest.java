@@ -8,7 +8,7 @@ public class PoissonTest{
 
     @Test
     public void testActualiser() {
-        double accepte = 0.1;
+        double accepte = 0.001;
         double deltaTemps = 1e-5;
 
         //Lorsque le poisson se déplace tranquillement vers la droite...

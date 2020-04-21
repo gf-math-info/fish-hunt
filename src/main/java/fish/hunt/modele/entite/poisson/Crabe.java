@@ -43,7 +43,7 @@ public class Crabe extends Poisson {
 
             tempsAvance += deltaTemps;
             if(tempsAvance >= DELTA_TEMPS_AVANCE) {
-                vy = -vy;
+                vx = -vx;
                 avance = false;
                 tempsAvance = 0;
             }
@@ -52,7 +52,7 @@ public class Crabe extends Poisson {
 
             tempsRecule += deltaTemps;
             if(tempsRecule >= DELTA_TEMPS_RECULE) {
-                vy = -vy;
+                vx = -vx;
                 avance = true;
                 tempsRecule = 0;
             }
