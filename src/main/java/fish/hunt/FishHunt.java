@@ -1,6 +1,9 @@
 package fish.hunt;
 
+import fish.hunt.vue.Accueil;
 import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class FishHunt extends Application {
@@ -11,6 +14,14 @@ public class FishHunt extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        //TODO : FishHunt.start(Stage) à implémenter.
+        stage.setWidth(640);
+        stage.setHeight(480);
+        stage.setResizable(false);
+        stage.setTitle("Fish Hunt");
+        stage.getIcons().add(new Image("/images/star.png"));
+
+        Scene scene = new Scene(new Accueil(stage));
+        stage.setScene(scene);
+        stage.show();
     }
 }
