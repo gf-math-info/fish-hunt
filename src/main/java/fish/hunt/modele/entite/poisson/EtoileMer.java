@@ -8,6 +8,7 @@ package fish.hunt.modele.entite.poisson;
 public class EtoileMer extends Poisson {
 
     private double yInit;
+    private double tempsDepuisCreation;
 
     private final static double AMPLITUDE = 50;
 
@@ -24,6 +25,7 @@ public class EtoileMer extends Poisson {
         super(largeur, hauteur, x, y, vx, 0);
         yInit = y;
         ay = 0;
+        tempsDepuisCreation = 0;
     }
 
     //TODO : Implémenter les tests de EtoileMer.actualiser(double)
@@ -34,8 +36,9 @@ public class EtoileMer extends Poisson {
      */
     @Override
     public void actualiser(double deltaTemps) {
+        tempsDepuisCreation += deltaTemps;
         x += vx * deltaTemps;
-        y = AMPLITUDE * Math.sin(x) + yInit;
+        y = AMPLITUDE * Math.sin(2 * Math.PI * tempsDepuisCreation) + yInit;
     }
 
 }
