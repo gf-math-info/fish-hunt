@@ -33,7 +33,7 @@ public class Accueil extends VBox {
         logo.setFitHeight(300);
 
         partieButton = new Button("Nouvelle Partie!");
-        scoreButton = new Button("Meilleurs scores");
+        scoreButton = new Button("Meilleurs Scores");
         partieButton.setOnMouseClicked(event -> {
             //TODO : Implémentation du début de la partie.
         });
