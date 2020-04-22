@@ -34,10 +34,10 @@ public class Accueil extends VBox {
 
         partieButton = new Button("Nouvelle Partie!");
         scoreButton = new Button("Meilleurs Scores");
-        partieButton.setOnMouseClicked(event -> {
+        partieButton.setOnAction(event -> {
             //TODO : Implémentation du début de la partie.
         });
-        scoreButton.setOnMouseClicked(event -> {
+        scoreButton.setOnAction(event -> {
             //TODO : Implémentation des meilleurs scores.
         });
 
