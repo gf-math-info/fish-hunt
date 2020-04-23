@@ -1,1 +1,3 @@
 Retirer le extends Entite de Projectile.
+
+Revoir les constructeurs des poissons.

@@ -1,43 +1,87 @@
 package fish.hunt.modele;
 
+/**
+ * La partie en cours. La partie et le plan de jeu sont deux entités distinctes.
+ * @see PlanJeu
+ * @author Fortin-Leblanc, Gabriel
+ * @author Colson-Ratelle, Antoine
+ */
 public class Partie {
     private int score;
     private int niveau;
     private PartieEtat etat;
-    private int nbPoissonRestant; // nbViesRestantes serait p ê mieux?
-                                  // sinon, ajouter attribut nbViesRestantes
-    private PlanJeu planJeu;
-    private int NB_POISSON_INIT = 3;
-    private int NB_POISSON_AUG_NIV = 5;
+    private int nbViesRestants;
 
+    private final int NB_VIES_INIT = 3;
+
+    /**
+     * Contruit une partie.
+     */
     public void Partie() {
         this.score = 0;
         this.niveau = 1;
-        this.etat = PartieEtat.EN_COURS;
-        this.nbPoissonRestant = NB_POISSON_INIT;
-        this.planJeu = new PlanJeu(640, 480);
+        this.etat = PartieEtat.EN_PAUSE;
+        this.nbViesRestants = NB_VIES_INIT;
     }
 
+    /**
+     * Incrémente le niveau de la partie.
+     */
     public void incrementerNiveau() {
         this.niveau++;
     }
 
+    /**
+     * Incrémente le score de la partie.
+     */
     public void incrementerScore() {
         this.score++;
     }
 
-    public void incrementerNbPoisRest() {
-        this.nbPoissonRestant += NB_POISSON_AUG_NIV;
+    /**
+     * Incrémente le nombre de vie.
+     */
+    public void incrementerVie() {
+        this.nbViesRestants++;
     }
 
-    public void perdrePartie() {
-        this.etat = PartieEtat.PERDU;
-        // TODO: afficher "Game Over" pendant 3 secondes
-        // TODO: passer ensuite à la fenêtre des meilleurs scores
-        // TODO: sauvegarder le score
+    /**
+     * Décrémente le nombre de vie.
+     */
+    public void decrementerVie() {
+        if(--nbViesRestants == 0)
+            etat = PartieEtat.PERDU;
     }
 
-    public void actualiser() {
-        // TODO: gérer le déplacement de chaque poisson, vitesse, acceleration
+    /**
+     * Mutateur de l'état de la partie.
+     * @param etat  L'état de la partie.
+     */
+    public void setEtat(PartieEtat etat) {
+        this.etat = etat;
+    }
+
+    /**
+     * Accesseur du niveau de la partie.
+     * @return  Le niveau de la partie.
+     */
+    public int getNiveau() {
+        return niveau;
+    }
+
+    /**
+     * Accesseur du score de la partie.
+     * @return  Le score de la partie.
+     */
+    public int getScore() {
+        return score;
+    }
+
+    /**
+     * Accesseur de l'état de la partie.
+     * @return  L'état de la partie.
+     */
+    public PartieEtat getEtat() {
+        return etat;
     }
 }

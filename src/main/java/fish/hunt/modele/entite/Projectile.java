@@ -25,22 +25,16 @@ public class Projectile extends Entite {
 
     //TODO : Implémenter les tests de Projectile.intersecte(Poisson)
     /**
-     * Vérifie si le projectile est en contact avec le poisson. La logique de
-     * l'algorithme est tiré du site Yellowafterlife.
-     * @see             "https://yal.cc/rectangle-circle-intersection-test/"
+     * Vérifie si le projectile est en contact avec le poisson.
      * @param poisson   Le poisson à évaluer.
      * @return          Vrai si le projectile est en contact avec le poisson,
      *                  faux sinon.
      */
     public boolean intersect(Poisson poisson) {
-        double pointX = Math.max(poisson.getX(),
-                Math.min(x, poisson.getX() + poisson.getLargeur()));
-        double pointY = Math.max(poisson.getY(),
-                Math.min(y, poisson.getY() + poisson.getHauteur()));
-
-        double deltaX = x - pointX, deltaY = y - pointY;
-
-        return (deltaX * deltaX + deltaY * deltaY) < largeur * largeur / 4;
+        return poisson.getX() <= x &&
+                x <= poisson.getX() + poisson.getLargeur() &&
+                y >= poisson.getY() &&
+                y <= poisson.getY() + poisson.getHauteur();
     }
 
     //TODO : Implémenter les tests de Projectile.actualiser(double).
