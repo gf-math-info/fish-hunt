@@ -37,4 +37,5 @@ public class EtoileMer extends Poisson {
         x += vx * deltaTemps;
         y = AMPLITUDE * Math.sin(x) + yInit;
     }
+
 }

@@ -33,12 +33,12 @@ public class Accueil extends VBox {
         logo.setFitHeight(300);
 
         partieButton = new Button("Nouvelle Partie!");
-        scoreButton = new Button("Meilleurs scores");
-        partieButton.setOnMouseClicked(event -> {
+        scoreButton = new Button("Meilleurs Scores");
+        partieButton.setOnAction(event -> {
             //TODO : Implémentation du début de la partie.
         });
-        scoreButton.setOnMouseClicked(event -> {
-            //TODO : Implémentation des meilleurs scores.
+        scoreButton.setOnAction(event -> {
+            stagePrincipal.getScene().setRoot(new FenScore(stagePrincipal, 100));
         });
 
         Insets margin = new Insets(12);
