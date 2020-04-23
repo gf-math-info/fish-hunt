@@ -38,7 +38,7 @@ public class Accueil extends VBox {
             //TODO : Implémentation du début de la partie.
         });
         scoreButton.setOnAction(event -> {
-            //TODO : Implémentation des meilleurs scores.
+            stagePrincipal.getScene().setRoot(new FenScore(stagePrincipal, 100));
         });
 
         Insets margin = new Insets(12);
