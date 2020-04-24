@@ -41,7 +41,7 @@ public class Partie {
     }
 
     /**
-     * Incrémente le nombre de vie.
+     * Incrémente le nombre de vies.
      */
     public void incrementerVie() {
         if(nbViesRestantes < 3)
@@ -49,7 +49,7 @@ public class Partie {
     }
 
     /**
-     * Décrémente le nombre de vie.
+     * Décrémente le nombre de vies.
      */
     public void decrementerVie() {
         if(--nbViesRestantes == 0)
