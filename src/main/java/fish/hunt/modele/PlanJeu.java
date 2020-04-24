@@ -29,6 +29,8 @@ public class PlanJeu {
     private Random random;
     private double deltaBulle, deltaPoisson, deltaPoissonSpecial;
 
+    // ici, nous réunissons toutes les constantes décrivant chaque poisson
+    // afin de faciliter la coordination des modifications au jeu.
     private final double DELAIS_BULLE = 3;
     private final int NB_GROUPES_BULLES = 3;
     private final double DIST_GROUPE_BULLE = 20;
