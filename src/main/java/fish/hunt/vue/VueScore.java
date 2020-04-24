@@ -153,24 +153,7 @@ public class VueScore extends VBox {
 
                 charge = true;
 
-            } catch (ClassNotFoundException classNotFoundException) {
-
-                Alert alertModale = new Alert(Alert.AlertType.ERROR,
-                        "Le fichier contenant les meilleurs scores " +
-                                "semble corrompu." + System.lineSeparator() +
-                                "Voulez-vous réessayer de le charger?" +
-                                System.lineSeparator() + "Si vous refusez, " +
-                                "un nouveau fichier de sauvegarde sera créé.",
-                        ButtonType.YES, ButtonType.NO);
-                alertModale.setResizable(true);
-                alertModale.getDialogPane().setPrefHeight(200);
-                alertModale.showAndWait();
-                ButtonType reponse = alertModale.getResult();
-                if(reponse != ButtonType.YES) {
-                    charge = true;
-                }
-
-            } catch (IOException ioException) {
+            } catch (IOException | ClassNotFoundException exception) {
 
                 Alert alertModale = new Alert(Alert.AlertType.ERROR,
                         "Une erreur s'est produite lors du chargement" +
@@ -213,11 +196,11 @@ public class VueScore extends VBox {
             }catch (IOException ioException) {
 
                 Alert alertModale = new Alert(Alert.AlertType.ERROR,
-                        "Une erreur s'est produit lors de la" +
+                        "Une erreur s'est produite lors de la" +
                                 " sauvegarde du fichier contenant les" +
                                 " meilleurs scores." +
-                                System.lineSeparator() + "Voulez-vous " +
-                                "essayer de le sauvegarder à nouveau?",
+                                System.lineSeparator() + "Voulez-vous" +
+                                " réessayer de sauvegarder votre score?",
                         ButtonType.YES, ButtonType.NO);
                 ioException.printStackTrace();
                 alertModale.setResizable(true);

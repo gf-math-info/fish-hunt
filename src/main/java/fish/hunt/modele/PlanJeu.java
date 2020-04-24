@@ -36,7 +36,7 @@ public class PlanJeu {
     private final double DIST_GROUPE_BULLE = 20;
     private final int NB_BULLES = 5;
     private final double DELAIS_POISSON = 3;
-    private final double DELAIS_POISSON_SPECIAL = 3;
+    private final double DELAIS_POISSON_SPECIAL = 5;
 
     private final double VITESSE_CRABE = 1.3;
 
