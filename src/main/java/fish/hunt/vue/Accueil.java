@@ -28,10 +28,16 @@ public class Accueil extends VBox {
      */
     public Accueil(Stage stagePrincipal) {
         this.stagePrincipal = stagePrincipal;
+        setBackground(new Background(
+                new BackgroundFill(Color.rgb(0, 0, 139),
+                        CornerRadii.EMPTY, Insets.EMPTY)));
+
+        //Initialisation du logo.
         logo = new ImageView("/images/logo.png");
         logo.setSmooth(true);
         logo.setFitHeight(300);
 
+        //Initialisation des boutons.
         partieButton = new Button("Nouvelle Partie!");
         scoreButton = new Button("Meilleurs Scores");
         partieButton.setOnAction(event -> {
@@ -40,7 +46,9 @@ public class Accueil extends VBox {
         scoreButton.setOnAction(event -> {
             stagePrincipal.getScene().setRoot(new FenScore(stagePrincipal));
         });
+        partieButton.setDefaultButton(true);
 
+        //Ajout de margin.
         Insets margin = new Insets(12);
         VBox.setMargin(logo, margin);
         VBox.setMargin(partieButton, margin);
@@ -48,9 +56,5 @@ public class Accueil extends VBox {
 
         getChildren().addAll(logo, partieButton, scoreButton);
         setAlignment(Pos.TOP_CENTER);
-
-        setBackground(new Background(
-                new BackgroundFill(Color.rgb(0, 0, 139),
-                        CornerRadii.EMPTY, Insets.EMPTY)));
     }
 }
