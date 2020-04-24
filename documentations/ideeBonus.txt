@@ -1,0 +1,3 @@
+- controler les poissons en multijoueurs
+- apparition de bulles lorsqu'un poisson est éliminé
+    ex.: derrière le poisson tué, 9 bulles apparaissent.
