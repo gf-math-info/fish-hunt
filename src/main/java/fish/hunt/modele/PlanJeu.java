@@ -193,7 +193,7 @@ public class PlanJeu {
      */
     private void ajouterPoissonNormal() {
         boolean versDroite = random.nextBoolean();
-        double grandeur = random.nextDouble() *
+        double hauteurPoisson = random.nextDouble() *
                 (Poisson.POISSON_GRANDEUR_MAX - Poisson.POISSON_GRANDEUR_MIN) +
                 Poisson.POISSON_GRANDEUR_MIN;
         double vy = random.nextDouble() *
@@ -202,15 +202,15 @@ public class PlanJeu {
         double vx = vitesseLevel(partie.getNiveau());
         double y = random.nextDouble() *
                 (Poisson.POISSON_Y_MAX_RATIO - Poisson.POISSON_Y_MIN_RATIO) *
-                (hauteur - grandeur) + Poisson.POISSON_Y_MIN_RATIO * hauteur;
+                (hauteur - hauteurPoisson) + Poisson.POISSON_Y_MIN_RATIO * hauteur;
         double x;
         if(!versDroite) {
             vx = -vx;
             x = largeur;
         } else
-            x = -grandeur;
+            x = -hauteurPoisson;
 
-        poissons.add(new Poisson(grandeur, grandeur, x, y, vx, vy));
+        poissons.add(new Poisson(hauteurPoisson, hauteurPoisson, x, y, vx, vy));
     }
 
     /**
