@@ -11,6 +11,13 @@ import fish.hunt.vue.Dessinable;
 
 import java.util.WeakHashMap;
 
+/**
+ * Cette classe est le controleur de jeu. La vue signifie au controleur qu'elle
+ * est prête à se mettre à jour, le controleur met à jour la partie et dicte
+ * à la vue quoi dessiner. La vue ne fait affaire qu'avec cette classe.
+ * @author Fortin-Leblanc, Gabriel
+ * @author Colson-Ratelle, Antoine
+ */
 public class ControleurPartie {
 
     private Partie partie;
@@ -24,6 +31,13 @@ public class ControleurPartie {
     private int dernierNiveau;
     private final double TEMPS_MESSAGE = 3;
 
+    /**
+     * Construit un controleur de jeu avec la largeur et la hauteur du plan de
+     * jeu, ainsi que la classe dessinable.
+     * @param largeur       La largeur du plan de jeu.
+     * @param hauteur       La hauteur du plan de jeu.
+     * @param dessinable    La classe dessinable.
+     */
     public ControleurPartie(double largeur, double hauteur,
                             Dessinable dessinable) {
         this.dessinable = dessinable;
@@ -35,6 +49,12 @@ public class ControleurPartie {
         poissonsCouleurs = new WeakHashMap<>();
     }
 
+    /**
+     * Actualise tous le moteur de jeu. Le controleur dicte également à la
+     * classe dessinable quoi dessiner.
+     * @param deltaTemps    L'intervalle de temps depuis la dernière
+     *                      actualisation.
+     */
     public void actualiser(double deltaTemps) {
         dessinable.viderPlan();
         if(augmenteNiveau) {
@@ -106,23 +126,40 @@ public class ControleurPartie {
         }
     }
 
+    /**
+     * Ajoute un projectile au plan de jeu.
+     * @param x La position horizontale du projectile.
+     * @param y La position verticale du projectile.
+     */
     public void ajouterProjectile(double x, double y) {
         if(!augmenteNiveau && !partiePerdue)
             planJeu.getProjectiles().add(new Projectile(x, y));
     }
 
+    /**
+     * Incrémente la partie d'un niveau.
+     */
     public void incrementerNiveau() {
         partie.incrementerNiveau();
     }
 
+    /**
+     * Incrémente la partie d'un point de score.
+     */
     public void incrementerScore() {
         partie.incrementerScore();
     }
 
+    /**
+     * Incrémente le nombre de poissons (vie) restant.
+     */
     public void incrementerPoissonRestant() {
         partie.incrementerVie();
     }
 
+    /**
+     * Fait perdre la partie.
+     */
     public void partiePerdue() {
         partie.setEtat(PartieEtat.PERDU);
     }

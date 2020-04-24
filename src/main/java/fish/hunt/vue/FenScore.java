@@ -1,6 +1,6 @@
 package fish.hunt.vue;
 
-import fish.hunt.modele.entite.Joueur;
+import fish.hunt.modele.entite.Record;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -22,10 +22,10 @@ import java.io.*;
  */
 public class FenScore extends VBox {
 
-    private ListView<Joueur> listView;
-    private ObservableList<Joueur> scores;
+    private ListView<Record> listView;
+    private ObservableList<Record> scores;
 
-    private final String NOM_SAUVEGARDE = "score.dat";
+    private final String NOM_SAUVEGARDE = "scores.dat";
 
     /**
      * Construit une fenêtre de score. Ce constructeur permet seulement de
@@ -45,7 +45,7 @@ public class FenScore extends VBox {
         //Pour afficher le numéro de ligne...
         listView.setCellFactory(joueurListView -> new ListCell<>() {
             @Override
-            protected void updateItem(Joueur item, boolean empty) {
+            protected void updateItem(Record item, boolean empty) {
                 super.updateItem(item, empty);
                 if(!empty)
                     setText("#" + (getIndex() + 1) + " - " + item);
@@ -111,9 +111,9 @@ public class FenScore extends VBox {
                     ajouterButton);
 
             ajouterButton.setOnAction((event) -> {
-                Joueur joueur = new Joueur(nomTextField.getText(), score);
+                Record record = new Record(nomTextField.getText(), score);
                 scores.remove(9);
-                scores.add(joueur);
+                scores.add(record);
                 FXCollections.sort(scores);
                 sauvegardeScores();
                 getChildren().remove(hBox);
@@ -141,7 +141,7 @@ public class FenScore extends VBox {
 
                 scoreData = (Object[])objectInput.readObject();
                 for(Object score : scoreData)
-                    scores.add((Joueur)score);
+                    scores.add((Record)score);
                 charge = true;
 
             } catch (FileNotFoundException fileNotFoundException) {

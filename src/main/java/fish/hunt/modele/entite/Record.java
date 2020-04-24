@@ -3,11 +3,12 @@ package fish.hunt.modele.entite;
 import java.io.Serializable;
 
 /**
- * Cette classe est une structure pour garder les données en mémoire.
+ * Cette classe est une structure pour garder les données des scores des joueurs
+ * en mémoire.
  * @author Fortin-Leblanc, Gabriel
  * @author Colson-Ratelle, Antoine
  */
-public class Joueur implements Serializable, Comparable<Joueur> {
+public class Record implements Serializable, Comparable<Record> {
 
     String nom;
     int score;
@@ -17,7 +18,7 @@ public class Joueur implements Serializable, Comparable<Joueur> {
      * @param nom   Le nom.
      * @param score Le score.
      */
-    public Joueur(String nom, int score) {
+    public Record(String nom, int score) {
         this.nom = nom;
         this.score = score;
     }
@@ -40,12 +41,12 @@ public class Joueur implements Serializable, Comparable<Joueur> {
 
     /**
      * Compare deux joueurs entre eux. On compare les scores entre eux.
-     * @param joueur    L'autre joueur.
+     * @param record    L'autre record.
      * @return          La différence entre les deux joueurs.
      */
     @Override
-    public int compareTo(Joueur joueur) {
-        return joueur.score - score;
+    public int compareTo(Record record) {
+        return record.score - score;
     }
 
     /**
