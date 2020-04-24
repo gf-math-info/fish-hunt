@@ -13,16 +13,15 @@ public class EtoileMer extends Poisson {
     private final static double AMPLITUDE = 50;
 
     /**
-     * Construit une étoile de mer avec tous les paramètres.
-     * @param largeur   La largeur.
-     * @param hauteur   La hauteur.
+     * Construit une étoile de mer carrée avec tous les paramètres.
+     * @param cote      La longueur du côté de l'étoile.
      * @param x         La position horizontale.
      * @param y         La position verticale.
      * @param vx        La vitesse horizontale.
      */
-    public EtoileMer(double largeur, double hauteur, double x, double y,
+    public EtoileMer(double cote, double x, double y,
                      double vx) {
-        super(largeur, hauteur, x, y, vx, 0);
+        super(cote, cote, x, y, vx, 0);
         yInit = y;
         ay = 0;
         tempsDepuisCreation = 0;

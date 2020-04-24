@@ -35,22 +35,10 @@ public class PlanJeu {
     private final int NB_GROUPES_BULLES = 3;
     private final double DIST_GROUPE_BULLE = 20;
     private final int NB_BULLES = 5;
-    private final double BULLE_RAYON_MIN = 10;
-    private final double BULLE_RAYON_MAX = 40;
-    private final double BULLE_VITESSE_MIN = -350;
-    private final double BULLE_VITESSE_MAX = -450;
     private final double DELAIS_POISSON = 3;
     private final double DELAIS_POISSON_SPECIAL = 3;
-    private final double POISSON_VITESSE_MIN = -100; //TODO : mettre dans classe
-    private final double POISSON_VITESSE_MAX = -200; //TODO : mettre dans classe
-    private final double POISSON_GRANDEUR_MIN = 70;  //TODO : mettre dans classe
-    private final double POISSON_GRANDEUR_MAX = 100; //TODO : mettre dans classe
-    private final double POISSON_Y_MAX_RATIO = 4/5.0; //TODO : mettre dans classe
-    private final double POISSON_Y_MIN_RATIO = 1/5.0; //TODO : mettre dans classe
 
-    //Un crabe est plus large que haut.
-    private final double RATIO_CRABE_HAUTEUR_LARGEUR = 367/477.0; //TODO : mettre dans classe
-    private final double VITESSE_CRABE = 1.3; //TODO : mettre dans classe
+    private final double VITESSE_CRABE = 1.3;
 
     /**
      * Construit un plan de jeu selon certaines dimensions et une partie.
@@ -187,11 +175,11 @@ public class PlanJeu {
                 posBulle = random.nextDouble() * 2 * DIST_GROUPE_BULLE -
                         DIST_GROUPE_BULLE + posGroupe;
                 diametreBulle = random.nextDouble() *
-                        (BULLE_RAYON_MAX - BULLE_RAYON_MIN) +
-                        BULLE_RAYON_MIN;
+                        (Bulle.BULLE_RAYON_MAX - Bulle.BULLE_RAYON_MIN) +
+                        Bulle.BULLE_RAYON_MIN;
                 vitesseBulle = random.nextDouble() *
-                        (BULLE_VITESSE_MAX - BULLE_VITESSE_MIN) +
-                        BULLE_VITESSE_MIN;
+                        (Bulle.BULLE_VITESSE_MAX - Bulle.BULLE_VITESSE_MIN) +
+                        Bulle.BULLE_VITESSE_MIN;
                 bulles.add(new Bulle(diametreBulle,
                         posBulle, hauteur + diametreBulle, vitesseBulle));
 
@@ -206,15 +194,15 @@ public class PlanJeu {
     private void ajouterPoissonNormal() {
         boolean versDroite = random.nextBoolean();
         double grandeur = random.nextDouble() *
-                (POISSON_GRANDEUR_MAX - POISSON_GRANDEUR_MIN) +
-                POISSON_GRANDEUR_MIN;
+                (Poisson.POISSON_GRANDEUR_MAX - Poisson.POISSON_GRANDEUR_MIN) +
+                Poisson.POISSON_GRANDEUR_MIN;
         double vy = random.nextDouble() *
-                (POISSON_VITESSE_MAX - POISSON_VITESSE_MIN) +
-                POISSON_VITESSE_MIN;
+                (Poisson.POISSON_VITESSE_MAX - Poisson.POISSON_VITESSE_MIN) +
+                Poisson.POISSON_VITESSE_MIN;
         double vx = vitesseLevel(partie.getNiveau());
         double y = random.nextDouble() *
-                (POISSON_Y_MAX_RATIO - POISSON_Y_MIN_RATIO) *
-                (hauteur - grandeur) + POISSON_Y_MIN_RATIO * hauteur;
+                (Poisson.POISSON_Y_MAX_RATIO - Poisson.POISSON_Y_MIN_RATIO) *
+                (hauteur - grandeur) + Poisson.POISSON_Y_MIN_RATIO * hauteur;
         double x;
         if(!versDroite) {
             vx = -vx;
@@ -232,8 +220,8 @@ public class PlanJeu {
     private void ajouterPoissonSpecial() {
         boolean versDroite = random.nextBoolean();
         double largeurPoisson = random.nextDouble() *
-                (POISSON_GRANDEUR_MAX - POISSON_GRANDEUR_MIN) +
-                POISSON_GRANDEUR_MIN;
+                (Poisson.POISSON_GRANDEUR_MAX - Poisson.POISSON_GRANDEUR_MIN) +
+                Poisson.POISSON_GRANDEUR_MIN;
         double x;
         if(!versDroite)
             x = largeur;
@@ -242,27 +230,29 @@ public class PlanJeu {
 
         if(random.nextBoolean()) {//Un crabe...
 
-            double hauteurPoisson = RATIO_CRABE_HAUTEUR_LARGEUR *
+            double hauteurPoisson = Crabe.RATIO_CRABE_HAUTEUR_LARGEUR *
                     largeurPoisson;
             double y = random.nextDouble() *
-                    (POISSON_Y_MAX_RATIO - POISSON_Y_MIN_RATIO) *
-                    (hauteur - hauteurPoisson) + POISSON_Y_MIN_RATIO * hauteur;
+                    (Poisson.POISSON_Y_MAX_RATIO - Poisson.POISSON_Y_MIN_RATIO) *
+                    (hauteur - hauteurPoisson) +
+                    Poisson.POISSON_Y_MIN_RATIO * hauteur;
             double vx = VITESSE_CRABE * vitesseLevel(partie.getNiveau());
             if(!versDroite)
                 vx = -vx;
-            Crabe crabe = new Crabe(largeurPoisson, hauteurPoisson, x, y, vx);
+            Crabe crabe = new Crabe(largeurPoisson, x, y, vx);
             poissons.add(crabe);
 
         } else {//... ou une étoile de mer ...
 
             double y = random.nextDouble() *
-                    (POISSON_Y_MAX_RATIO - POISSON_Y_MIN_RATIO) *
-                    (hauteur - largeurPoisson) + POISSON_Y_MIN_RATIO * hauteur;
+                    (Poisson.POISSON_Y_MAX_RATIO - Poisson.POISSON_Y_MIN_RATIO) *
+                    (hauteur - largeurPoisson) +
+                    Poisson.POISSON_Y_MIN_RATIO * hauteur;
             double vx = 100 * Math.pow(partie.getNiveau(), 1/3.0) + 200;
             if(!versDroite)
                 vx = -vx;
             poissons.add(
-                    new EtoileMer(largeurPoisson, largeurPoisson, x, y, vx));
+                    new EtoileMer(largeurPoisson, x, y, vx));
 
         }
     }

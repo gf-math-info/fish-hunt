@@ -7,24 +7,23 @@ package fish.hunt.modele.entite.poisson;
  */
 public class Crabe extends Poisson {
 
-    private final static double
-            DELTA_TEMPS_AVANCE = 0.5,
-            DELTA_TEMPS_RECULE = 0.25;
+    private final double DELTA_TEMPS_AVANCE = 0.5, DELTA_TEMPS_RECULE = 0.25;
+    public static final double RATIO_CRABE_HAUTEUR_LARGEUR = 367/477.0;
 
     private double tempsAvance, tempsRecule;
     private boolean avance;
 
     /**
-     * Construit un crabe avec tous les paramètre.
+     * Construit un crabe avec la largeur, la position et sa vitesse. La hauteur
+     * est définie en fonction de la largeur.
      * @param largeur   La largeur.
-     * @param hauteur   La hauteur.
      * @param x         La position horizontale.
      * @param y         La position verticale.
      * @param vx        La vitesse horizontale.
      */
-    public Crabe(double largeur, double hauteur, double x, double y,
-                 double vx) {
-        super(largeur, hauteur, x, y, vx, 0);
+    public Crabe(double largeur, double x, double y, double vx) {
+        super(largeur, RATIO_CRABE_HAUTEUR_LARGEUR * largeur,
+                x, y, vx, 0);
         ay = 0;
         avance = true;
     }
