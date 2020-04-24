@@ -41,16 +41,16 @@ public class PlanJeu {
     private final double BULLE_VITESSE_MAX = -450;
     private final double DELAIS_POISSON = 3;
     private final double DELAIS_POISSON_SPECIAL = 3;
-    private final double POISSON_VITESSE_MIN = -100;
-    private final double POISSON_VITESSE_MAX = -200;
-    private final double POISSON_GRANDEUR_MIN = 70;
-    private final double POISSON_GRANDEUR_MAX = 100;
-    private final double POISSON_Y_MAX_RATIO = 4/5.0;
-    private final double POISSON_Y_MIN_RATIO = 1/5.0;
+    private final double POISSON_VITESSE_MIN = -100; //TODO : mettre dans classe
+    private final double POISSON_VITESSE_MAX = -200; //TODO : mettre dans classe
+    private final double POISSON_GRANDEUR_MIN = 70;  //TODO : mettre dans classe
+    private final double POISSON_GRANDEUR_MAX = 100; //TODO : mettre dans classe
+    private final double POISSON_Y_MAX_RATIO = 4/5.0; //TODO : mettre dans classe
+    private final double POISSON_Y_MIN_RATIO = 1/5.0; //TODO : mettre dans classe
 
     //Un crabe est plus large que haut.
-    private final double RATIO_CRABE_HAUTEUR_LARGEUR = 367/477.0;
-    private final double VITESSE_CRABE = 1.3;
+    private final double RATIO_CRABE_HAUTEUR_LARGEUR = 367/477.0; //TODO : mettre dans classe
+    private final double VITESSE_CRABE = 1.3; //TODO : mettre dans classe
 
     /**
      * Construit un plan de jeu selon certaines dimensions et une partie.
