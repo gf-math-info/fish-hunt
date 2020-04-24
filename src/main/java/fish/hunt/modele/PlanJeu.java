@@ -218,11 +218,13 @@ public class PlanJeu {
      * choisis alatoirement.
      */
     private void ajouterPoissonSpecial() {
+        Poisson poisson;
         boolean versDroite = random.nextBoolean();
-        double largeurPoisson = random.nextDouble() *
+        double largeurPoisson, hauteurPoisson, x, y, vx;
+
+        largeurPoisson = random.nextDouble() *
                 (Poisson.POISSON_GRANDEUR_MAX - Poisson.POISSON_GRANDEUR_MIN) +
                 Poisson.POISSON_GRANDEUR_MIN;
-        double x;
         if(!versDroite)
             x = largeur;
         else
@@ -230,31 +232,31 @@ public class PlanJeu {
 
         if(random.nextBoolean()) {//Un crabe...
 
-            double hauteurPoisson = Crabe.RATIO_CRABE_HAUTEUR_LARGEUR *
+            hauteurPoisson = Crabe.RATIO_CRABE_HAUTEUR_LARGEUR *
                     largeurPoisson;
-            double y = random.nextDouble() *
-                    (Poisson.POISSON_Y_MAX_RATIO - Poisson.POISSON_Y_MIN_RATIO) *
+            y = random.nextDouble() *
+                    (Poisson.POISSON_Y_MAX_RATIO - Poisson.POISSON_Y_MIN_RATIO)*
                     (hauteur - hauteurPoisson) +
                     Poisson.POISSON_Y_MIN_RATIO * hauteur;
-            double vx = VITESSE_CRABE * vitesseLevel(partie.getNiveau());
+            vx = VITESSE_CRABE * vitesseLevel(partie.getNiveau());
             if(!versDroite)
                 vx = -vx;
-            Crabe crabe = new Crabe(largeurPoisson, x, y, vx);
-            poissons.add(crabe);
+            poisson = new Crabe(largeurPoisson, x, y, vx);
 
         } else {//... ou une étoile de mer ...
 
-            double y = random.nextDouble() *
-                    (Poisson.POISSON_Y_MAX_RATIO - Poisson.POISSON_Y_MIN_RATIO) *
+            y = random.nextDouble() *
+                    (Poisson.POISSON_Y_MAX_RATIO - Poisson.POISSON_Y_MIN_RATIO)*
                     (hauteur - largeurPoisson) +
                     Poisson.POISSON_Y_MIN_RATIO * hauteur;
-            double vx = 100 * Math.pow(partie.getNiveau(), 1/3.0) + 200;
+            vx = 100 * Math.pow(partie.getNiveau(), 1/3.0) + 200;
             if(!versDroite)
                 vx = -vx;
-            poissons.add(
-                    new EtoileMer(largeurPoisson, x, y, vx));
+            poisson = new EtoileMer(largeurPoisson, x, y, vx);
 
         }
+
+        poissons.add(poisson);
     }
 
     private double vitesseLevel(int niveau) {
