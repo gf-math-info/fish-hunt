@@ -112,7 +112,8 @@ public class FenScore extends VBox {
 
             ajouterButton.setOnAction((event) -> {
                 Joueur joueur = new Joueur(nomTextField.getText(), score);
-                scores.remove(9);
+                if (scores.size() == 10)
+                    scores.remove(9);
                 scores.add(joueur);
                 FXCollections.sort(scores);
                 sauvegardeScores();
