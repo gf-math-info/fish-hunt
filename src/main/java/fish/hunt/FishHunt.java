@@ -1,6 +1,6 @@
 package fish.hunt;
 
-import fish.hunt.vue.Accueil;
+import fish.hunt.vue.VueAccueil;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -20,7 +20,7 @@ public class FishHunt extends Application {
         stage.setTitle("Fish Hunt");
         stage.getIcons().add(new Image("/images/star.png"));
 
-        Scene scene = new Scene(new Accueil(stage));
+        Scene scene = new Scene(new VueAccueil(stage));
         stage.setScene(scene);
         stage.show();
     }

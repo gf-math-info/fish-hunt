@@ -21,7 +21,7 @@ import java.io.*;
  * @author Fortin-Leblanc, Gabriel
  * @author Colson-Ratelle, Antoine
  */
-public class FenScore extends VBox {
+public class VueScore extends VBox {
 
     private ListView<Record> listView;
     private ObservableList<Record> scores;
@@ -33,7 +33,7 @@ public class FenScore extends VBox {
      * consulter les meilleurs scores.
      * @param stagePrincipal    Le stage principal de l'application.
      */
-    public FenScore(Stage stagePrincipal) {
+    public VueScore(Stage stagePrincipal) {
         setAlignment(Pos.CENTER);
         setPadding(new Insets(10, 30, 10, 30));
         setSpacing(15);
@@ -64,7 +64,7 @@ public class FenScore extends VBox {
 
         Button menuButton = new Button("Menu");
         menuButton.setOnAction(event -> {
-            stagePrincipal.getScene().setRoot(new Accueil(stagePrincipal));
+            stagePrincipal.getScene().setRoot(new VueAccueil(stagePrincipal));
         });
 
         getChildren().addAll(titre, listView, menuButton);
@@ -85,7 +85,7 @@ public class FenScore extends VBox {
      * @param stagePrincipal    Le stage principal de l'application.
      * @param score             Le score du joueur.
      */
-    public FenScore(Stage stagePrincipal, int score) {
+    public VueScore(Stage stagePrincipal, int score) {
         this(stagePrincipal);
 
         //Si le score est assez élevé pour intégrer les 10 meilleurs, alors on

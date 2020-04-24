@@ -16,7 +16,7 @@ import javafx.stage.Stage;
  * @author Fortin-Leblanc, Gabriel
  * @author Colson-Ratelle, Antoine
  */
-public class Accueil extends VBox {
+public class VueAccueil extends VBox {
 
     Stage stagePrincipal;
     Button partieButton, scoreButton;
@@ -26,7 +26,7 @@ public class Accueil extends VBox {
      * Construit la page principal avec le stage principal de l'application.
      * @param stagePrincipal    Le stage principal de l'application.
      */
-    public Accueil(Stage stagePrincipal) {
+    public VueAccueil(Stage stagePrincipal) {
         this.stagePrincipal = stagePrincipal;
         setBackground(new Background(
                 new BackgroundFill(Color.rgb(0, 0, 139),
@@ -41,10 +41,10 @@ public class Accueil extends VBox {
         partieButton = new Button("Nouvelle Partie!");
         scoreButton = new Button("Meilleurs Scores");
         partieButton.setOnAction(event -> {
-            stagePrincipal.getScene().setRoot(new FenJeu(stagePrincipal));
+            stagePrincipal.getScene().setRoot(new VueJeu(stagePrincipal));
         });
         scoreButton.setOnAction(event -> {
-            stagePrincipal.getScene().setRoot(new FenScore(stagePrincipal));
+            stagePrincipal.getScene().setRoot(new VueScore(stagePrincipal));
         });
         partieButton.setDefaultButton(true);
 

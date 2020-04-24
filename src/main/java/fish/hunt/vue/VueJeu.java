@@ -2,7 +2,6 @@ package fish.hunt.vue;
 
 import fish.hunt.controleur.ControleurPartie;
 import javafx.animation.AnimationTimer;
-import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -22,7 +21,7 @@ import java.util.HashMap;
  * @author Fortin-Leblanc, Gabriel
  * @author Colson-Ratelle, Antoine
  */
-public class FenJeu extends Pane implements Dessinable{
+public class VueJeu extends Pane implements Dessinable{
 
     private Stage stagePrincipal;
     private Canvas canvas;
@@ -45,7 +44,7 @@ public class FenJeu extends Pane implements Dessinable{
      * Construit la fenêtre de jeu avec le stage principal de l'application.
      * @param stagePrincipal    Le stage principal de l'application.
      */
-    public FenJeu(Stage stagePrincipal) {
+    public VueJeu(Stage stagePrincipal) {
         this.stagePrincipal = stagePrincipal;
         largeur = stagePrincipal.getWidth();
         hauteur = stagePrincipal.getHeight();
@@ -194,7 +193,7 @@ public class FenJeu extends Pane implements Dessinable{
     @Override
     public void partieTermine(int score) {
         timer.stop();
-        stagePrincipal.getScene().setRoot(new FenScore(stagePrincipal, score));
+        stagePrincipal.getScene().setRoot(new VueScore(stagePrincipal, score));
     }
 
     /**
