@@ -25,6 +25,8 @@ public class FenScore extends VBox {
     private ListView<Joueur> listView;
     private ObservableList<Joueur> scores;
 
+    private final String NOM_SAUVEGARDE = "score.dat";
+
     /**
      * Construit une fenêtre de score. Ce constructeur permet seulement de
      * consulter les meilleurs scores.
@@ -38,6 +40,7 @@ public class FenScore extends VBox {
         Text titre = new Text("Meilleurs Scores");
         titre.setFont(Font.font(30));
 
+        //Initialise la liste.
         listView = new ListView<>();
         //Pour afficher le numéro de ligne...
         listView.setCellFactory(joueurListView -> new ListCell<>() {
@@ -52,7 +55,9 @@ public class FenScore extends VBox {
                 }
             }
         });
+        listView.setPrefHeight(245);
 
+        //Déséréalise la liste de score.
         initScores();
         FXCollections.sort(scores);
         listView.setItems(scores);
@@ -78,6 +83,8 @@ public class FenScore extends VBox {
     public FenScore(Stage stagePrincipal, int score) {
         this(stagePrincipal);
 
+        //Si le score est assez élevé pour intégrer les 10 meilleurs, alors on
+        //offre l'utilisateur d'ajouter son score à la liste.
         if(scores.size() < 10 ||
                 scores.size() == 10 && scores.get(9).getScore() < score) {
 
@@ -105,6 +112,7 @@ public class FenScore extends VBox {
 
             ajouterButton.setOnAction((event) -> {
                 Joueur joueur = new Joueur(nomTextField.getText(), score);
+                scores.remove(9);
                 scores.add(joueur);
                 FXCollections.sort(scores);
                 sauvegardeScores();
@@ -116,7 +124,8 @@ public class FenScore extends VBox {
     }
 
     /**
-     * Déséréalise le tableau de score.
+     * Déséréalise le tableau de score. Si le fichier n'existe pas, alors une
+     * nouvelle liste de meilleurs scores sera créé.
      */
     private void initScores() {
         boolean charge = false;
@@ -126,7 +135,7 @@ public class FenScore extends VBox {
         while (!charge) {
 
             try (FileInputStream fileInputStream =
-                         new FileInputStream("scores.dat");
+                         new FileInputStream(NOM_SAUVEGARDE);
                  ObjectInputStream objectInput =
                          new ObjectInputStream(fileInputStream)){
 
@@ -180,7 +189,7 @@ public class FenScore extends VBox {
     }
 
     /**
-     * Séréalise le tableau de score.
+     * Séréalise la liste des meilleurs scores.
      */
     private void sauvegardeScores() {
         Object[] scoreData = new Object[scores.size()];
@@ -192,7 +201,7 @@ public class FenScore extends VBox {
         while (!sauvegarde) {
 
             try(FileOutputStream fileOutputStream =
-                        new FileOutputStream("scores.dat");
+                        new FileOutputStream(NOM_SAUVEGARDE);
                 ObjectOutputStream objectOutputStream =
                         new ObjectOutputStream(fileOutputStream)) {
 
