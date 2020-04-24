@@ -113,12 +113,13 @@ public class VueJeu extends Pane implements Dessinable{
 
     private void initOutilsDessin() {
         poissonImages = new Image[8];
+
         for(int i = 0; i < poissonImages.length; i++)
             poissonImages[i] = new Image("/images/fish/0" + i + ".png");
+
         poissonScoreImage = poissonImages[0];
 
         idImages = new HashMap<>();
-
         cibleImage = new Image("/images/cible.png");
         crabeImage = new Image("/images/crabe.png");
         etoileImage = new Image("/images/star.png");
@@ -128,6 +129,7 @@ public class VueJeu extends Pane implements Dessinable{
         msgColor = Color.WHITE;
         bulleColor = Color.rgb(0, 0, 255, 0.4);
         projectileColor = Color.BLACK;
+
         poissonCouleurs = new Color[]{
                 Color.RED, Color.BEIGE, Color.CORNSILK, Color.CYAN,
                 Color.FLORALWHITE, Color.GOLDENROD, Color.LIGHTGREEN,
@@ -151,7 +153,7 @@ public class VueJeu extends Pane implements Dessinable{
     }
 
     /**
-     * Affiche un message au joueur lui expliquant que la partie est terminée.
+     * Affiche au joueur un message lui indiquant que la partie est terminée.
      */
     @Override
     public void afficheFinPartie() {
@@ -269,7 +271,7 @@ public class VueJeu extends Pane implements Dessinable{
     }
 
     /**
-     * Dessine une étoile de mer à une certaine position et d'une certaine
+     * Dessine une étoile de mer qui a une certaine position et une certaine
      * dimension.
      * @param x         La position horizontale.
      * @param y         La position verticale.
@@ -283,7 +285,7 @@ public class VueJeu extends Pane implements Dessinable{
     }
 
     /**
-     * Dessine un crabe à une certaine position et d'une certaine dimension.
+     * Dessine un crabe qui a une certaine position et une certaine dimension.
      * @param x         La position horizontale.
      * @param y         La position verticale.
      * @param largeur   La largeur.
@@ -296,7 +298,7 @@ public class VueJeu extends Pane implements Dessinable{
     }
 
     /**
-     * Dessine un projectile à une certaine position et d'un certain diamètre.
+     * Dessine un projectile qui a une certaine position et un certain diamètre.
      * @param x         La position horizontale du projectile.
      * @param y         La position verticale du projectile.
      * @param diametre  Le diamètre du projectile.
@@ -309,8 +311,8 @@ public class VueJeu extends Pane implements Dessinable{
     }
 
     /**
-     * Accesseur du nombre d'images de poisson disponible.
-     * @return  Le nombre d'images de poisson disponible.
+     * Accesseur du nombre d'images de poissons disponibles.
+     * @return  Le nombre d'images de poissons disponibles.
      */
     @Override
     public int getNombreImagesPoissons() {

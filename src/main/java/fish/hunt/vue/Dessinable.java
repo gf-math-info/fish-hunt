@@ -1,8 +1,8 @@
 package fish.hunt.vue;
 
 /**
- * Cette interface doit être implémenté pour représenter le jeu. Le contrôleur
- * ou la vue appelleront ces méthodes pour animer le jeu.
+ * Cette interface doit être implémentée pour représenter le jeu.
+ * Le contrôleur ou la vue appelleront ces méthodes pour animer le jeu.
  * @author Fortin-Leblanc, Gabriel
  * @author Colson-Ratelle, Antoine
  */
@@ -97,8 +97,8 @@ public interface Dessinable {
     void dessinerProjectile(double x, double y, double diametre);
 
     /**
-     * Accesseur du nombre d'images de poisson disponible.
-     * @return  Le nombre d'images de poisson disponible.
+     * Accesseur du nombre d'images de poissons disponibles.
+     * @return  Le nombre d'images de poissons disponibles.
      */
     int getNombreImagesPoissons();
 

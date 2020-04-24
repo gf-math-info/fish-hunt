@@ -23,7 +23,6 @@ public class Bulle extends Entite {
         super(diametre, diametre, x, y, 0, vy);
     }
 
-    //TODO : Implémentation des tests de Bulle.actualiser(double)
     /**
      * Actualise le déplacement de la bulle selon l'intervalle de temps depuis
      * la dernière actualisation.

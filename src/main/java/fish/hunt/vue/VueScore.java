@@ -60,7 +60,7 @@ public class VueScore extends VBox {
         });
         listView.setPrefHeight(245);
 
-        //Déséréalise la liste de score.
+        //Désérialise la liste de scores.
 
         Button menuButton = new Button("Menu");
         menuButton.setOnAction(event -> {
@@ -76,7 +76,7 @@ public class VueScore extends VBox {
     }
 
     /**
-     * Construit une fenêtre de score. Si la liste de score contient moins de 10
+     * Construit une fenêtre de score. Si la liste de scores contient moins de 10
      * éléments, alors le joueur pourra entrer son score dans le tableau des
      * meilleurs scores. Si la liste de score contient déjà 10 éléments, alors
      * le joueur pourra entrer son score dans le tableau des meilleurs scores

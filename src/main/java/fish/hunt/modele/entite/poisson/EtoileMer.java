@@ -27,7 +27,6 @@ public class EtoileMer extends Poisson {
         tempsDepuisCreation = 0;
     }
 
-    //TODO : Implémenter les tests de EtoileMer.actualiser(double)
     /**
      * Actualise le déplacement de l'étoile de mer selon l'intervalle de temps
      * depuis la dernière actualisation.

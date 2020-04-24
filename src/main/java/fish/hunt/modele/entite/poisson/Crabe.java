@@ -14,7 +14,7 @@ public class Crabe extends Poisson {
     private boolean avance;
 
     /**
-     * Construit un crabe avec la largeur, la position et sa vitesse. La hauteur
+     * Construit un crabe avec la largeur, la position et la vitesse. La hauteur
      * est définie en fonction de la largeur.
      * @param largeur   La largeur.
      * @param x         La position horizontale.
@@ -28,7 +28,6 @@ public class Crabe extends Poisson {
         avance = true;
     }
 
-    //TODO : Implémenter les tests de Crabe.actualiser(double)
     /**
      * Actualise le déplacement du crabe selon l'intervalle de temps depuis
      * la dernière actualisation.

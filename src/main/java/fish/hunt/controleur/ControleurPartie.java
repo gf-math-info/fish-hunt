@@ -12,8 +12,8 @@ import fish.hunt.vue.Dessinable;
 import java.util.WeakHashMap;
 
 /**
- * Cette classe est le controleur de jeu. La vue signifie au controleur qu'elle
- * est prête à se mettre à jour, le controleur met à jour la partie et dicte
+ * Cette classe est le contrôleur de jeu. La vue dit au controleur qu'elle
+ * est prête à se mettre à jour, le contrôleur met à jour la partie et dicte
  * à la vue quoi dessiner. La vue ne fait affaire qu'avec cette classe.
  * @author Fortin-Leblanc, Gabriel
  * @author Colson-Ratelle, Antoine
@@ -32,7 +32,7 @@ public class ControleurPartie {
     private final double TEMPS_MESSAGE = 3;
 
     /**
-     * Construit un controleur de jeu avec la largeur et la hauteur du plan de
+     * Construit un contrôleur de jeu avec la largeur et la hauteur du plan de
      * jeu, ainsi que la classe dessinable.
      * @param largeur       La largeur du plan de jeu.
      * @param hauteur       La hauteur du plan de jeu.
@@ -50,7 +50,7 @@ public class ControleurPartie {
     }
 
     /**
-     * Actualise tous le moteur de jeu. Le controleur dicte également à la
+     * Actualise la partie. Le contrôleur dicte également à la
      * classe dessinable quoi dessiner.
      * @param deltaTemps    L'intervalle de temps depuis la dernière
      *                      actualisation.
@@ -151,7 +151,7 @@ public class ControleurPartie {
     }
 
     /**
-     * Incrémente le nombre de poissons (vie) restant.
+     * Incrémente le nombre de poissons de vie restants.
      */
     public void incrementerPoissonRestant() {
         partie.incrementerVie();

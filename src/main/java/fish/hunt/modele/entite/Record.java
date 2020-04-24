@@ -14,7 +14,7 @@ public class Record implements Serializable, Comparable<Record> {
     int score;
 
     /**
-     * Construit un joueur avec un nom et un score.
+     * Construit un record avec un nom et un score.
      * @param nom   Le nom.
      * @param score Le score.
      */
@@ -24,25 +24,25 @@ public class Record implements Serializable, Comparable<Record> {
     }
 
     /**
-     * Accesseur du nom du joueur.
-     * @return  Le nom du joueur.
+     * Accesseur du nom du record.
+     * @return  Le nom du record.
      */
     public String getNom() {
         return nom;
     }
 
     /**
-     * Accesseur du score du joueur.
-     * @return  Le score du joueur.
+     * Accesseur du score du record.
+     * @return  Le score du record.
      */
     public int getScore() {
         return score;
     }
 
     /**
-     * Compare deux joueurs entre eux. On compare les scores entre eux.
+     * Compare deux records entre eux. On compare les records entre eux.
      * @param record    L'autre record.
-     * @return          La différence entre les deux joueurs.
+     * @return          La différence entre les deux records.
      */
     @Override
     public int compareTo(Record record) {
@@ -50,8 +50,8 @@ public class Record implements Serializable, Comparable<Record> {
     }
 
     /**
-     * Permet d'afficher la représentation d'un joueur.
-     * @return  La chaine de carctère représentant le joueur.
+     * Permet d'afficher la représentation d'un record.
+     * @return  La chaine de caractères représentant le record.
      */
     @Override
     public String toString() {

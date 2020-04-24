@@ -6,6 +6,11 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+/**
+ * Cette classe est la classe principale du jeu.
+ * @author Fortin-Leblanc, Gabriel
+ * @author Colson-Ratelle, Antoine
+ */
 public class FishHunt extends Application {
 
     public static void main(String[] args) {

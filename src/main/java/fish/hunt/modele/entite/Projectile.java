@@ -9,8 +9,6 @@ import fish.hunt.modele.entite.poisson.Poisson;
  */
 public class Projectile extends Entite {
 
-    private boolean aNiveau;
-
     private final static double VITESSE_ELOIGNEMENT = 300;
     private final static double GRANDEUR_DEFAUT = 50;
 
@@ -50,7 +48,6 @@ public class Projectile extends Entite {
 
         if(largeur <= 0) {
             largeur = hauteur = 0;
-            aNiveau = true;//Peut atteindre des poissons.
         }
     }
 

@@ -9,6 +9,8 @@ import javafx.scene.paint.Color;
 /**
  * Classe fournissant des méthodes statiques pour manipuler des Images avec
  * JavaFX.
+ * 
+ * Cette classe était fournie avec l'énoncé de ce TP.
  */
 public class ImageHelpers {
 

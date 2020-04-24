@@ -12,7 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
- * Cette classe représente la page principal contenant le menu.
+ * Cette classe représente la page principale contenant le menu.
  * @author Fortin-Leblanc, Gabriel
  * @author Colson-Ratelle, Antoine
  */
@@ -23,7 +23,7 @@ public class VueAccueil extends VBox {
     ImageView logo;
 
     /**
-     * Construit la page principal avec le stage principal de l'application.
+     * Construit la page principale avec le stage principal de l'application.
      * @param stagePrincipal    Le stage principal de l'application.
      */
     public VueAccueil(Stage stagePrincipal) {
@@ -48,7 +48,7 @@ public class VueAccueil extends VBox {
         });
         partieButton.setDefaultButton(true);
 
-        //Ajout de margin.
+        //Ajout des marges.
         Insets margin = new Insets(12);
         VBox.setMargin(logo, margin);
         VBox.setMargin(partieButton, margin);

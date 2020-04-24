@@ -41,7 +41,8 @@ public class PlanJeu {
     private final double VITESSE_CRABE = 1.3;
 
     /**
-     * Construit un plan de jeu selon certaines dimensions et une partie.
+     * Construit un plan de jeu selon certaines dimensions
+     * avec une partie initiée sur ce plan de jeu.
      * @param largeur   La largeur du plan de jeu.
      * @param hauteur   La hauteur du plan de jeu.
      * @param partie    La partie de jeu.
@@ -119,14 +120,14 @@ public class PlanJeu {
 
         }
 
-        //On ajoute les poissons après un certain délais.
+        //On ajoute les poissons après un certain délai.
         deltaPoisson += deltaTemps;
         if(deltaPoisson >= DELAIS_POISSON) {
             deltaPoisson = 0;
             ajouterPoissonNormal();
         }
 
-        //On ajoute les poissons spécials après un certain délais.
+        //On ajoute les poissons spéciaux après un certain délai.
         if(partie.getNiveau() > 1) {
             deltaPoissonSpecial += deltaTemps;
             if(deltaPoissonSpecial >= DELAIS_POISSON_SPECIAL) {
@@ -138,7 +139,7 @@ public class PlanJeu {
 
     /**
      * Accesseur des bulles.
-     * @return  La liste de bulle que le plan de jeu contient.
+     * @return  La liste de bulles que le plan de jeu contient.
      */
     public ArrayList<Bulle> getBulles() {
         return bulles;
@@ -153,7 +154,7 @@ public class PlanJeu {
     }
 
     /**
-     * Accesseur de poissons que le plan de jeu contient.
+     * Accesseur des poissons que le plan de jeu contient.
      * @return
      */
     public ArrayList<Poisson> getPoissons() {
@@ -215,7 +216,7 @@ public class PlanJeu {
 
     /**
      * Ajoute un poisson spécial au plan de jeu. Les attributs du poisson sont
-     * choisis alatoirement.
+     * choisis aléatoirement.
      */
     private void ajouterPoissonSpecial() {
         Poisson poisson;
@@ -239,17 +240,19 @@ public class PlanJeu {
                     (hauteur - hauteurPoisson) +
                     Poisson.POISSON_Y_MIN_RATIO * hauteur;
             vx = VITESSE_CRABE * vitesseLevel(partie.getNiveau());
+
             if(!versDroite)
                 vx = -vx;
             poisson = new Crabe(largeurPoisson, x, y, vx);
 
-        } else {//... ou une étoile de mer ...
+        } else {//... ou une étoile de mer.
 
             y = random.nextDouble() *
                     (Poisson.POISSON_Y_MAX_RATIO - Poisson.POISSON_Y_MIN_RATIO)*
                     (hauteur - largeurPoisson) +
                     Poisson.POISSON_Y_MIN_RATIO * hauteur;
             vx = 100 * Math.pow(partie.getNiveau(), 1/3.0) + 200;
+
             if(!versDroite)
                 vx = -vx;
             poisson = new EtoileMer(largeurPoisson, x, y, vx);
