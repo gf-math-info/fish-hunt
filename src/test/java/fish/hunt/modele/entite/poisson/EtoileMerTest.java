@@ -11,8 +11,7 @@ public class EtoileMerTest{
         double deltaTemps = 1e-5;
         double accepte = 0.001;
 
-        EtoileMer etoile = new EtoileMer(50, 50,
-                0, 0, 100);
+        EtoileMer etoile = new EtoileMer(50, 0, 0, 100);
 
         assertEquals(0, etoile.getY(), accepte);
 
