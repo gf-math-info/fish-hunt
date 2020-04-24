@@ -10,18 +10,19 @@ public class Partie {
     private int score;
     private int niveau;
     private PartieEtat etat;
-    private int nbViesRestants;
+    private int nbViesRestantes;
 
     private final int NB_VIES_INIT = 3;
+    private final int NB_POISSONS_NIVEAU = 5;
 
     /**
      * Contruit une partie.
      */
-    public void Partie() {
+    public Partie() {
         this.score = 0;
         this.niveau = 1;
-        this.etat = PartieEtat.EN_PAUSE;
-        this.nbViesRestants = NB_VIES_INIT;
+        this.etat = PartieEtat.EN_COURS;
+        this.nbViesRestantes = NB_VIES_INIT;
     }
 
     /**
@@ -35,21 +36,23 @@ public class Partie {
      * Incrémente le score de la partie.
      */
     public void incrementerScore() {
-        this.score++;
+        if(++score % NB_POISSONS_NIVEAU == 0)
+            incrementerNiveau();
     }
 
     /**
      * Incrémente le nombre de vie.
      */
     public void incrementerVie() {
-        this.nbViesRestants++;
+        if(nbViesRestantes < 3)
+            this.nbViesRestantes++;
     }
 
     /**
      * Décrémente le nombre de vie.
      */
     public void decrementerVie() {
-        if(--nbViesRestants == 0)
+        if(--nbViesRestantes == 0)
             etat = PartieEtat.PERDU;
     }
 
@@ -83,5 +86,13 @@ public class Partie {
      */
     public PartieEtat getEtat() {
         return etat;
+    }
+
+    /**
+     * Accesseur du nombres de vies restantes.
+     * @return  Le nombre de vies restantes.
+     */
+    public int getNbViesRestantes() {
+        return nbViesRestantes;
     }
 }

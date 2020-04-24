@@ -35,10 +35,10 @@ public class Accueil extends VBox {
         partieButton = new Button("Nouvelle Partie!");
         scoreButton = new Button("Meilleurs Scores");
         partieButton.setOnAction(event -> {
-            //TODO : Implémentation du début de la partie.
+            stagePrincipal.getScene().setRoot(new FenJeu(stagePrincipal));
         });
         scoreButton.setOnAction(event -> {
-            stagePrincipal.getScene().setRoot(new FenScore(stagePrincipal, 100));
+            stagePrincipal.getScene().setRoot(new FenScore(stagePrincipal));
         });
 
         Insets margin = new Insets(12);

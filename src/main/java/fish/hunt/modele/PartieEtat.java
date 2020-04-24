@@ -8,7 +8,6 @@ package fish.hunt.modele;
 public enum PartieEtat {
 
     EN_COURS,
-    EN_PAUSE,
     PERDU
 
 }

@@ -93,6 +93,7 @@ public class FenScore extends VBox {
                     FontWeight.BOLD, Font.getDefault().getSize()));
             Button ajouterButton = new Button("Ajouter!");
             ajouterButton.setDisable(true);
+            ajouterButton.setDefaultButton(true);
 
             nomTextField.setOnKeyPressed((event) -> {
                 ajouterButton.setDisable(

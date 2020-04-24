@@ -45,7 +45,6 @@ public class Projectile extends Entite {
      */
     @Override
     public void actualiser(double deltaTemps) {
-        double derniereLargeur = largeur;
         largeur -= VITESSE_ELOIGNEMENT * deltaTemps;
         hauteur -= VITESSE_ELOIGNEMENT * deltaTemps;
 
@@ -53,10 +52,13 @@ public class Projectile extends Entite {
             largeur = hauteur = 0;
             aNiveau = true;//Peut atteindre des poissons.
         }
+    }
 
-        double deltaEspace = (derniereLargeur - largeur) / 2;
-
-        x += deltaEspace;
-        y += deltaEspace;
+    /**
+     * Accesseur du diamètre du projectile.
+     * @return  Le diamètre du projectile.
+     */
+    public double getDiametre() {
+        return largeur;
     }
 }

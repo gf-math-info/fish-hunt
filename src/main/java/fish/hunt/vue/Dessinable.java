@@ -46,11 +46,11 @@ public interface Dessinable {
 
     /**
      * Dessine une bulle d'une certaine dimension à une certaine position.
-     * @param x         La position horizontale.
-     * @param y         La position verticale.
-     * @param rayon     Le rayon de la bulle.
+     * @param x             La position horizontale.
+     * @param y             La position verticale.
+     * @param diametre      Le rayon de la bulle.
      */
-    void dessinerBulle(double x, double y, double rayon);
+    void dessinerBulle(double x, double y, double diametre);
 
     /**
      * Dessine un poisson à une certaine position et d'une certaine dimension.
@@ -60,9 +60,12 @@ public interface Dessinable {
      * @param hauteur       La hauteur.
      * @param versDroite    Vrai si le poisson se dirige vers la droite,
      *                      faux sinon.
+     * @param numCouleur    Le numéro de la couleur du poisson.
+     * @param numImage      Le numéro de l'image du poisson.
      */
     void dessinerPoisson(double x, double y,
-                         double largeur, double hauteur, boolean versDroite);
+                         double largeur, double hauteur, boolean versDroite,
+                         int numImage, int numCouleur);
 
     /**
      * Dessine une étoile de mer à une certaine position et d'une certaine
@@ -84,4 +87,24 @@ public interface Dessinable {
      */
     void dessinerCrabe(double x, double y,
                        double largeur, double hauteur);
+
+    /**
+     * Dessine un projectile à une certaine position et d'un certain diamètre.
+     * @param x         La position horizontale du projectile.
+     * @param y         La position verticale du projectile.
+     * @param diametre  Le diamètre du projectile.
+     */
+    void dessinerProjectile(double x, double y, double diametre);
+
+    /**
+     * Accesseur du nombre d'images de poisson disponible.
+     * @return  Le nombre d'images de poisson disponible.
+     */
+    int getNombreImagesPoissons();
+
+    /**
+     * Accesseur du nombre de couleurs disponibles pour les différents poissons.
+     * @return  Le nombre de couleurs disponibles pour les différents poissons.
+     */
+    int getNombreCouleurPoisson();
 }

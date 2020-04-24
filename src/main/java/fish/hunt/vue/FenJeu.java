@@ -1,6 +1,7 @@
 package fish.hunt.vue;
 
 import fish.hunt.controleur.ControleurPartie;
+import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -9,6 +10,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
+import java.util.HashMap;
 
 /**
  * Cette classe représente la fenêtre de jeu. Elle est dessinable par le
@@ -24,15 +27,18 @@ public class FenJeu extends Pane implements Dessinable{
     private Canvas canvas;
     private GraphicsContext graphicsContext;
 
-    private double largeur, hauteur;
+    private double largeur, hauteur, cibleX, cibleY;
 
     private ControleurPartie controleurPartie;
+    private AnimationTimer timer;
 
     private Image poissonScoreImage, cibleImage, etoileImage, crabeImage;
     private Image[] poissonImages;
-    private Color fondColor, scoreColor, msgColor, bulleCouleur;
+    private Color fondColor, scoreColor, msgColor, bulleColor,
+            projectileColor;
     private Color[] poissonCouleurs;
     private Font msgFont, scoreFont;
+    private HashMap<Integer, Image> idImages;
 
     /**
      * Construit la fenêtre de jeu avec le stage principal de l'application.
@@ -48,14 +54,29 @@ public class FenJeu extends Pane implements Dessinable{
         graphicsContext = canvas.getGraphicsContext2D();
         getChildren().add(canvas);
 
-        controleurPartie = new ControleurPartie(largeur, hauteur);
+        controleurPartie = new ControleurPartie(largeur, hauteur,
+                this);
 
         initOutilsDessin();
         initListeners();
+
+        timer = new AnimationTimer() {
+            long dernierMoment = System.nanoTime();
+
+            @Override
+            public void handle(long l) {
+                controleurPartie.actualiser(
+                        (l - dernierMoment) * 1e-9);
+                dessinerCible(cibleX, cibleY);
+                dernierMoment = l;
+            }
+        };
+
+        timer.start();
     }
 
     private void initListeners() {
-        canvas.setOnKeyPressed((event) -> {
+        stagePrincipal.getScene().setOnKeyPressed((event) -> {
             switch(event.getCode()) {
 
                 case H:
@@ -78,7 +99,8 @@ public class FenJeu extends Pane implements Dessinable{
         });
 
         canvas.setOnMouseMoved((event) -> {
-            dessinerCible(event.getX(), event.getY());
+            cibleX = event.getX();
+            cibleY = event.getY();
         });
 
         canvas.setOnMouseClicked((event) -> {
@@ -92,6 +114,8 @@ public class FenJeu extends Pane implements Dessinable{
             poissonImages[i] = new Image("/images/fish/0" + i + ".png");
         poissonScoreImage = poissonImages[0];
 
+        idImages = new HashMap<>();
+
         cibleImage = new Image("/images/cible.png");
         crabeImage = new Image("/images/crabe.png");
         etoileImage = new Image("/images/star.png");
@@ -99,18 +123,18 @@ public class FenJeu extends Pane implements Dessinable{
         fondColor = Color.rgb(49, 13, 166);
         scoreColor = Color.WHITE;
         msgColor = Color.WHITE;
-        bulleCouleur = Color.rgb(0, 0, 255, 0.4);
+        bulleColor = Color.rgb(0, 0, 255, 0.4);
+        projectileColor = Color.BLACK;
         poissonCouleurs = new Color[]{
-                Color.RED, Color.BEIGE, Color.BROWN, Color.CHOCOLATE,
+                Color.RED, Color.BEIGE, Color.CHOCOLATE,
                 Color.CORNSILK, Color.CYAN, Color.FLORALWHITE, Color.GOLDENROD,
-                Color.FUCHSIA, Color.SALMON, Color.FIREBRICK, Color.GREENYELLOW,
-                Color.DEEPPINK, Color.GREY, Color.INDIGO, Color.LAVENDER,
+                Color.SALMON, Color.GREENYELLOW, Color.GREY,
+                Color.INDIGO, Color.LAVENDER,
                 Color.LIMEGREEN, Color.MEDIUMORCHID, Color.ORANGE,
-                Color.ORANGERED, Color.SLATEBLUE, Color.TOMATO,
-                Color.WHITESMOKE};
+                Color.ORANGERED, Color.SLATEBLUE, Color.WHITESMOKE};
 
-        msgFont = Font.font(28);
-        scoreFont = Font.font(18);
+        msgFont = Font.font(60);
+        scoreFont = Font.font(25);
     }
 
     /**
@@ -165,7 +189,8 @@ public class FenJeu extends Pane implements Dessinable{
      */
     @Override
     public void partieTermine(int score) {
-        //TODO
+        timer.stop();
+        stagePrincipal.getScene().setRoot(new FenScore(stagePrincipal, score));
     }
 
     /**
@@ -183,14 +208,15 @@ public class FenJeu extends Pane implements Dessinable{
         text.setFont(scoreFont);
 
         graphicsContext.fillText(String.valueOf(score),
-                (largeur - text.getLayoutBounds().getWidth()) / 2, 50);
+                (largeur - text.getLayoutBounds().getWidth()) / 2, 30);
 
-        double dimPoisson = 70;
-        double x = (largeur - dimPoisson * 3 + 60) / 2,
-                y = 50 + text.getLayoutBounds().getHeight() + 20;
+        double dimPoisson = 35, insets = 20;
+        double x = (largeur - (dimPoisson * 3 + insets * 2)) / 2,
+                y = 30 + text.getLayoutBounds().getHeight();
 
         for(int i = 0; i < nbPoissonsRestants; i++)
-            graphicsContext.drawImage(poissonScoreImage, x + i, y,
+            graphicsContext.drawImage(poissonScoreImage,
+                    x + i * (dimPoisson + insets), y,
                     dimPoisson, dimPoisson);
     }
 
@@ -201,22 +227,21 @@ public class FenJeu extends Pane implements Dessinable{
      */
     @Override
     public void dessinerCible(double x, double y) {
-        double dimCible = 60;
+        double dimCible = 50;
         graphicsContext.drawImage(cibleImage,
-                x - dimCible / 2, y - dimCible / 2);
+                x - dimCible / 2, y - dimCible / 2, dimCible, dimCible);
     }
 
     /**
      * Dessine une bulle d'une certaine dimension à une certaine position.
-     * @param x         La position horizontale.
-     * @param y         La position verticale.
-     * @param rayon     Le rayon de la bulle.
+     * @param x             La position horizontale.
+     * @param y             La position verticale.
+     * @param diametre      Le diamètre de la bulle.
      */
     @Override
-    public void dessinerBulle(double x, double y, double rayon) {
-        graphicsContext.setFill(bulleCouleur);
-        double dim = rayon * 2;
-        graphicsContext.fillRect(x, y, dim, dim);
+    public void dessinerBulle(double x, double y, double diametre) {
+        graphicsContext.setFill(bulleColor);
+        graphicsContext.fillRect(x, y, diametre, diametre);
     }
 
     /**
@@ -229,13 +254,11 @@ public class FenJeu extends Pane implements Dessinable{
     @Override
     public void dessinerPoisson(double x, double y,
                                 double largeur, double hauteur,
-                                boolean versDroite) {
-        Color couleur = poissonCouleurs[
-                (int)Math.floor(Math.random() * poissonCouleurs.length)];
-        int nbImg = (int)Math.floor(Math.random() * 8);
-        Image img = poissonImages[nbImg];
+                                boolean versDroite,
+                                int numImage, int numCouleur) {
+        Image img = poissonImages[numImage];
 
-        img = ImageHelpers.colorize(img, couleur);
+        img = ImageHelpers.colorize(img, poissonCouleurs[numCouleur]);
         if(!versDroite)
             img = ImageHelpers.flop(img);
 
@@ -267,5 +290,36 @@ public class FenJeu extends Pane implements Dessinable{
     public void dessinerCrabe(double x, double y,
                               double largeur, double hauteur) {
         graphicsContext.drawImage(crabeImage, x, y, largeur, hauteur);
+    }
+
+    /**
+     * Dessine un projectile à une certaine position et d'un certain diamètre.
+     * @param x         La position horizontale du projectile.
+     * @param y         La position verticale du projectile.
+     * @param diametre  Le diamètre du projectile.
+     */
+    @Override
+    public void dessinerProjectile(double x, double y, double diametre) {
+        double rayon = diametre / 2;
+        graphicsContext.setFill(projectileColor);
+        graphicsContext.fillOval(x - rayon, y - rayon, diametre, diametre);
+    }
+
+    /**
+     * Accesseur du nombre d'images de poisson disponible.
+     * @return  Le nombre d'images de poisson disponible.
+     */
+    @Override
+    public int getNombreImagesPoissons() {
+        return poissonImages.length;
+    }
+
+    /**
+     * Accesseur du nombre de couleurs disponibles pour les différents poissons.
+     * @return  Le nombre de couleurs disponibles pour les différents poissons.
+     */
+    @Override
+    public int getNombreCouleurPoisson() {
+        return poissonCouleurs.length;
     }
 }
