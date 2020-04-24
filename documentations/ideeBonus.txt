@@ -1,3 +1,20 @@
-- controler les poissons en multijoueurs
-- apparition de bulles lorsqu'un poisson est éliminé
+1 - apparition de bulles lorsqu'un poisson est éliminé
     ex.: derrière le poisson tué, 9 bulles apparaissent.
+
+2 - One-shot-kill
+	1x : + 3 points
+	2x : + 5 points
+	3x : + 1 vie
+
+Multijoueur:
+
+-Création de comptes de joueur.
+-Consultation des 10 meilleurs joueurs.
+-Ajouter un ranking ELO.
+-Implémentation du mode 1.
+
+	1 mode : le plus de point
+
+	2 mode : attaque
+
+	3 mode : ex : 40 lignes à détruire.
