@@ -103,7 +103,9 @@ public class FenJeu extends Pane implements Dessinable{
             cibleY = event.getY();
         });
 
-        canvas.setOnMouseClicked((event) -> {
+        canvas.setOnMousePressed((event) -> {
+            cibleX = event.getX();
+            cibleY = event.getY();
             controleurPartie.ajouterProjectile(event.getX(), event.getY());
         });
     }
@@ -126,12 +128,12 @@ public class FenJeu extends Pane implements Dessinable{
         bulleColor = Color.rgb(0, 0, 255, 0.4);
         projectileColor = Color.BLACK;
         poissonCouleurs = new Color[]{
-                Color.RED, Color.BEIGE, Color.CHOCOLATE,
-                Color.CORNSILK, Color.CYAN, Color.FLORALWHITE, Color.GOLDENROD,
-                Color.SALMON, Color.GREENYELLOW, Color.GREY,
-                Color.INDIGO, Color.LAVENDER,
+                Color.RED, Color.BEIGE, Color.CORNSILK, Color.CYAN,
+                Color.FLORALWHITE, Color.GOLDENROD, Color.LIGHTGREEN,
+                Color.SALMON, Color.GREENYELLOW, Color.GREY, Color.LIGHTSALMON,
+                Color.INDIGO, Color.LIGHTPINK, Color.LIGHTSTEELBLUE,
                 Color.LIMEGREEN, Color.MEDIUMORCHID, Color.ORANGE,
-                Color.ORANGERED, Color.SLATEBLUE, Color.WHITESMOKE};
+                Color.ORANGERED, Color.WHITESMOKE};
 
         msgFont = Font.font(60);
         scoreFont = Font.font(25);

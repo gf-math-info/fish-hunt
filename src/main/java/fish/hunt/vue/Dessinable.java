@@ -14,6 +14,12 @@ public interface Dessinable {
     void viderPlan();
 
     /**
+     * Gère la partie terminée avec le score final.
+     * @param score Le score final de la partie.
+     */
+    void partieTermine(int score);
+
+    /**
      * Affiche un message au joueur lui expliquant que la partie est terminée.
      */
     void afficheFinPartie();
@@ -23,12 +29,6 @@ public interface Dessinable {
      * @param niveau    Le niveau du jeu.
      */
     void afficherNouveauNiveau(int niveau);
-
-    /**
-     * Gère la partie terminée avec le score final.
-     * @param score Le score final de la partie.
-     */
-    void partieTermine(int score);
 
     /**
      * Dessine le score et le nombre de poissons qui restent au joueur.
