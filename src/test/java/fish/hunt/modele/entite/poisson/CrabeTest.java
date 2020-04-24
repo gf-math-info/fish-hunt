@@ -12,8 +12,8 @@ public class CrabeTest {
         double deltaTemps = 1e-5;
 
         //Lorsque le crabe se déplace tranquillement vers la droite...
-        Crabe crabe = new Crabe(50, 50, 0, 0, 100);
-        Crabe crabe1 = new Crabe(50, 50, 10, 30, 130);
+        Crabe crabe = new Crabe(50, 0, 0, 100);
+        Crabe crabe1 = new Crabe(50, 10, 30, 130);
         for(int i = 0; i < 1e5; i++) {
             crabe.actualiser(deltaTemps);
             crabe1.actualiser(deltaTemps);

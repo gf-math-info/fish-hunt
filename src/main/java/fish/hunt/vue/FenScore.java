@@ -1,6 +1,7 @@
 package fish.hunt.vue;
 
 import fish.hunt.modele.entite.Record;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -41,7 +42,9 @@ public class FenScore extends VBox {
         titre.setFont(Font.font(30));
 
         //Initialise la liste.
+        scores = FXCollections.observableArrayList();
         listView = new ListView<>();
+        listView.setItems(scores);
         //Pour afficher le numéro de ligne...
         listView.setCellFactory(joueurListView -> new ListCell<>() {
             @Override
@@ -58,9 +61,6 @@ public class FenScore extends VBox {
         listView.setPrefHeight(245);
 
         //Déséréalise la liste de score.
-        initScores();
-        FXCollections.sort(scores);
-        listView.setItems(scores);
 
         Button menuButton = new Button("Menu");
         menuButton.setOnAction(event -> {
@@ -68,6 +68,11 @@ public class FenScore extends VBox {
         });
 
         getChildren().addAll(titre, listView, menuButton);
+
+        Platform.runLater(() -> {
+            chargerScores();
+            FXCollections.sort(scores);
+        });
     }
 
     /**
@@ -112,11 +117,11 @@ public class FenScore extends VBox {
 
             ajouterButton.setOnAction((event) -> {
                 Record record = new Record(nomTextField.getText(), score);
-                if(scores.size()==10)
+                if(scores.size() == 10)
                     scores.remove(9);
                 scores.add(record);
                 FXCollections.sort(scores);
-                sauvegardeScores();
+                sauvegarderScores();
                 getChildren().remove(hBox);
             });
 
@@ -128,10 +133,9 @@ public class FenScore extends VBox {
      * Déséréalise le tableau de score. Si le fichier n'existe pas, alors une
      * nouvelle liste de meilleurs scores sera créé.
      */
-    private void initScores() {
+    private void chargerScores() {
         boolean charge = false;
         Object[] scoreData;
-        scores = FXCollections.observableArrayList();
 
         while (!charge) {
 
@@ -147,7 +151,6 @@ public class FenScore extends VBox {
 
             } catch (FileNotFoundException fileNotFoundException) {
 
-                scores = FXCollections.observableArrayList();
                 charge = true;
 
             } catch (ClassNotFoundException classNotFoundException) {
@@ -164,7 +167,6 @@ public class FenScore extends VBox {
                 alertModale.showAndWait();
                 ButtonType reponse = alertModale.getResult();
                 if(reponse != ButtonType.YES) {
-                    scores = FXCollections.observableArrayList();
                     charge = true;
                 }
 
@@ -172,6 +174,7 @@ public class FenScore extends VBox {
 
                 Alert alertModale = new Alert(Alert.AlertType.ERROR,
                         "Une erreur s'est produit lors du chargement" +
+
                                 " du fichier contenant les meilleurs scores." +
                                 System.lineSeparator() + "Voulez-vous " +
                                 "essayer de le recharger?",
@@ -181,7 +184,6 @@ public class FenScore extends VBox {
                 alertModale.showAndWait();
                 ButtonType reponse = alertModale.getResult();
                 if(reponse != ButtonType.YES) {
-                    scores = FXCollections.observableArrayList();
                     charge = true;
                 }
 
@@ -192,7 +194,7 @@ public class FenScore extends VBox {
     /**
      * Séréalise la liste des meilleurs scores.
      */
-    private void sauvegardeScores() {
+    private void sauvegarderScores() {
         Object[] scoreData = new Object[scores.size()];
         boolean sauvegarde = false;
 
@@ -224,7 +226,6 @@ public class FenScore extends VBox {
                 alertModale.showAndWait();
                 ButtonType reponse = alertModale.getResult();
                 if(reponse != ButtonType.YES) {
-                    scores = FXCollections.observableArrayList();
                     sauvegarde = true;
                 }
 
