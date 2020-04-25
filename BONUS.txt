@@ -9,16 +9,19 @@ nous avons apportées au jeu.
 BULLES DE LA MORT
     Lorsqu'un poisson est touché, de petites bulles
     apparaissent derrière lui après sa disparition.
+
 TIR PARFAIT
     Lorsqu'un poisson est frappé du premier coup, la
     mention "Tir parfait!" apparait en haut à droite de
     l'écran. Autrement dit, un tir parfait est un
     one-shot-kill.
+
 SÉRIE DE TIRS PARFAITS
     Le nombre de tirs parfaits de suite est gardé
     en mémoire. Le 1er donne 3 points au joueur, le
     2e donne 5 points et le 3e donne une vie bonus.
     Après une suite de 3, on redescend à 1.
+
 AFFICHAGE DES VIES
     Si un joueur a 5 vies ou plus, alors ses vies sont
     affichées sous le format "N × [00.png]".

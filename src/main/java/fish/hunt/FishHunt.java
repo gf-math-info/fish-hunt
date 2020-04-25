@@ -7,7 +7,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /**
- * Cette classe est la classe principale du jeu.
+ * Cette classe est la classe principale du jeu Fish Hunt.
  * @author Fortin-Leblanc, Gabriel
  * @author Colson-Ratelle, Antoine
  */
