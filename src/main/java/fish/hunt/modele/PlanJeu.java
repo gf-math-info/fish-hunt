@@ -7,10 +7,7 @@ import fish.hunt.modele.entite.poisson.EtoileMer;
 import fish.hunt.modele.entite.poisson.Poisson;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Cette classe représente le plan du jeu. Elle contient tous les éléments du
@@ -22,10 +19,10 @@ public class PlanJeu {
 
     private double largeur, hauteur;
 
-    private Partie partie;
-    private ArrayList<Bulle> bulles;
-    private ArrayList<Projectile> projectiles;
-    private ArrayList<Poisson> poissons;
+    private final Partie partie;
+    private final ArrayList<Bulle> bulles;
+    private final ArrayList<Projectile> projectiles;
+    private final ArrayList<Poisson> poissons;
 
     private Random random;
     private boolean pretUnProjectileUnMort;
@@ -70,72 +67,81 @@ public class PlanJeu {
      *                      actualisation.
      */
     public void actualiser(double deltaTemps) {
-        //On actualise la position des objects du plan de jeu.
-        bulles.forEach(bulle -> bulle.actualiser(deltaTemps));
-        projectiles.forEach(projectile -> projectile.actualiser(deltaTemps));
-        poissons.forEach(poisson -> poisson.actualiser(deltaTemps));
+        /*On actualise la position des bulles, retire les bulles à l'extérieur
+        du plan et on rajoute de nouvelles bulles lorsque le moment est venu.*/
+        Bulle bulle;
+        for(int i = 0; i < bulles.size();) {
+            bulle = bulles.get(i);
+            bulle.actualiser(deltaTemps);
+
+            if(bulle.getY() + bulle.getHauteur() < 0)
+                //Si la bulle est à l'extérieur du plan de jeu, alors...
+                bulles.remove(i);
+            else
+                i++;
+        }
+
+        Poisson poisson;
+        for(int i = 0; i < poissons.size();) {
+            poisson = poissons.get(i);
+            poisson.actualiser(deltaTemps);
+
+            if((poisson.getVx() < 0 &&
+                    poisson.getX() + poisson.getLargeur() < 0) ||
+                    (poisson.getVx() > 0 && poisson.getX() > largeur)) {
+                //Si le poisson s'est échappé, alors...
+                poissons.remove(i);
+                partie.decrementerVie();
+            } else
+                i++;
+        }
 
         //On met à jour les contacts des projectiles avec les poissons.
         Projectile projectile;
+        boolean touche;
         for(int i = 0; i < projectiles.size();) {
             projectile = projectiles.get(i);
+            projectile.actualiser(deltaTemps);
 
-            //Si un projectile est au niveau des poissons, alors...
-            if(projectile.getLargeur() == 0) {
-                List<Poisson> poissonsTouches = new LinkedList<>();
-                AtomicBoolean touche = new AtomicBoolean(false);
+            touche = false;//Le projectile n'a pas encore touché de poisson.
 
-                poissons.stream()
-                        .filter(projectile::intersect)
-                        .forEach(poisson -> {
-                            if(pretUnProjectileUnMort)
-                                partie.incrementerUnProjectileUnMort();
-                            else {
-                                partie.incrementerScore();
-                                pretUnProjectileUnMort = true;
-                            }
-                            poissonsTouches.add(poisson);
-                            ajouterBullePoisson(poisson.getX(), poisson.getY(),
-                                    poisson.getLargeur(), poisson.getHauteur());
-                            touche.set(true);
-                        });
+            if(projectile.getDiametre() == 0) {
+                //Alors le projectile est au niveau des poissons...
+                for(int j = 0; j < poissons.size();) {
+                    poisson = poissons.get(j);
+                    if(projectile.intersect(poisson)) {
 
-                //Si le projectile n'a pas atteint de poissons, mais qu'il était
-                //près d'un poisson on peut considérer qu
-                if(!touche.get()) {
+                        if(pretUnProjectileUnMort) {
+                            /*On augmente le score selon que le tire est un
+                            premier tire ou que le poisson a nécessité plusieurs
+                            tires pour être touché.*/
+                            partie.incrementerUnProjectileUnMort();
+                        } else {
+                            partie.incrementerScore();
+                            pretUnProjectileUnMort = true;
+                        }
+
+                        //L'animation de bulle lorsqu'un poisson est touché.
+                        ajouterBullePoisson(poisson.getX(), poisson.getY(),
+                                poisson.getLargeur(), poisson.getHauteur());
+                        touche = true;
+                        poissons.remove(j);
+
+                    } else
+                        j++;
+                }
+
+                if(!touche) {
+                    /* Si le projectile n'a pas touché de cible, alors le nombre
+                    de poisson touché d'un coup est réinitialisé.
+                     */
                     partie.initUnProjectileUnMort();
                     pretUnProjectileUnMort = false;
                 }
 
-                poissons.removeAll(poissonsTouches);
-                projectiles.remove(projectile);
+                projectiles.remove(i);
             } else
                 i++;
-        }
-
-        //On retire les bulles à l'extérieur du plan et on rajoute de nouvelles
-        //bulles lorsque le moment est venu.
-        deltaBulle += deltaTemps;
-        bulles.removeIf(bulle -> bulle.getY() + bulle.getDiametre() < 0);
-        if(deltaBulle >= DELAIS_BULLE) {
-            deltaBulle = 0;
-            ajouterBulles();
-        }
-
-        //On retire les poissons qui ont passé à travers le plan de jeu sans
-        //se faire toucher.
-        Poisson poisson;
-        for(int i = 0; i < poissons.size();) {
-
-            poisson = poissons.get(i);
-            if((poisson.getVx() < 0 &&
-                    poisson.getX() + poisson.getLargeur() < 0) ||
-                    (poisson.getVx() > 0 && poisson.getX() > largeur)) {
-                poissons.remove(poisson);
-                partie.decrementerVie();
-            } else
-                i++;
-
         }
 
         //On ajoute les poissons après un certain délai.
@@ -152,6 +158,12 @@ public class PlanJeu {
                 deltaPoissonSpecial = 0;
                 ajouterPoissonSpecial();
             }
+        }
+
+        deltaBulle += deltaTemps;
+        if(deltaBulle >= DELAIS_BULLE) {
+            deltaBulle = 0;
+            ajouterBulles();
         }
     }
 
@@ -221,7 +233,8 @@ public class PlanJeu {
         double vx = vitesseLevel(partie.getNiveau());
         double y = random.nextDouble() *
                 (Poisson.POISSON_Y_MAX_RATIO - Poisson.POISSON_Y_MIN_RATIO) *
-                (hauteur - hauteurPoisson) + Poisson.POISSON_Y_MIN_RATIO * hauteur;
+                (hauteur - hauteurPoisson) +
+                Poisson.POISSON_Y_MIN_RATIO * hauteur;
         double x;
         if(!versDroite) {
             vx = -vx;
@@ -302,29 +315,9 @@ public class PlanJeu {
     /**
      * Calcul la vitesse des poissons en fonction du niveau.
      * @param niveau    Le niveau de la partie.
-     * @return
+     * @return  La vitesse des poissons selon le niveau de la partie.
      */
     private double vitesseLevel(int niveau) {
         return 100 * Math.pow(niveau, 1/3.0) + 200;
     }
-/*
-    /**
-     * Calcul la distance au carré entre un point et un rectangle.
-     * @param xPoint        La position horizontale du point.
-     * @param yPoint        La position verticale du point.
-     * @param xRect         La position horizontale du rectangle.
-     * @param yRect         La position verticale du rectangle.
-     * @param largeurRect   La largeur du rectangle.
-     * @param hauteurRect   La hauteur du rectangle.
-     * @return              La distance au carré entre le point et le rectangle.
-     *
-    private double distanceCarrePointRectangle(double xPoint, double yPoint,
-                                          double xRect, double yRect,
-                                          double largeurRect,
-                                          double hauteurRect) {
-        double xPres = Math.min(xRect, Math.min(xPoint, xRect + largeurRect));
-        double yPres = Math.min(yRect, Math.min(yPoint, yRect + hauteurRect));
-        double distX = xPres - xPoint, distY = yPres - yPoint;
-        return distX * distX + distY * distY;
-    }*/
 }
