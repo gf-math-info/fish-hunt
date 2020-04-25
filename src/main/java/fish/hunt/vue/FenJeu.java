@@ -2,6 +2,7 @@ package fish.hunt.vue;
 
 import fish.hunt.controleur.ControleurPartie;
 import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -99,13 +100,14 @@ public class FenJeu extends Pane implements Dessinable{
         });
 
         canvas.setOnMouseMoved((event) -> {
-            cibleX = event.getX();
-            cibleY = event.getY();
+            setCiblePosition(event.getX(), event.getY());
+        });
+
+        canvas.setOnMouseDragged((event) -> {
+            setCiblePosition(event.getX(), event.getY());
         });
 
         canvas.setOnMousePressed((event) -> {
-            cibleX = event.getX();
-            cibleY = event.getY();
             controleurPartie.ajouterProjectile(event.getX(), event.getY());
         });
     }
@@ -323,5 +325,15 @@ public class FenJeu extends Pane implements Dessinable{
     @Override
     public int getNombreCouleurPoisson() {
         return poissonCouleurs.length;
+    }
+
+    /**
+     * Change la position de la souris.
+     * @param x La position horizontale.
+     * @param y La position verticale.
+     */
+    private void setCiblePosition(double x, double y) {
+        cibleX = x;
+        cibleY = y;
     }
 }
