@@ -98,7 +98,7 @@ public class PlanJeu {
         //On retire les bulles à l'extérieur du plan et on rajoute de nouvelles
         //bulles lorsque le moment est venu.
         deltaBulle += deltaTemps;
-        bulles.removeIf(bulle -> bulle.getY() + bulle.getHauteur() > 0);
+        bulles.removeIf(bulle -> bulle.getY() + bulle.getDiametre() < 0);
         if(deltaBulle >= DELAIS_BULLE) {
             deltaBulle = 0;
             ajouterBulles();

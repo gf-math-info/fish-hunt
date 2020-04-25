@@ -131,12 +131,11 @@ public class VueJeu extends Pane implements Dessinable{
         projectileColor = Color.BLACK;
 
         poissonCouleurs = new Color[]{
-                Color.RED, Color.BEIGE, Color.CORNSILK, Color.CYAN,
+                Color.BEIGE, Color.CORNSILK, Color.CYAN,
                 Color.FLORALWHITE, Color.GOLDENROD, Color.LIGHTGREEN,
                 Color.SALMON, Color.GREENYELLOW, Color.GREY, Color.LIGHTSALMON,
                 Color.INDIGO, Color.LIGHTPINK, Color.LIGHTSTEELBLUE,
-                Color.LIMEGREEN, Color.MEDIUMORCHID, Color.ORANGE,
-                Color.ORANGERED, Color.WHITESMOKE};
+                Color.LIMEGREEN, Color.ORANGE, Color.WHITESMOKE};
 
         msgFont = Font.font(60);
         scoreFont = Font.font(25);
@@ -246,7 +245,7 @@ public class VueJeu extends Pane implements Dessinable{
     @Override
     public void dessinerBulle(double x, double y, double diametre) {
         graphicsContext.setFill(bulleColor);
-        graphicsContext.fillRect(x, y, diametre, diametre);
+        graphicsContext.fillOval(x, y, diametre, diametre);
     }
 
     /**

@@ -7,8 +7,8 @@ package fish.hunt.modele.entite;
  */
 public class Bulle extends Entite {
 
-    public static final double BULLE_RAYON_MIN = 10;
-    public static final double BULLE_RAYON_MAX = 40;
+    public static final double BULLE_RAYON_MIN = 30;
+    public static final double BULLE_RAYON_MAX = 50;
     public static final double BULLE_VITESSE_MIN = -350;
     public static final double BULLE_VITESSE_MAX = -450;
 
