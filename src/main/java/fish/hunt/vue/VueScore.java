@@ -25,6 +25,9 @@ public class VueScore extends VBox {
 
     private ListView<Record> listView;
     private ObservableList<Record> scores;
+    private Stage stagePrincipal;
+
+    private boolean charge;
 
     private final String NOM_SAUVEGARDE = "scores.dat";
 
@@ -34,6 +37,46 @@ public class VueScore extends VBox {
      * @param stagePrincipal    Le stage principal de l'application.
      */
     public VueScore(Stage stagePrincipal) {
+        this.stagePrincipal = stagePrincipal;
+        initVueBase();
+
+        Platform.runLater(() -> {
+            chargerScores();
+            FXCollections.sort(scores);
+        });
+    }
+
+    /**
+     * Construit une fenêtre de score. Si la liste de scores contient moins de 10
+     * éléments, alors le joueur pourra entrer son score dans le tableau des
+     * meilleurs scores. Si la liste de score contient déjà 10 éléments, alors
+     * le joueur pourra entrer son score dans le tableau des meilleurs scores
+     * seulement si son score est meilleur que le pire des scores du tableau.
+     * Dans ce cas, le pire score sera supprimé du tableau.
+     * @param stagePrincipal    Le stage principal de l'application.
+     * @param score             Le score du joueur.
+     */
+    public VueScore(Stage stagePrincipal, int score) {
+        this.stagePrincipal = stagePrincipal;
+        initVueBase();
+
+        Platform.runLater(() -> {
+            chargerScores();
+            FXCollections.sort(scores);
+            //Si le score est assez élevé pour intégrer les 10 meilleurs, alors
+            //on offre l'utilisateur d'ajouter son score à la liste.
+            if(scores.size() < 10 ||
+                    (scores.size() == 10 && scores.get(9).getScore() < score)) {
+                initVueAjoutScore(score);
+            }
+        });
+    }
+
+    /**
+     * Initialise la vue de base, c'est-à-dire la liste et le bouton pour
+     * retourner au menu.
+     */
+    private void initVueBase() {
         setAlignment(Pos.CENTER);
         setPadding(new Insets(10, 30, 10, 30));
         setSpacing(15);
@@ -60,115 +103,90 @@ public class VueScore extends VBox {
         });
         listView.setPrefHeight(245);
 
-        //Désérialise la liste de scores.
-
         Button menuButton = new Button("Menu");
         menuButton.setOnAction(event -> {
             stagePrincipal.getScene().setRoot(new VueAccueil(stagePrincipal));
         });
 
         getChildren().addAll(titre, listView, menuButton);
-
-        Platform.runLater(() -> {
-            chargerScores();
-            FXCollections.sort(scores);
-        });
     }
 
     /**
-     * Construit une fenêtre de score. Si la liste de scores contient moins de 10
-     * éléments, alors le joueur pourra entrer son score dans le tableau des
-     * meilleurs scores. Si la liste de score contient déjà 10 éléments, alors
-     * le joueur pourra entrer son score dans le tableau des meilleurs scores
-     * seulement si son score est meilleur que le pire des scores du tableau.
-     * Dans ce cas, le pire score sera supprimé du tableau.
-     * @param stagePrincipal    Le stage principal de l'application.
-     * @param score             Le score du joueur.
+     * Initialise la vue qui permet au joueur d'ajouter son score à la liste.
+     * @param score Le score que le joueur a fait.
      */
-    public VueScore(Stage stagePrincipal, int score) {
-        this(stagePrincipal);
+    private void initVueAjoutScore(int score) {
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER);
+        hBox.setSpacing(10);
 
-        //Si le score est assez élevé pour intégrer les 10 meilleurs, alors on
-        //offre l'utilisateur d'ajouter son score à la liste.
-        if(scores.size() < 10 ||
-                scores.size() == 10 && scores.get(9).getScore() < score) {
+        Text nomText = new Text("Votre nom :");
+        TextField nomTextField = new TextField();
+        Text pointText = new Text("a fait "
+                + score + " points!");
+        pointText.setFont(Font.font(Font.getDefault().getFamily(),
+                FontWeight.BOLD, Font.getDefault().getSize()));
+        Button ajouterButton = new Button("Ajouter!");
+        ajouterButton.setDisable(true);
+        ajouterButton.setDefaultButton(true);
 
-            HBox hBox = new HBox();
-            hBox.setAlignment(Pos.CENTER);
-            hBox.setSpacing(10);
+        nomTextField.setOnKeyPressed((event) -> {
+            ajouterButton.setDisable(
+                    nomTextField.getText().strip().length() == 0);
+        });
 
-            Text nomText = new Text("Votre nom :");
-            TextField nomTextField = new TextField();
-            Text pointText = new Text("a fait "
-                    + score + " points!");
-            pointText.setFont(Font.font(Font.getDefault().getFamily(),
-                    FontWeight.BOLD, Font.getDefault().getSize()));
-            Button ajouterButton = new Button("Ajouter!");
-            ajouterButton.setDisable(true);
-            ajouterButton.setDefaultButton(true);
+        hBox.getChildren().addAll(nomText, nomTextField, pointText,
+                ajouterButton);
 
-            nomTextField.setOnKeyPressed((event) -> {
-                ajouterButton.setDisable(
-                        nomTextField.getText().strip().length() == 0);
-            });
+        ajouterButton.setOnAction((event) -> {
+            Record record = new Record(nomTextField.getText(), score);
+            if(scores.size() == 10)
+                scores.remove(9);
+            scores.add(record);
+            FXCollections.sort(scores);
+            sauvegarderScores();
+            getChildren().remove(hBox);
+        });
 
-            hBox.getChildren().addAll(nomText, nomTextField, pointText,
-                    ajouterButton);
-
-            ajouterButton.setOnAction((event) -> {
-                Record record = new Record(nomTextField.getText(), score);
-                if(scores.size() == 10)
-                    scores.remove(9);
-                scores.add(record);
-                FXCollections.sort(scores);
-                sauvegarderScores();
-                getChildren().remove(hBox);
-            });
-
-            getChildren().add(2, hBox);
-        }
+        getChildren().add(2, hBox);
     }
+
 
     /**
      * Déséréalise le tableau de score. Si le fichier n'existe pas, alors une
      * nouvelle liste de meilleurs scores sera créé.
      */
     private void chargerScores() {
-        boolean charge = false;
         Object[] scoreData;
 
-        while (!charge) {
+        try (FileInputStream fileInputStream =
+                     new FileInputStream(NOM_SAUVEGARDE);
+             ObjectInputStream objectInput =
+                     new ObjectInputStream(fileInputStream)){
 
-            try (FileInputStream fileInputStream =
-                         new FileInputStream(NOM_SAUVEGARDE);
-                 ObjectInputStream objectInput =
-                         new ObjectInputStream(fileInputStream)){
+            scoreData = (Object[])objectInput.readObject();
+            for(Object score : scoreData)
+                scores.add((Record)score);
+            charge = true;
 
-                scoreData = (Object[])objectInput.readObject();
-                for(Object score : scoreData)
-                    scores.add((Record)score);
+        } catch (FileNotFoundException fileNotFoundException) {
+
+            charge = true;
+
+        } catch (IOException | ClassNotFoundException exception) {
+
+            Alert alertModale = new Alert(Alert.AlertType.ERROR,
+                    "Une erreur s'est produite lors du chargement" +
+                            " du fichier contenant les meilleurs scores." +
+                            System.lineSeparator() + "Voulez-vous " +
+                            "essayer de le recharger?",
+                    ButtonType.YES, ButtonType.NO);
+            alertModale.setResizable(true);
+            alertModale.getDialogPane().setPrefHeight(200);
+            alertModale.showAndWait();
+            ButtonType reponse = alertModale.getResult();
+            if(reponse != ButtonType.YES) {
                 charge = true;
-
-            } catch (FileNotFoundException fileNotFoundException) {
-
-                charge = true;
-
-            } catch (IOException | ClassNotFoundException exception) {
-
-                Alert alertModale = new Alert(Alert.AlertType.ERROR,
-                        "Une erreur s'est produite lors du chargement" +
-                                " du fichier contenant les meilleurs scores." +
-                                System.lineSeparator() + "Voulez-vous " +
-                                "essayer de le recharger?",
-                        ButtonType.YES, ButtonType.NO);
-                alertModale.setResizable(true);
-                alertModale.getDialogPane().setPrefHeight(200);
-                alertModale.showAndWait();
-                ButtonType reponse = alertModale.getResult();
-                if(reponse != ButtonType.YES) {
-                    charge = true;
-                }
-
             }
         }
     }
