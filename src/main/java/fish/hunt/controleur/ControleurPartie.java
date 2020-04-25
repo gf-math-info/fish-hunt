@@ -57,7 +57,7 @@ public class ControleurPartie {
      */
     public void actualiser(double deltaTemps) {
         dessinable.viderPlan();
-        if(augmenteNiveau) {
+        if(augmenteNiveau) { // si le message Level X est en affichage.
 
             deltaMessage += deltaTemps;
             if(deltaMessage < TEMPS_MESSAGE)
