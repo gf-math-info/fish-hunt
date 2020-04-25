@@ -9,8 +9,10 @@ package fish.hunt.modele;
 public class Partie {
     private int score;
     private int niveau;
+    private int nbPoissonsTouches;
     private PartieEtat etat;
     private int nbViesRestantes;
+    private int unProjectileUnMort;
 
     private final int NB_VIES_INIT = 3;
     private final int NB_POISSONS_NIVEAU = 5;
@@ -21,6 +23,8 @@ public class Partie {
     public Partie() {
         this.score = 0;
         this.niveau = 1;
+        this.unProjectileUnMort = 0;
+        this.nbViesRestantes = 0;
         this.etat = PartieEtat.EN_COURS;
         this.nbViesRestantes = NB_VIES_INIT;
     }
@@ -33,19 +37,26 @@ public class Partie {
     }
 
     /**
+     * Incremente le nombre de poissons touchés.
+     */
+    public void incrementerNbPoissonsTouches() {
+        if(++nbPoissonsTouches % NB_POISSONS_NIVEAU == 0)
+            incrementerNiveau();
+    }
+
+    /**
      * Incrémente le score de la partie.
      */
     public void incrementerScore() {
-        if(++score % NB_POISSONS_NIVEAU == 0)
-            incrementerNiveau();
+        score++;
+        incrementerNbPoissonsTouches();
     }
 
     /**
      * Incrémente le nombre de vies.
      */
     public void incrementerVie() {
-        if(nbViesRestantes < 3)
-            this.nbViesRestantes++;
+        this.nbViesRestantes++;
     }
 
     /**
@@ -54,6 +65,31 @@ public class Partie {
     public void decrementerVie() {
         if(--nbViesRestantes == 0)
             etat = PartieEtat.PERDU;
+    }
+
+    /**
+     * Signifie à la partie que le joueur a fait un autre un-projectile-un-mort.
+     */
+    public void incrementerUnProjectileUnMort() {
+        switch (++unProjectileUnMort) {
+            case 1:
+                score += 3;
+                break;
+            case 2:
+                score += 5;
+                break;
+            case 3:
+                nbViesRestantes++;
+                break;
+            default:
+                incrementerScore();
+                initUnProjectileUnMort();
+        }
+        incrementerNbPoissonsTouches();
+    }
+
+    public void initUnProjectileUnMort() {
+        unProjectileUnMort = 0;
     }
 
     /**

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Cette classe représente le plan du jeu. Elle contient tous les éléments du
@@ -27,6 +28,7 @@ public class PlanJeu {
     private ArrayList<Poisson> poissons;
 
     private Random random;
+    private boolean pretUnProjectileUnMort;
     private double deltaBulle, deltaPoisson, deltaPoissonSpecial;
 
     // ici, nous réunissons toutes les constantes décrivant chaque poisson
@@ -37,7 +39,6 @@ public class PlanJeu {
     private final int NB_BULLES = 5;
     private final double DELAIS_POISSON = 3;
     private final double DELAIS_POISSON_SPECIAL = 5;
-
     private final double VITESSE_CRABE = 1.3;
 
     /**
@@ -53,6 +54,7 @@ public class PlanJeu {
         this.partie = partie;
 
         random = new Random();
+        pretUnProjectileUnMort = true;
         deltaBulle = 0;
         deltaPoisson = 0;
         deltaPoissonSpecial = 0;
@@ -81,15 +83,29 @@ public class PlanJeu {
             //Si un projectile est au niveau des poissons, alors...
             if(projectile.getLargeur() == 0) {
                 List<Poisson> poissonsTouches = new LinkedList<>();
+                AtomicBoolean touche = new AtomicBoolean(false);
 
                 poissons.stream()
                         .filter(projectile::intersect)
                         .forEach(poisson -> {
-                            partie.incrementerScore();
+                            if(pretUnProjectileUnMort)
+                                partie.incrementerUnProjectileUnMort();
+                            else {
+                                partie.incrementerScore();
+                                pretUnProjectileUnMort = true;
+                            }
                             poissonsTouches.add(poisson);
                             ajouterBullePoisson(poisson.getX(), poisson.getY(),
                                     poisson.getLargeur(), poisson.getHauteur());
+                            touche.set(true);
                         });
+
+                //Si le projectile n'a pas atteint de poissons, mais qu'il était
+                //près d'un poisson on peut considérer qu
+                if(!touche.get()) {
+                    partie.initUnProjectileUnMort();
+                    pretUnProjectileUnMort = false;
+                }
 
                 poissons.removeAll(poissonsTouches);
                 projectiles.remove(projectile);
@@ -157,7 +173,7 @@ public class PlanJeu {
 
     /**
      * Accesseur des poissons que le plan de jeu contient.
-     * @return
+     * @return  La liste de poissons que le plan de jeu contient.
      */
     public ArrayList<Poisson> getPoissons() {
         return poissons;
@@ -291,4 +307,24 @@ public class PlanJeu {
     private double vitesseLevel(int niveau) {
         return 100 * Math.pow(niveau, 1/3.0) + 200;
     }
+/*
+    /**
+     * Calcul la distance au carré entre un point et un rectangle.
+     * @param xPoint        La position horizontale du point.
+     * @param yPoint        La position verticale du point.
+     * @param xRect         La position horizontale du rectangle.
+     * @param yRect         La position verticale du rectangle.
+     * @param largeurRect   La largeur du rectangle.
+     * @param hauteurRect   La hauteur du rectangle.
+     * @return              La distance au carré entre le point et le rectangle.
+     *
+    private double distanceCarrePointRectangle(double xPoint, double yPoint,
+                                          double xRect, double yRect,
+                                          double largeurRect,
+                                          double hauteurRect) {
+        double xPres = Math.min(xRect, Math.min(xPoint, xRect + largeurRect));
+        double yPres = Math.min(yRect, Math.min(yPoint, yRect + hauteurRect));
+        double distX = xPres - xPoint, distY = yPres - yPoint;
+        return distX * distX + distY * distY;
+    }*/
 }
