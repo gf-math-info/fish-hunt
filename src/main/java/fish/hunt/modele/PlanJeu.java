@@ -87,6 +87,8 @@ public class PlanJeu {
                         .forEach(poisson -> {
                             partie.incrementerScore();
                             poissonsTouches.add(poisson);
+                            ajouterBullePoisson(poisson.getX(), poisson.getY(),
+                                    poisson.getLargeur(), poisson.getHauteur());
                         });
 
                 poissons.removeAll(poissonsTouches);
@@ -262,6 +264,30 @@ public class PlanJeu {
         poissons.add(poisson);
     }
 
+    /**
+     * Ajoute des bulle dans une région donné lorsqu'un poisson est touché.
+     * @param x         La position horizontale du poisson.
+     * @param y         La position verticale du poisson.
+     * @param largeur   La larguer du poisson.
+     * @param hauteur   La hauteur du poisson.
+     */
+    private void ajouterBullePoisson(double x, double y,
+                                     double largeur, double hauteur) {
+        for(int i = 0; i < 12; i++) {
+            bulles.add(new Bulle(random.nextDouble() * 10 + 10,
+                    random.nextDouble() * largeur + x,
+                    random.nextDouble() * hauteur + y,
+                    random.nextDouble() *
+                            (Bulle.BULLE_VITESSE_MAX - Bulle.BULLE_VITESSE_MIN)
+                            + Bulle.BULLE_VITESSE_MIN));
+        }
+    }
+
+    /**
+     * Calcul la vitesse des poissons en fonction du niveau.
+     * @param niveau    Le niveau de la partie.
+     * @return
+     */
     private double vitesseLevel(int niveau) {
         return 100 * Math.pow(niveau, 1/3.0) + 200;
     }
