@@ -157,8 +157,8 @@ public class VueScore extends VBox {
 
                 Alert alertModale = new Alert(Alert.AlertType.ERROR,
                         "Le fichier contenant les meilleurs scores " +
-                                "semblent corrompus." + System.lineSeparator() +
-                                "Voulez-vous essayer de le recharger?" +
+                                "semble corrompu." + System.lineSeparator() +
+                                "Voulez-vous réessayer de le charger?" +
                                 System.lineSeparator() + "Si vous refusez, " +
                                 "un nouveau fichier de sauvegarde sera créé.",
                         ButtonType.YES, ButtonType.NO);
@@ -173,8 +173,7 @@ public class VueScore extends VBox {
             } catch (IOException ioException) {
 
                 Alert alertModale = new Alert(Alert.AlertType.ERROR,
-                        "Une erreur s'est produit lors du chargement" +
-
+                        "Une erreur s'est produite lors du chargement" +
                                 " du fichier contenant les meilleurs scores." +
                                 System.lineSeparator() + "Voulez-vous " +
                                 "essayer de le recharger?",
