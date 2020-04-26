@@ -133,6 +133,9 @@ public class ControleurPartie {
             dessinable.dessinerScore(partie.getScore(),
                     partie.getNbViesRestantes());
 
+            if(partie.getNbUnProjectileUnMort() > 0)
+                dessinable.dessinerCombo(partie.getNbUnProjectileUnMort());
+
             partiePerdue = partie.getEtat() == PartieEtat.PERDU;
 
             if(partie.getNiveau() != dernierNiveau) {

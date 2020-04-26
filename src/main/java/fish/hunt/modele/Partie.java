@@ -129,4 +129,12 @@ public class Partie {
     public int getNbViesRestantes() {
         return nbViesRestantes;
     }
+
+    /**
+     * Accesseur du nombre de tire un-projectile-un-mort.
+     * @return  Le nombre de tire un-projectile-un-mort.
+     */
+    public int getNbUnProjectileUnMort() {
+        return nbUnProjectileUnMort;
+    }
 }

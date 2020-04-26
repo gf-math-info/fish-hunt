@@ -90,6 +90,12 @@ public interface Dessinable {
     void dessinerProjectile(double x, double y, double diametre);
 
     /**
+     * Dessine le nombre de tire un-projectile-un-mort.
+     * @param nbUnProjectileUnMort  Le nombre de tire un-projectile-un-mort.
+     */
+    void dessinerCombo(int nbUnProjectileUnMort);
+
+    /**
      * Accesseur du nombre d'images de poissons disponibles.
      * @return  Le nombre d'images de poissons disponibles.
      */

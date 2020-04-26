@@ -356,4 +356,21 @@ public class VueJeu extends Pane implements Dessinable{
         graphicsContext.drawImage(cibleImage,
                 x - dimCible / 2, y - dimCible / 2, dimCible, dimCible);
     }
+
+    /**
+     * Dessine le nombre de tire un-projectile-un-mort.
+     * @param nbUnProjectileUnMort  Le nombre de tire un-projectile-un-mort.
+     */
+    @Override
+    public void dessinerCombo(int nbUnProjectileUnMort) {
+        graphicsContext.setFill(msgColor);
+        graphicsContext.setFont(scoreFont);
+
+        String msg = "Tir parfait \u2715 " + nbUnProjectileUnMort;
+        Text text = new Text(msg);
+        text.setFont(scoreFont);
+
+        graphicsContext.fillText(msg,
+                largeur - text.getLayoutBounds().getWidth() - 20, 30);
+    }
 }
