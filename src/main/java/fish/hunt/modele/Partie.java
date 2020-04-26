@@ -83,7 +83,7 @@ public class Partie {
                 break;
             default:
                 incrementerScore();
-                initUnProjectileUnMort();
+                unProjectileUnMort = 1;
         }
         incrementerNbPoissonsTouches();
     }

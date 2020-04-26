@@ -38,13 +38,6 @@ public interface Dessinable {
     void dessinerScore(int score, int nbPoissonsRestants);
 
     /**
-     * Dessine une cible à une certaine position.
-     * @param x La position horizontale.
-     * @param y La position verticale.
-     */
-    void dessinerCible(double x, double y);
-
-    /**
      * Dessine une bulle d'une certaine dimension à une certaine position.
      * @param x             La position horizontale.
      * @param y             La position verticale.

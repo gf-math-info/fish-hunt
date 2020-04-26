@@ -54,19 +54,19 @@ public class VueJeu extends Pane implements Dessinable{
         graphicsContext = canvas.getGraphicsContext2D();
         getChildren().add(canvas);
 
-        controleurPartie = new ControleurPartie(largeur, hauteur,
-                this);
+        controleurPartie = new ControleurPartie(largeur, hauteur, this);
 
         initOutilsDessin();
         initListeners();
 
         timer = new AnimationTimer() {
             long dernierMoment = System.nanoTime();
+            final double MAX_DELTA_TEMPS = 0.003;
 
             @Override
             public void handle(long l) {
                 controleurPartie.actualiser(
-                        (l - dernierMoment) * 1e-9);
+                        Math.max((l - dernierMoment) * 1e-9, MAX_DELTA_TEMPS));
                 dessinerCible(cibleX, cibleY);
                 dernierMoment = l;
             }
@@ -75,6 +75,9 @@ public class VueJeu extends Pane implements Dessinable{
         timer.start();
     }
 
+    /**
+     * Initialise les écouteurs pour le jeu.
+     */
     private void initListeners() {
         stagePrincipal.getScene().setOnKeyPressed((event) -> {
             switch(event.getCode()) {
@@ -111,6 +114,9 @@ public class VueJeu extends Pane implements Dessinable{
         });
     }
 
+    /**
+     * Initialise les couleurs, les fonts et charge les images.
+     */
     private void initOutilsDessin() {
         poissonImages = new Image[8];
 
@@ -131,10 +137,9 @@ public class VueJeu extends Pane implements Dessinable{
         projectileColor = Color.BLACK;
 
         poissonCouleurs = new Color[]{
-                Color.BEIGE, Color.CORNSILK, Color.CYAN,
-                Color.FLORALWHITE, Color.GOLDENROD, Color.LIGHTGREEN,
+                Color.BEIGE, Color.CYAN, Color.FLORALWHITE, Color.LIGHTGREEN,
                 Color.SALMON, Color.GREENYELLOW, Color.GREY, Color.LIGHTSALMON,
-                Color.INDIGO, Color.LIGHTPINK, Color.LIGHTSTEELBLUE,
+                Color.LIGHTPINK, Color.LIGHTSTEELBLUE, Color.PINK,
                 Color.LIMEGREEN, Color.ORANGE, Color.WHITESMOKE};
 
         msgFont = Font.font(60);
@@ -206,34 +211,37 @@ public class VueJeu extends Pane implements Dessinable{
     public void dessinerScore(int score, int nbPoissonsRestants) {
         graphicsContext.setFill(scoreColor);
         graphicsContext.setFont(scoreFont);
+        double dimPoisson = 35, insets = 15, xVie, yVie, yScore = 30;
 
         String nombre = String.valueOf(score);
         Text text = new Text(nombre);
         text.setFont(scoreFont);
 
         graphicsContext.fillText(String.valueOf(score),
-                (largeur - text.getLayoutBounds().getWidth()) / 2, 30);
+                (largeur - text.getLayoutBounds().getWidth()) / 2, yScore);
 
-        double dimPoisson = 35, insets = 20;
-        double x = (largeur - (dimPoisson * 3 + insets * 2)) / 2,
-                y = 30 + text.getLayoutBounds().getHeight();
+        yVie = 40 + text.getLayoutBounds().getHeight();
+        if(nbPoissonsRestants > 4) {
+            String msg = nbPoissonsRestants + " \u2715 ";
+            text.setText(msg);
+            xVie = (largeur - text.getLayoutBounds().getWidth() -
+                    dimPoisson) / 2;
 
-        for(int i = 0; i < nbPoissonsRestants; i++)
+            graphicsContext.fillText(msg, xVie, yVie);
             graphicsContext.drawImage(poissonScoreImage,
-                    x + i * (dimPoisson + insets), y,
+                    xVie + text.getLayoutBounds().getWidth(), yVie,
                     dimPoisson, dimPoisson);
-    }
+        } else {
+            xVie = (largeur - (dimPoisson * nbPoissonsRestants +
+                    ((nbPoissonsRestants > 0) ?
+                            insets * (nbPoissonsRestants - 1) :
+                            0))) / 2;
 
-    /**
-     * Dessine une cible à une certaine position.
-     * @param x La position horizontale.
-     * @param y La position verticale.
-     */
-    @Override
-    public void dessinerCible(double x, double y) {
-        double dimCible = 50;
-        graphicsContext.drawImage(cibleImage,
-                x - dimCible / 2, y - dimCible / 2, dimCible, dimCible);
+            for (int i = 0; i < nbPoissonsRestants; i++)
+                graphicsContext.drawImage(poissonScoreImage,
+                        xVie + i * (dimPoisson + insets), yVie,
+                        dimPoisson, dimPoisson);
+        }
     }
 
     /**
@@ -335,5 +343,16 @@ public class VueJeu extends Pane implements Dessinable{
     private void setCiblePosition(double x, double y) {
         cibleX = x;
         cibleY = y;
+    }
+
+    /**
+     * Dessine une cible à une certaine position.
+     * @param x La position horizontale.
+     * @param y La position verticale.
+     */
+    public void dessinerCible(double x, double y) {
+        double dimCible = 50;
+        graphicsContext.drawImage(cibleImage,
+                x - dimCible / 2, y - dimCible / 2, dimCible, dimCible);
     }
 }
