@@ -2,7 +2,10 @@ package fish.hunt.vue;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -19,7 +22,7 @@ import javafx.stage.Stage;
 public class VueAccueil extends VBox {
 
     Stage stagePrincipal;
-    Button partieButton, scoreButton;
+    Button partieButton, scoreButton, multiButton;
     ImageView logo;
 
     /**
@@ -40,21 +43,40 @@ public class VueAccueil extends VBox {
         //Initialisation des boutons.
         partieButton = new Button("Nouvelle Partie!");
         scoreButton = new Button("Meilleurs Scores");
+        multiButton = new Button("Multijoueurs");
+
         partieButton.setOnAction(event -> {
             stagePrincipal.getScene().setRoot(new VueJeu(stagePrincipal));
         });
+
         scoreButton.setOnAction(event -> {
             stagePrincipal.getScene().setRoot(new VueScore(stagePrincipal));
         });
+
+        multiButton.setOnAction(event -> {
+            TextInputDialog dialog = new TextInputDialog(
+                    "Svp, entrez un pseudonyme"
+            );
+            dialog.setResizable(true);
+            dialog.getDialogPane().setPrefHeight(200);
+            dialog.showAndWait();
+        });
+
         partieButton.setDefaultButton(true);
 
         //Ajout des marges.
-        Insets margin = new Insets(12);
+        Insets margin = new Insets(7);
         VBox.setMargin(logo, margin);
         VBox.setMargin(partieButton, margin);
         VBox.setMargin(scoreButton, margin);
+        VBox.setMargin(multiButton, margin);
 
-        getChildren().addAll(logo, partieButton, scoreButton);
+        getChildren().addAll(
+                logo,
+                partieButton,
+                scoreButton,
+                multiButton
+        );
         setAlignment(Pos.TOP_CENTER);
     }
 }

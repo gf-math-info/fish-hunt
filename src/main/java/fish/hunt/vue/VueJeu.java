@@ -133,7 +133,7 @@ public class VueJeu extends Pane implements Dessinable{
         fondColor = Color.rgb(49, 13, 166);
         scoreColor = Color.WHITE;
         msgColor = Color.WHITE;
-        bulleColor = Color.rgb(100, 100, 255, 0.3);
+        bulleColor = Color.rgb(100, 100, 255, 0.4);
         projectileColor = Color.BLACK;
 
         poissonCouleurs = new Color[]{
