@@ -55,7 +55,7 @@ public class VueAccueil extends VBox {
 
         multiButton.setOnAction(event -> {
             TextInputDialog dialog = new TextInputDialog(
-                    "Svp, entrez un pseudonyme"
+                    "pseudonyme"
             );
             dialog.setResizable(true);
             dialog.getDialogPane().setPrefHeight(200);
