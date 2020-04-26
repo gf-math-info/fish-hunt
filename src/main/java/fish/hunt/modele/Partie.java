@@ -12,7 +12,7 @@ public class Partie {
     private int nbPoissonsTouches;
     private PartieEtat etat;
     private int nbViesRestantes;
-    private int unProjectileUnMort;
+    private int nbUnProjectileUnMort;
 
     private final int NB_VIES_INIT = 3;
     private final int NB_POISSONS_NIVEAU = 5;
@@ -23,7 +23,7 @@ public class Partie {
     public Partie() {
         this.score = 0;
         this.niveau = 1;
-        this.unProjectileUnMort = 0;
+        this.nbUnProjectileUnMort = 0;
         this.nbViesRestantes = 0;
         this.etat = PartieEtat.EN_COURS;
         this.nbViesRestantes = NB_VIES_INIT;
@@ -38,9 +38,29 @@ public class Partie {
 
     /**
      * Incremente le nombre de poissons touchés.
+     * @param unProjectileUnMort    Vrai si le poisson a été touché d'un coup,
+     *                              faux sinon.
      */
-    public void incrementerNbPoissonsTouches() {
-        if(++nbPoissonsTouches % NB_POISSONS_NIVEAU == 0)
+    public void incrementerNbPoissonsTouches(boolean unProjectileUnMort) {
+        if(unProjectileUnMort) {
+            switch (++nbUnProjectileUnMort) {
+                case 1:
+                    score += 3;
+                    break;
+                case 2:
+                    score += 5;
+                    break;
+                case 3:
+                    nbViesRestantes++;
+                    break;
+                default:
+                    incrementerScore();
+                    nbUnProjectileUnMort = 1;
+            }
+        } else
+            incrementerScore();
+
+        if (++nbPoissonsTouches % NB_POISSONS_NIVEAU == 0)
             incrementerNiveau();
     }
 
@@ -49,7 +69,6 @@ public class Partie {
      */
     public void incrementerScore() {
         score++;
-        incrementerNbPoissonsTouches();
     }
 
     /**
@@ -67,29 +86,8 @@ public class Partie {
             etat = PartieEtat.PERDU;
     }
 
-    /**
-     * Signifie à la partie que le joueur a fait un autre un-projectile-un-mort.
-     */
-    public void incrementerUnProjectileUnMort() {
-        switch (++unProjectileUnMort) {
-            case 1:
-                score += 3;
-                break;
-            case 2:
-                score += 5;
-                break;
-            case 3:
-                nbViesRestantes++;
-                break;
-            default:
-                incrementerScore();
-                unProjectileUnMort = 1;
-        }
-        incrementerNbPoissonsTouches();
-    }
-
     public void initUnProjectileUnMort() {
-        unProjectileUnMort = 0;
+        nbUnProjectileUnMort = 0;
     }
 
     /**

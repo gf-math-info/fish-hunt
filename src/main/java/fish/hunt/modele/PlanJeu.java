@@ -111,15 +111,13 @@ public class PlanJeu {
                     poisson = poissons.get(j);
                     if(projectile.intersect(poisson)) {
 
-                        if(pretUnProjectileUnMort) {
-                            /*On augmente le score selon que le tire est un
-                            premier tire ou que le poisson a nécessité plusieurs
-                            tires pour être touché.*/
-                            partie.incrementerUnProjectileUnMort();
-                        } else {
-                            partie.incrementerScore();
+                        /*On augmente le score selon que le tire est un
+                        premier tire ou que le poisson a nécessité plusieurs
+                        tires pour être touché.*/
+                        partie.incrementerNbPoissonsTouches(
+                                pretUnProjectileUnMort);
+                        if(!pretUnProjectileUnMort)
                             pretUnProjectileUnMort = true;
-                        }
 
                         //L'animation de bulle lorsqu'un poisson est touché.
                         ajouterBullePoisson(poisson.getX(), poisson.getY(),

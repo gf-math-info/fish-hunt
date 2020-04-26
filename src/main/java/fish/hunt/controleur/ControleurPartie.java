@@ -157,6 +157,7 @@ public class ControleurPartie {
      */
     public void incrementerNiveau() {
         partie.incrementerNiveau();
+        deltaMessage = 0;
     }
 
     /**

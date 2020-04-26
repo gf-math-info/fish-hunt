@@ -133,7 +133,7 @@ public class VueJeu extends Pane implements Dessinable{
         fondColor = Color.rgb(49, 13, 166);
         scoreColor = Color.WHITE;
         msgColor = Color.WHITE;
-        bulleColor = Color.rgb(0, 0, 255, 0.4);
+        bulleColor = Color.rgb(0, 0, 255, 0.3);
         projectileColor = Color.BLACK;
 
         poissonCouleurs = new Color[]{
@@ -227,7 +227,8 @@ public class VueJeu extends Pane implements Dessinable{
             xVie = (largeur - text.getLayoutBounds().getWidth() -
                     dimPoisson) / 2;
 
-            graphicsContext.fillText(msg, xVie, yVie);
+            graphicsContext.fillText(msg, xVie, yVie +
+                    (dimPoisson + text.getLayoutBounds().getHeight()) / 2);
             graphicsContext.drawImage(poissonScoreImage,
                     xVie + text.getLayoutBounds().getWidth(), yVie,
                     dimPoisson, dimPoisson);
