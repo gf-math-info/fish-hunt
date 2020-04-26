@@ -14,6 +14,9 @@ public class Partie {
     private int nbViesRestantes;
     private int nbUnProjectileUnMort;
 
+    // les 2 constantes suivantes sont sous forme d'attribut pour
+    // faciliter la tâche d'un programmeur qui voudrait les
+    // modifier.
     private final int NB_VIES_INIT = 3;
     private final int NB_POISSONS_NIVEAU = 5;
 
