@@ -220,7 +220,7 @@ public class PlanJeu {
      * Ajoute un poisson normal au plan de jeu. Les attributs du poisson sont
      * choisis alatoirement.
      */
-    private void ajouterPoissonNormal() {
+    public void ajouterPoissonNormal() {
         boolean versDroite = random.nextBoolean();
         double hauteurPoisson = random.nextDouble() *
                 (Poisson.POISSON_GRANDEUR_MAX - Poisson.POISSON_GRANDEUR_MIN) +

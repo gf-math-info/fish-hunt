@@ -132,6 +132,23 @@ public class VueConnexion extends VBox {
                             informationsText.setText("Pseudo accepté.");
                         });
 
+                        //On laisse le temps à l'utilisateur de voir le message.
+                        Thread.sleep(2000);
+
+                        for(int i = 5; i > 0; i--) {
+                            int nbSec = i;
+                            Platform.runLater(() -> {
+                                informationsText.setText(
+                                        "La partie débute dans " + nbSec +
+                                                " seconde" +
+                                                ((nbSec > 1)?"s...":"..."));
+                            });
+                            Thread.sleep(1000);
+                        }
+
+                        stagePrincipal.getScene().setRoot(
+                                new VueJeu(stagePrincipal, client));
+
                     } else {
 
                         Platform.runLater(() -> {
@@ -143,7 +160,7 @@ public class VueConnexion extends VBox {
 
                     }
 
-                } catch (IOException ioException) {
+                } catch (IOException | InterruptedException ioException) {
                     connecte = false;
                     //On communique qu'il y a un erreur de connexion.
                     Platform.runLater(() -> {
