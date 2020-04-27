@@ -1,5 +1,7 @@
 package fish.hunt.vue;
 
+import fish.hunt.modele.Record;
+
 /**
  * Cette interface doit être implémentée pour représenter le jeu.
  * Le contrôleur ou la vue appelleront ces méthodes pour animer le jeu.
@@ -94,6 +96,18 @@ public interface Dessinable {
      * @param nbUnProjectileUnMort  Le nombre de tire un-projectile-un-mort.
      */
     void dessinerCombo(int nbUnProjectileUnMort);
+
+    /**
+     * Dessine les scores des participants en mode multijoueur
+     * @param scores    Un tableau de scores.
+     */
+    void dessinerScoresMultijoueur(Record[] scores);
+
+    /**
+     * Dessine le record des meilleurs joueurs en mode multijoueur.
+     * @param records   Un tableau de records.
+     */
+    void dessinerMeilleursScores(Record[] records);
 
     /**
      * Accesseur du nombre d'images de poissons disponibles.

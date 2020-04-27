@@ -1,6 +1,8 @@
 package fish.hunt.vue;
 
 import fish.hunt.controleur.ControleurPartie;
+import fish.hunt.controleur.ControleurPartieMulti;
+import fish.hunt.modele.Record;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -11,7 +13,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.net.Socket;
 import java.util.HashMap;
+import java.util.stream.Stream;
 
 /**
  * Cette classe représente la fenêtre de jeu. Elle est dessinable par le
@@ -44,7 +48,12 @@ public class VueJeu extends Pane implements Dessinable{
      * Construit la fenêtre de jeu avec le stage principal de l'application.
      * @param stagePrincipal    Le stage principal de l'application.
      */
+
     public VueJeu(Stage stagePrincipal) {
+        this(stagePrincipal, null);
+    }
+
+    public VueJeu(Stage stagePrincipal, Socket client) {
         this.stagePrincipal = stagePrincipal;
         largeur = stagePrincipal.getWidth();
         hauteur = stagePrincipal.getHeight();
@@ -54,7 +63,12 @@ public class VueJeu extends Pane implements Dessinable{
         graphicsContext = canvas.getGraphicsContext2D();
         getChildren().add(canvas);
 
-        controleurPartie = new ControleurPartie(largeur, hauteur, this);
+        if(client == null)
+            controleurPartie = new ControleurPartie(largeur, hauteur,
+                    this);
+        else
+            controleurPartie = new ControleurPartieMulti(largeur, hauteur,
+                    this, client);
 
         initOutilsDessin();
         initListeners();
@@ -316,6 +330,46 @@ public class VueJeu extends Pane implements Dessinable{
         double rayon = diametre / 2;
         graphicsContext.setFill(projectileColor);
         graphicsContext.fillOval(x - rayon, y - rayon, diametre, diametre);
+    }
+
+    /**
+     * Dessine le scores des joueurs en mode multijoueur
+     * @param scores    Un tableau de scores.
+     */
+    @Override
+    public void dessinerScoresMultijoueur(Record[] scores) {
+        if(scores.length == 0)
+            return;
+
+        StringBuilder msg = new StringBuilder("1. ").append(scores[0]);
+        for(int i = 1; i < scores.length; i++)
+            msg.append(System.lineSeparator())
+                    .append(i + 1).append(". ").append(scores[i]);
+
+        graphicsContext.setFill(scoreColor);
+        graphicsContext.setFont(scoreFont);
+        graphicsContext.fillText(msg.toString(), 20, 30);
+    }
+
+    /**
+     * Dessine les meilleurs scores en mode multijoueur.
+     * @param records   Un tableau de records.
+     */
+    @Override
+    public void dessinerMeilleursScores(Record[] records) {
+        if(records.length == 0)
+            return;
+
+        StringBuilder msg = new StringBuilder("Meilleurs scores")
+                .append(System.lineSeparator())
+                .append("1. ").append(records[0]);
+        for(int i = 1; i < records.length; i++)
+            msg.append(System.lineSeparator())
+                    .append(i + 1).append(". ").append(records[i]);
+
+        graphicsContext.setFill(scoreColor);
+        graphicsContext.setFont(scoreFont);
+        graphicsContext.fillText(msg.toString(), largeur - 100, 30);
     }
 
     /**
