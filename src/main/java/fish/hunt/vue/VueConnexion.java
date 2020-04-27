@@ -10,14 +10,19 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 public class VueConnexion extends VBox {
 
     private Socket client;
+    private boolean connecte;
 
     private final String ADRESSE = "127.0.0.1";
     private final int PORT = 1337;
@@ -25,6 +30,10 @@ public class VueConnexion extends VBox {
     private final int PSEUDO_REFUSE = 11;
 
     private Stage stagePrincipal;
+    private Text informationsText;
+    private TextField pseudoTextField;
+    private Button validerButton, menuButton;
+    private ProgressIndicator progressIndicator;
 
     public VueConnexion(Stage stagePrincipal) {
         this.stagePrincipal = stagePrincipal;
@@ -33,10 +42,11 @@ public class VueConnexion extends VBox {
                         CornerRadii.EMPTY, Insets.EMPTY)));
         setAlignment(Pos.CENTER);
 
-        ProgressIndicator progressIndicator = new ProgressIndicator();
+        progressIndicator = new ProgressIndicator();
         progressIndicator.setPrefWidth(25);
 
-        Text informationsText = new Text("Connexion au serveur...");
+        informationsText = new Text("Connexion au serveur...");
+        informationsText.setTextAlignment(TextAlignment.CENTER);
         informationsText.setFont(Font.font(18));
         informationsText.setFill(Color.WHITE);
 
@@ -44,26 +54,108 @@ public class VueConnexion extends VBox {
                 System.lineSeparator() + "Il doit contenir au moins un " +
                 System.lineSeparator() +
                 "caractère et un maximum de 10 caractère.");
+        demandeText.setTextAlignment(TextAlignment.CENTER);
         demandeText.setFill(Color.WHITE);
-        demandeText.setFont(Font.font(20));
+        demandeText.setFont(Font.font(14));
 
-        TextField pseudonymeTextField = new TextField("Votre pseudonyme");
-        pseudonymeTextField.selectAll();
-        pseudonymeTextField.setMaxWidth(200);
+        pseudoTextField = new TextField("Votre pseudonyme");
+        pseudoTextField.selectAll();
+        pseudoTextField.setMaxWidth(200);
 
         HBox buttonHBox = new HBox();
         buttonHBox.setAlignment(Pos.TOP_CENTER);
 
-        Button validerButton = new Button("Valider");
+        validerButton = new Button("Valider");
         validerButton.setDisable(true);
 
-        pseudonymeTextField.setOnKeyReleased((event) -> {
-            validerButton.setDisable(
-                    pseudonymeTextField.getText().strip().length() == 0 ||
-                            pseudonymeTextField.getText().length() > 10);
+        menuButton = new Button("Menu");
+        menuButton.prefWidthProperty().bind(validerButton.widthProperty());
+
+        buttonHBox.getChildren().addAll(validerButton, menuButton);
+
+        Insets margin = new Insets(10);
+        VBox.setMargin(informationsText, margin);
+        VBox.setMargin(demandeText, margin);
+        VBox.setMargin(pseudoTextField, margin);
+        HBox.setMargin(validerButton, margin);
+        HBox.setMargin(menuButton, margin);
+
+        getChildren().addAll(informationsText, progressIndicator, demandeText,
+                pseudoTextField, buttonHBox);
+
+        initListener();
+
+        new Thread(() -> {
+
+            try {
+                client = new Socket(ADRESSE, PORT);
+                Platform.runLater(() -> {
+                    informationsText.setText("Serveur connecté.");
+                    connecte = true;
+                });
+            } catch (IOException ioException) {
+                Platform.runLater(() -> {
+                    informationsText.setText("Erreur de connexion.");
+                });
+            }
+            
+            Platform.runLater(() -> getChildren().remove(progressIndicator));
+
+        }).start();
+    }
+    
+    private void initListener() {
+        validerButton.setOnAction((event) -> {
+
+            new Thread(() -> {
+
+                Platform.runLater(() -> {
+                    //On signifie à l'utilisateur qu'on communique avec le
+                    //serveur.
+                    getChildren().add(1, progressIndicator);
+                    informationsText.setText("Vérification du pseudo...");
+                });
+
+                try (PrintWriter output = new PrintWriter(
+                        client.getOutputStream(), true);
+                     BufferedReader input = new BufferedReader(
+                             new InputStreamReader(client.getInputStream()))) {
+
+                    //Envoie du pseudo au serveur et attente de sa réponse.
+                    output.println(pseudoTextField.getText());
+                    int reponse = input.read();
+
+                    //On communique la réponse du server à l'utilisateur.
+                    if(reponse == PSEUDO_ACCEPTE) {
+
+                        Platform.runLater(() -> {
+                            informationsText.setText("Pseudo accepté.");
+                        });
+
+                    } else {
+
+                        Platform.runLater(() -> {
+                            informationsText.setText(
+                                    "Pseudo refusé." + System.lineSeparator() +
+                                    "Choisissez un autre pseudo. " +
+                                    "Il se peut qu'il soit déjà choisi.");
+                        });
+
+                    }
+
+                } catch (IOException ioException) {
+                    connecte = false;
+                    //On communique qu'il y a un erreur de connexion.
+                    Platform.runLater(() -> {
+                        informationsText.setText("Erreur de connexion.");
+                    });
+                }
+
+                Platform.runLater(() ->
+                        getChildren().remove(progressIndicator));
+            }).start();
         });
 
-        Button menuButton = new Button("Menu");
         menuButton.setOnAction((event) -> {
             if(client != null && client.isConnected()) {
                 try {
@@ -74,34 +166,12 @@ public class VueConnexion extends VBox {
             }
             stagePrincipal.getScene().setRoot(new VueAccueil(stagePrincipal));
         });
-        menuButton.prefWidthProperty().bind(validerButton.widthProperty());
 
-        Insets margin = new Insets(10);
-        VBox.setMargin(informationsText, margin);
-        VBox.setMargin(demandeText, margin);
-        VBox.setMargin(pseudonymeTextField, margin);
-        HBox.setMargin(validerButton, margin);
-        HBox.setMargin(menuButton, margin);
-
-        buttonHBox.getChildren().addAll(validerButton, menuButton);
-
-        getChildren().addAll(informationsText, progressIndicator, demandeText,
-                pseudonymeTextField, buttonHBox);
-
-        new Thread(() -> {
-
-            try {
-                client = new Socket(ADRESSE, PORT);
-                Platform.runLater(() -> {
-                    informationsText.setText("Serveur connecté.");
-                });
-            } catch (IOException ioException) {
-                Platform.runLater(() -> {
-                    informationsText.setText("Erreur de connexion.");
-                });
-                getChildren().remove(progressIndicator);
-            }
-
-        }).start();
+        pseudoTextField.setOnKeyReleased((event) -> {
+            validerButton.setDisable(
+                    pseudoTextField.getText().strip().length() == 0 ||
+                            pseudoTextField.getText().length() > 10 ||
+                            !connecte);
+        });
     }
 }
