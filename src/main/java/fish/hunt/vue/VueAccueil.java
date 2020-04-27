@@ -54,15 +54,13 @@ public class VueAccueil extends VBox {
         });
 
         multiButton.setOnAction(event -> {
-            TextInputDialog dialog = new TextInputDialog(
-                    "pseudonyme"
-            );
-            dialog.setResizable(true);
-            dialog.getDialogPane().setPrefHeight(200);
-            dialog.showAndWait();
+            stagePrincipal.getScene().setRoot(new VueConnexion(stagePrincipal));
         });
 
         partieButton.setDefaultButton(true);
+
+        partieButton.prefWidthProperty().bind(scoreButton.widthProperty());
+        multiButton.prefWidthProperty().bind(scoreButton.widthProperty());
 
         //Ajout des marges.
         Insets margin = new Insets(7);
@@ -74,8 +72,8 @@ public class VueAccueil extends VBox {
         getChildren().addAll(
                 logo,
                 partieButton,
-                scoreButton,
-                multiButton
+                multiButton,
+                scoreButton
         );
         setAlignment(Pos.TOP_CENTER);
     }

@@ -1,7 +1,7 @@
 1 - apparition de bulles lorsqu'un poisson est éliminé
     ex.: derrière le poisson tué, 9 bulles apparaissent. (Complété)
 
-2 - One-shot-kill
+2 - One-shot-kill (Complété)
 	1x : + 3 points
 	2x : + 5 points
 	3x : + 1 vie
@@ -13,8 +13,6 @@ Multijoueur:
 -Ajouter un ranking ELO.
 -Implémentation du mode 1.
 
-	1 mode : le plus de point
+	1 mode : attaque
 
-	2 mode : attaque
-
-	3 mode : ex : 40 lignes à détruire.
+	2 mode : ex : 40 lignes à détruire.
