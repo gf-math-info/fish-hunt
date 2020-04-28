@@ -1,7 +1,6 @@
 package fish.hunt.controleur;
 
 import fish.hunt.modele.Partie;
-import fish.hunt.modele.PartieEtat;
 import fish.hunt.modele.PlanJeu;
 import fish.hunt.modele.entite.Bulle;
 import fish.hunt.modele.entite.Projectile;
@@ -22,13 +21,13 @@ import java.util.WeakHashMap;
  */
 public class ControleurPartie {
 
-    private Partie partie;
-    private PlanJeu planJeu;
-    private Dessinable dessinable;
+    protected Partie partie;
+    protected PlanJeu planJeu;
+    protected Dessinable dessinable;
 
     private WeakHashMap<Poisson, Integer> poissonsCouleurs;
     private WeakHashMap<Poisson, Integer> poissonsImages;
-    private boolean augmenteNiveau, partiePerdue;
+    private boolean augmenteNiveau;
     private double deltaMessage;
     private int dernierNiveau;
     private Random random;
@@ -71,7 +70,7 @@ public class ControleurPartie {
                 deltaMessage = 0;
             }
 
-        } else if(partiePerdue){
+        } else if(partie.estPerdue()){
 
             deltaMessage += deltaTemps;
             if(deltaMessage < TEMPS_MESSAGE)
@@ -85,58 +84,12 @@ public class ControleurPartie {
             //On actualise la partie et on l'affiche.
             planJeu.actualiser(deltaTemps);
 
-            //On dessine les bulles.
-            for(Bulle bulle : planJeu.getBulles())
-                dessinable.dessinerBulle(bulle.getX(), bulle.getY(),
-                        bulle.getDiametre());
+            dessinerBulles();
+            dessinerPoisson();
+            dessinerProjectiles();
+            dessinerInformations();
 
-            //On dessine les poissons.
-            for(Poisson poisson : planJeu.getPoissons()) {
-
-                if(poisson instanceof EtoileMer) {
-
-                    dessinable.dessinerEtoileMer(poisson.getX(), poisson.getY(),
-                            poisson.getLargeur(), poisson.getHauteur());
-
-                } else if(poisson instanceof Crabe) {
-
-                    dessinable.dessinerCrabe(poisson.getX(), poisson.getY(),
-                            poisson.getLargeur(), poisson.getHauteur());
-
-                } else {
-
-                    if(!poissonsCouleurs.containsKey(poisson)) {
-                    /*Si c'est un nouveau poisson normal, on lui attribut un
-                    numéro d'images et un numéro de couleurs.*/
-                        poissonsImages.put(poisson,random.nextInt(
-                                dessinable.getNombreImagesPoissons()));
-                        poissonsCouleurs.put(poisson, random.nextInt(
-                                dessinable.getNombreCouleurPoisson()));
-                    }
-
-                    dessinable.dessinerPoisson(poisson.getX(), poisson.getY(),
-                            poisson.getLargeur(), poisson.getHauteur(),
-                            poisson.getVx() > 0,
-                            poissonsImages.get(poisson),
-                            poissonsCouleurs.get(poisson));
-
-                }
-            }
-
-            //On dessine les projectiles.
-            for(Projectile projectile : planJeu.getProjectiles()) {
-                dessinable.dessinerProjectile(projectile.getX(),
-                        projectile.getY(), projectile.getDiametre());
-            }
-
-
-            dessinable.dessinerScore(partie.getScore(),
-                    partie.getNbViesRestantes());
-
-            if(partie.getNbUnProjectileUnMort() > 0)
-                dessinable.dessinerCombo(partie.getNbUnProjectileUnMort());
-
-            partiePerdue = partie.getEtat() == PartieEtat.PERDU;
+            dessinable.dessinerMessageMultijoueur("J'écris un long message avec beaucoup de mots.");
 
             if(partie.getNiveau() != dernierNiveau) {
                 dernierNiveau = partie.getNiveau();
@@ -151,7 +104,7 @@ public class ControleurPartie {
      * @param y La position verticale du projectile.
      */
     public void ajouterProjectile(double x, double y) {
-        if(!augmenteNiveau && !partiePerdue)
+        if(!augmenteNiveau && !partie.estPerdue())
             planJeu.getProjectiles().add(new Projectile(x, y));
     }
 
@@ -181,6 +134,61 @@ public class ControleurPartie {
      * Fait perdre la partie.
      */
     public void partiePerdue() {
-        partie.setEtat(PartieEtat.PERDU);
+        partie.setPerdue(true);
+    }
+
+    private void dessinerBulles() {
+        for(Bulle bulle : planJeu.getBulles())
+            dessinable.dessinerBulle(bulle.getX(), bulle.getY(),
+                    bulle.getDiametre());
+    }
+
+    private void dessinerPoisson() {
+        for(Poisson poisson : planJeu.getPoissons()) {
+
+            if(poisson instanceof EtoileMer) {
+
+                dessinable.dessinerEtoileMer(poisson.getX(), poisson.getY(),
+                        poisson.getLargeur(), poisson.getHauteur());
+
+            } else if(poisson instanceof Crabe) {
+
+                dessinable.dessinerCrabe(poisson.getX(), poisson.getY(),
+                        poisson.getLargeur(), poisson.getHauteur());
+
+            } else {
+
+                if(!poissonsCouleurs.containsKey(poisson)) {
+                    /*Si c'est un nouveau poisson normal, on lui attribut un
+                    numéro d'images et un numéro de couleurs.*/
+                    poissonsImages.put(poisson,random.nextInt(
+                            dessinable.getNombreImagesPoissons()));
+                    poissonsCouleurs.put(poisson, random.nextInt(
+                            dessinable.getNombreCouleurPoisson()));
+                }
+
+                dessinable.dessinerPoisson(poisson.getX(), poisson.getY(),
+                        poisson.getLargeur(), poisson.getHauteur(),
+                        poisson.getVx() > 0,
+                        poissonsImages.get(poisson),
+                        poissonsCouleurs.get(poisson));
+
+            }
+        }
+    }
+
+    private void dessinerProjectiles() {
+        for(Projectile projectile : planJeu.getProjectiles()) {
+            dessinable.dessinerProjectile(projectile.getX(),
+                    projectile.getY(), projectile.getDiametre());
+        }
+    }
+
+    private void dessinerInformations() {
+        dessinable.dessinerScore(partie.getScore(),
+                partie.getNbViesRestantes());
+
+        if(partie.getNbUnProjectileUnMort() > 0)
+            dessinable.dessinerCombo(partie.getNbUnProjectileUnMort());
     }
 }

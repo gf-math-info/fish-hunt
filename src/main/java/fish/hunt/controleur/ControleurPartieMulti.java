@@ -1,5 +1,6 @@
 package fish.hunt.controleur;
 
+import fish.hunt.modele.Record;
 import fish.hunt.vue.Dessinable;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -7,8 +8,8 @@ import javafx.scene.control.Alert;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.List;
 
 public class ControleurPartieMulti extends ControleurPartie{
 
@@ -19,6 +20,8 @@ public class ControleurPartieMulti extends ControleurPartie{
     private final int MISE_A_JOUR_RECORD_RECU = 161;
 
     private Socket client;
+    private List<Record> records, scores;
+    private Alert erreurConnexionAlert;
 
     /**
      * Construit un contrôleur de jeu avec la largeur et la hauteur du plan de
@@ -32,12 +35,12 @@ public class ControleurPartieMulti extends ControleurPartie{
                                  Dessinable dessinable, Socket client) {
         super(largeur, hauteur, dessinable);
         this.client = client;
+        erreurConnexionAlert = new Alert(Alert.AlertType.ERROR,
+                "Une erreur de connexion s'est produite.");
 
         new Thread(() -> {
 
-            try (PrintWriter onput = new PrintWriter(
-                    client.getOutputStream(), true);
-                 BufferedReader input = new BufferedReader(
+            try (BufferedReader input = new BufferedReader(
                          new InputStreamReader(client.getInputStream()))) {
 
                 while(client.isConnected()) {
@@ -45,11 +48,12 @@ public class ControleurPartieMulti extends ControleurPartie{
                     switch (input.read()) {
 
                         case ATTAQUE_POISSON_RECU:
-                            //TODO
+                            String attaquant = input.readLine();
+                            Platform.runLater(planJeu::ajouterPoissonNormal);
                             break;
 
                         case MISE_A_JOUR_SCORE_RECU:
-                            //TODO
+
                             break;
 
                         case MISE_A_JOUR_RECORD_RECU:
@@ -61,10 +65,14 @@ public class ControleurPartieMulti extends ControleurPartie{
                 }
 
             } catch (IOException ioException) {
-                Alert erreurModale = new Alert(Alert.AlertType.ERROR,
-                        "Une erreur de connexion s'est produite.");
-                Platform.runLater(erreurModale::showAndWait);
+
+                Platform.runLater(erreurConnexionAlert::showAndWait);
             }
         }).start();
+    }
+
+    @Override
+    public void actualiser(double deltaTemps) {
+        super.actualiser(deltaTemps);
     }
 }

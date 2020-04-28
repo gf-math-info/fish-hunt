@@ -7,12 +7,12 @@ package fish.hunt.modele;
  * @author Colson-Ratelle, Antoine
  */
 public class Partie {
-    private int score;
-    private int niveau;
-    private int nbPoissonsTouches;
-    private PartieEtat etat;
-    private int nbViesRestantes;
-    private int nbUnProjectileUnMort;
+    protected int score;
+    protected int niveau;
+    protected int nbPoissonsTouches;
+    protected boolean perdue;
+    protected int nbViesRestantes;
+    protected int nbUnProjectileUnMort;
 
     // les 2 constantes suivantes sont sous forme d'attribut pour
     // faciliter la tâche d'un programmeur qui voudrait les
@@ -24,11 +24,7 @@ public class Partie {
      * Contruit une partie.
      */
     public Partie() {
-        this.score = 0;
         this.niveau = 1;
-        this.nbUnProjectileUnMort = 0;
-        this.nbViesRestantes = 0;
-        this.etat = PartieEtat.EN_COURS;
         this.nbViesRestantes = NB_VIES_INIT;
     }
 
@@ -85,8 +81,7 @@ public class Partie {
      * Décrémente le nombre de vies.
      */
     public void decrementerVie() {
-        if(--nbViesRestantes == 0)
-            etat = PartieEtat.PERDU;
+        perdue = --nbViesRestantes == 0;
     }
 
     public void initUnProjectileUnMort() {
@@ -95,10 +90,10 @@ public class Partie {
 
     /**
      * Mutateur de l'état de la partie.
-     * @param etat  L'état de la partie.
+     * @param estPerdue  L'état de la partie.
      */
-    public void setEtat(PartieEtat etat) {
-        this.etat = etat;
+    public void setPerdue(boolean estPerdue) {
+        this.perdue = estPerdue;
     }
 
     /**
@@ -121,8 +116,8 @@ public class Partie {
      * Accesseur de l'état de la partie.
      * @return  L'état de la partie.
      */
-    public PartieEtat getEtat() {
-        return etat;
+    public boolean estPerdue() {
+        return perdue;
     }
 
     /**
