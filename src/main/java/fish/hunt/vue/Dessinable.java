@@ -110,6 +110,12 @@ public interface Dessinable {
     void dessinerMeilleursScores(Record[] records);
 
     /**
+     * Dessine un message d'information en mode multijoueur.
+     * @param message   Un message d'information.
+     */
+    void dessinerMessageMultijoueur(String message);
+
+    /**
      * Accesseur du nombre d'images de poissons disponibles.
      * @return  Le nombre d'images de poissons disponibles.
      */
