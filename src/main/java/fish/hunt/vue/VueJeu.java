@@ -41,7 +41,7 @@ public class VueJeu extends Pane implements Dessinable{
     private Color fondColor, scoreColor, msgColor, bulleColor,
             projectileColor;
     private Color[] poissonCouleurs;
-    private Font msgFont, scoreFont;
+    private Font msgFont, scoreFont, msgMultiFont;
     private HashMap<Integer, Image> idImages;
 
     /**
@@ -158,6 +158,7 @@ public class VueJeu extends Pane implements Dessinable{
 
         msgFont = Font.font(60);
         scoreFont = Font.font(25);
+        msgMultiFont = Font.font(14);
     }
 
     /**
@@ -333,43 +334,20 @@ public class VueJeu extends Pane implements Dessinable{
     }
 
     /**
-     * Dessine le scores des joueurs en mode multijoueur
-     * @param scores    Un tableau de scores.
+     * Dessine un message d'information en mode multijoueur.
+     * @param message   Un message d'information.
      */
     @Override
-    public void dessinerScoresMultijoueur(Record[] scores) {
-        if(scores.length == 0)
-            return;
+    public void dessinerMessageMultijoueur(String message) {
+        double espace = 10;
+        Text texte = new Text(message);
+        texte.setFont(msgMultiFont);
 
-        StringBuilder msg = new StringBuilder("1. ").append(scores[0]);
-        for(int i = 1; i < scores.length; i++)
-            msg.append(System.lineSeparator())
-                    .append(i + 1).append(". ").append(scores[i]);
-
-        graphicsContext.setFill(scoreColor);
-        graphicsContext.setFont(scoreFont);
-        graphicsContext.fillText(msg.toString(), 20, 30);
-    }
-
-    /**
-     * Dessine les meilleurs scores en mode multijoueur.
-     * @param records   Un tableau de records.
-     */
-    @Override
-    public void dessinerMeilleursScores(Record[] records) {
-        if(records.length == 0)
-            return;
-
-        StringBuilder msg = new StringBuilder("Meilleurs scores")
-                .append(System.lineSeparator())
-                .append("1. ").append(records[0]);
-        for(int i = 1; i < records.length; i++)
-            msg.append(System.lineSeparator())
-                    .append(i + 1).append(". ").append(records[i]);
-
-        graphicsContext.setFill(scoreColor);
-        graphicsContext.setFont(scoreFont);
-        graphicsContext.fillText(msg.toString(), largeur - 100, 30);
+        graphicsContext.setFont(msgMultiFont);
+        graphicsContext.setFill(msgColor);
+        graphicsContext.fillText(message, espace,
+                hauteur - texte.getLayoutBounds().getHeight() - 25,
+                largeur - espace);
     }
 
     /**

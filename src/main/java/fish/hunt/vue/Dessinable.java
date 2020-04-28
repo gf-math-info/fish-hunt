@@ -98,18 +98,6 @@ public interface Dessinable {
     void dessinerCombo(int nbUnProjectileUnMort);
 
     /**
-     * Dessine les scores des participants en mode multijoueur
-     * @param scores    Un tableau de scores.
-     */
-    void dessinerScoresMultijoueur(Record[] scores);
-
-    /**
-     * Dessine le record des meilleurs joueurs en mode multijoueur.
-     * @param records   Un tableau de records.
-     */
-    void dessinerMeilleursScores(Record[] records);
-
-    /**
      * Dessine un message d'information en mode multijoueur.
      * @param message   Un message d'information.
      */
