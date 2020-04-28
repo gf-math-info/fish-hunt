@@ -160,7 +160,7 @@ public class ControleurPartie {
      */
     public void incrementerNiveau() {
         partie.incrementerNiveau();
-        deltaMessage = 0;
+        //this.deltaMessage = 0; // cette ligne ne fait absolument rien...
     }
 
     /**

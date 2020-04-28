@@ -115,17 +115,18 @@ public class VueJeu extends Pane implements Dessinable{
             }
         });
 
-        canvas.setOnMouseMoved((event) -> {
-            setCiblePosition(event.getX(), event.getY());
-        });
+        canvas.setOnMouseMoved(
+                (event) -> setCiblePosition(event.getX(), event.getY())
+        );
 
-        canvas.setOnMouseDragged((event) -> {
-            setCiblePosition(event.getX(), event.getY());
-        });
+        canvas.setOnMouseDragged(
+                (event) -> setCiblePosition(event.getX(), event.getY())
+        );
 
-        canvas.setOnMousePressed((event) -> {
-            controleurPartie.ajouterProjectile(event.getX(), event.getY());
-        });
+        canvas.setOnMousePressed(
+                (event) -> controleurPartie
+                        .ajouterProjectile(event.getX(), event.getY())
+        );
     }
 
     /**
