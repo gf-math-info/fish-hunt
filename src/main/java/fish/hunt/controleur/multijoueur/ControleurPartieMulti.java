@@ -1,5 +1,6 @@
-package fish.hunt.controleur;
+package fish.hunt.controleur.multijoueur;
 
+import fish.hunt.controleur.ControleurPartie;
 import fish.hunt.modele.PartieMulti;
 import fish.hunt.modele.Record;
 import fish.hunt.vue.Dessinable;
@@ -7,18 +8,15 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class ControleurPartieMulti extends ControleurPartie{
+public class ControleurPartieMulti extends ControleurPartie {
 
     private final int ATTAQUE_POISSON_NORMAL_ENVOIE = 50;
     private final int ATTAQUE_POISSON_SPECIAL_ENVOIE = 51;
     private final int MISE_A_JOUR_SCORE_ENVOIE = 60;
-    private final int ATTAQUE_POISSON_NORMAL_RECU = 150;
-    private final int ATTAQUE_POISSON_SPECIAL_RECU = 151;
-    private final int MISE_A_JOUR_SCORE_RECU = 160;
-    private final int DECONNEXION_JOUEUR_RECU = 190;
 
     private final int TEMPS_MESSAGE_ATTAQUE = 1;
     private final int TEMPS_MESSAGE_SCORES = 1;
@@ -29,6 +27,8 @@ public class ControleurPartieMulti extends ControleurPartie{
     private boolean attaqueEnCours, deconnexionEnCours, attaqueSpecial;
     private double deltaAttaque, deltaDeconnexion, deltaScores;
     private int indexScores;
+    private Record scoreAffiche;
+    private Iterator<Record> itRecord;
     private ConnexionServeur connexion;
     private String nomAttaquant, nomDeconnexion;
     private Alert erreurConnexionAlert;
@@ -77,6 +77,10 @@ public class ControleurPartieMulti extends ControleurPartie{
                     synchronized (cadenas) {
                         scores.add(new Record(pseudoJoueur, scoreJoueur));
                     }
+                }
+
+                synchronized (cadenas) {
+
                 }
 
                 //En entre dans la partie.
@@ -206,11 +210,10 @@ public class ControleurPartieMulti extends ControleurPartie{
                 deltaScores += deltaTemps;
                 if (deltaScores >= TEMPS_MESSAGE_SCORES) {
                     deltaScores = 0;
-                    indexScores ++;
-                    indexScores %= scores.size();
+                    //TODO
                 }
 
-                dessinable.dessinerMessageMultijoueur((indexScores + 1) + ". " + scores);
+                dessinable.dessinerMessageMultijoueur((indexScores + 1) + ". " + scores.);
 
             }
 

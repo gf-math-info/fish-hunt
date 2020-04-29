@@ -1,6 +1,6 @@
 package fish.hunt.vue;
 
-import fish.hunt.controleur.ConnexionServeur;
+import fish.hunt.controleur.multijoueur.ConnexionServeur;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

@@ -40,8 +40,7 @@ public class ControleurPartie {
      * @param hauteur       La hauteur du plan de jeu.
      * @param dessinable    La classe dessinable.
      */
-    public ControleurPartie(double largeur, double hauteur,
-                            Dessinable dessinable) {
+    public ControleurPartie(double largeur, double hauteur, Dessinable dessinable) {
         this.dessinable = dessinable;
         partie = new Partie();
         planJeu = new PlanJeu(largeur, hauteur, partie);
@@ -135,13 +134,19 @@ public class ControleurPartie {
         partie.setPerdue(true);
     }
 
-    private void dessinerBulles() {
+    /**
+     * Demande à la vue de dessiner les bulles de la partie.
+     */
+    protected void dessinerBulles() {
         for(Bulle bulle : planJeu.getBulles())
             dessinable.dessinerBulle(bulle.getX(), bulle.getY(),
                     bulle.getDiametre());
     }
 
-    private void dessinerPoisson() {
+    /**
+     * Demande à la vue de dessiner les poissons de la partie.
+     */
+    protected void dessinerPoisson() {
         for(Poisson poisson : planJeu.getPoissons()) {
 
             if(poisson instanceof EtoileMer) {
@@ -175,14 +180,20 @@ public class ControleurPartie {
         }
     }
 
-    private void dessinerProjectiles() {
+    /**
+     * Demande à la vue de dessiner les projectiles de la partie.
+     */
+    protected void dessinerProjectiles() {
         for(Projectile projectile : planJeu.getProjectiles()) {
             dessinable.dessinerProjectile(projectile.getX(),
                     projectile.getY(), projectile.getDiametre());
         }
     }
 
-    private void dessinerInformations() {
+    /**
+     * Demande à la vue de dessiner le score, le nombre de vies restantes et le nombre de tirs parfaits de suite.
+     */
+    protected void dessinerInformations() {
         dessinable.dessinerScore(partie.getScore(),
                 partie.getNbViesRestantes());
 
