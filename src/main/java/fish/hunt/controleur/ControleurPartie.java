@@ -106,7 +106,7 @@ public class ControleurPartie {
                 } else {
 
                     if(!poissonsCouleurs.containsKey(poisson)) {
-                    /*Si c'est un nouveau poisson normal, on lui attribut un
+                    /*Si c'est un nouveau poisson normal, on lui attribue un
                     numéro d'images et un numéro de couleurs.*/
                         poissonsImages.put(poisson,random.nextInt(
                                 dessinable.getNombreImagesPoissons()));

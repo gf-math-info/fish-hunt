@@ -2,7 +2,6 @@ package fish.hunt.vue;
 
 import fish.hunt.controleur.ControleurPartie;
 import fish.hunt.controleur.ControleurPartieMulti;
-import fish.hunt.modele.Record;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -15,7 +14,6 @@ import javafx.stage.Stage;
 
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.stream.Stream;
 
 /**
  * Cette classe représente la fenêtre de jeu. Elle est dessinable par le
