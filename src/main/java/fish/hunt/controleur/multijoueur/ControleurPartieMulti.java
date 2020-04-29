@@ -1,6 +1,7 @@
 package fish.hunt.controleur.multijoueur;
 
 import fish.hunt.controleur.ControleurPartie;
+import fish.hunt.modele.Partie;
 import fish.hunt.modele.PartieMulti;
 import fish.hunt.modele.Record;
 import fish.hunt.vue.Dessinable;
@@ -22,8 +23,9 @@ public class ControleurPartieMulti extends ControleurPartie {
     private final int TEMPS_MESSAGE_SCORES = 1;
     private final int TEMPS_MESSAGE_DECONNEXION = 1;
 
-    private final Object cadenas;
+    private final Object cadenas = new Object();
     private Set<Record> scores;
+
     private boolean attaqueEnCours, deconnexionEnCours, attaqueSpecial;
     private double deltaAttaque, deltaDeconnexion, deltaScores;
     private int indexScores;
@@ -42,9 +44,10 @@ public class ControleurPartieMulti extends ControleurPartie {
      */
     public ControleurPartieMulti(double largeur, double hauteur, Dessinable dessinable) {
         super(largeur, hauteur, dessinable);
-        planJeu.setPartie(new PartieMulti(this));
+        partie = new PartieMulti(this);
+        planJeu.setPartie(partie);
+
         scores = new TreeSet<>();
-        cadenas = new Object();
         erreurConnexionAlert = new Alert(Alert.AlertType.ERROR, "Un erreur de connexion s'est produit.");
 
         new Thread(() -> {
@@ -83,94 +86,7 @@ public class ControleurPartieMulti extends ControleurPartie {
 
                 }
 
-                //En entre dans la partie.
-                while(!partie.estPerdue()) {
 
-                    switch (connexion.getInput().read()) {
-
-                        case ATTAQUE_POISSON_NORMAL_RECU:
-                            String attaquant = connexion.getInput().readLine();
-                            if(attaquant == null) {
-                                afficherErreur();
-                                return;
-                            }
-
-                            synchronized (cadenas) {
-                                nomAttaquant = attaquant;
-                                attaqueEnCours = true;
-                                attaqueSpecial = false;
-                                deltaAttaque = 0;
-                            }
-
-                            Platform.runLater(() -> {
-                                planJeu.ajouterPoissonNormal();
-                            });
-                            break;
-
-                        case ATTAQUE_POISSON_SPECIAL_RECU:
-                            String attaquantSpecial = connexion.getInput().readLine();
-                            if(attaquantSpecial == null) {
-                                afficherErreur();
-                                return;
-                            }
-
-                            synchronized (cadenas) {
-                                nomAttaquant = attaquantSpecial;
-                                attaqueEnCours = true;
-                                attaqueSpecial = true;
-                                deltaAttaque = 0;
-                            }
-
-                            Platform.runLater(() -> {
-                                planJeu.ajouterPoissonSpecial();
-                            });
-
-                        case MISE_A_JOUR_SCORE_RECU:
-                            String nomScore = connexion.getInput().readLine();
-                            if(nomScore == null) {
-                                afficherErreur();
-                                return;
-                            }
-
-                            int score = connexion.getInput().read();
-                            if(score == -1) {
-                                afficherErreur();
-                                return;
-                            }
-
-                            synchronized (cadenas) {
-                                Record recordMiseAJour = null;
-                                for(Record record : scores)
-                                    if(record.getNom().equals(nomScore))
-                                        recordMiseAJour = record;
-
-                                if(recordMiseAJour == null)
-                                    scores.add(new Record(nomScore, score));
-                                else
-                                    recordMiseAJour.setScore(score);
-
-
-                            }
-                            break;
-
-                        case DECONNEXION_JOUEUR_RECU:
-                            String nomJoueurDeconnexion = connexion.getInput().readLine();
-                            if(nomJoueurDeconnexion == null) {
-                                afficherErreur();
-                                return;
-                            }
-
-                            synchronized (cadenas) {
-                                nomDeconnexion = nomJoueurDeconnexion;
-                                deconnexionEnCours = true;
-                                deltaDeconnexion = 0;
-                                scores.stream()
-                                        .filter(record -> record.getNom().equals(nomJoueurDeconnexion))
-                                        .findFirst().ifPresent(recordARetirer -> scores.remove(recordARetirer));
-                            }
-                            break;
-                    }
-                }
 
             } catch (IOException ioException) {
                 afficherErreur();
@@ -213,7 +129,7 @@ public class ControleurPartieMulti extends ControleurPartie {
                     //TODO
                 }
 
-                dessinable.dessinerMessageMultijoueur((indexScores + 1) + ". " + scores.);
+                dessinable.dessinerMessageMultijoueur((indexScores + 1) + ". " + scores);
 
             }
 
@@ -232,10 +148,42 @@ public class ControleurPartieMulti extends ControleurPartie {
         //TODO
     }
 
+    public void attaquePoissonNormal(String pseudoAttaquant) {
+        //TODO
+    }
+
+    public void attaquePoissonSpecial(String pseudoAttaquant) {
+        //TODO
+    }
+
+    public void miseAJourScore(String pseudo, int score) {
+        //TODO
+    }
+
+    public void deconnexionJoueur(String pseudo) {
+        //TODO
+    }
+
+    /**
+     * Accesseur du cadenas.
+     * @return  Le cadenas pour modifier les attributs du controleur.
+     */
+    public Object getCadenas() {
+        return cadenas;
+    }
+
+    /**
+     * Accesseur de la partie en cours.
+     * @return  La partie en cours.
+     */
+    public Partie getPartie() {
+        return partie;
+    }
+
     /**
      * Affiche une boite modale signifiant une erreur et met fin à la partie.
      */
-    private void afficherErreur() {
+    public void afficherErreur() {
         Platform.runLater(() -> {
             erreurConnexionAlert.showAndWait();
             dessinable.partieTermine(partie.getScore());

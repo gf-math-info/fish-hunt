@@ -36,7 +36,7 @@ public class EtoileMerTest{
         for(int i = 0; i < 1e5 / 4; i++)
             etoile.actualiser(deltaTemps);
 
-        assertEquals(200, etoile.getX(), accepte); // SHOULD FAIL
+        assertEquals(200, etoile.getX(), accepte);
         assertEquals(0, etoile.getY(), accepte);
     }
 }

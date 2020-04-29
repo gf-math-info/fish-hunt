@@ -1,7 +1,5 @@
 package fish.hunt.vue;
 
-import fish.hunt.modele.Record;
-
 /**
  * Cette interface doit être implémentée pour représenter le jeu.
  * Le contrôleur ou la vue appelleront ces méthodes pour animer le jeu.

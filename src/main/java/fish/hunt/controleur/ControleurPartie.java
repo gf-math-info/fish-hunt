@@ -161,8 +161,8 @@ public class ControleurPartie {
 
             } else {
 
-                if(!poissonsCouleurs.containsKey(poisson)) {
-                    /*Si c'est un nouveau poisson normal, on lui attribut un
+                    if(!poissonsCouleurs.containsKey(poisson)) {
+                    /*Si c'est un nouveau poisson normal, on lui attribue un
                     numéro d'images et un numéro de couleurs.*/
                     poissonsImages.put(poisson,random.nextInt(
                             dessinable.getNombreImagesPoissons()));
@@ -194,10 +194,14 @@ public class ControleurPartie {
      * Demande à la vue de dessiner le score, le nombre de vies restantes et le nombre de tirs parfaits de suite.
      */
     protected void dessinerInformations() {
-        dessinable.dessinerScore(partie.getScore(),
-                partie.getNbViesRestantes());
+        dessinable.dessinerScore(partie.getScore(), partie.getNbViesRestantes());
 
         if(partie.getNbUnProjectileUnMort() > 0)
             dessinable.dessinerCombo(partie.getNbUnProjectileUnMort());
+
+        if(partie.getNiveau() != dernierNiveau) {
+            dernierNiveau = partie.getNiveau();
+            augmenteNiveau = true;
+        }
     }
 }

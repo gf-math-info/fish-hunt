@@ -47,7 +47,7 @@ public class VueConnexion extends VBox {
         Text demandeText = new Text("Veuillez entrer votre pseudonyme." +
                 System.lineSeparator() + "Il doit contenir au moins un " +
                 System.lineSeparator() +
-                "caractère et un maximum de 10 caractère.");
+                "caractère et un maximum de 10 caractères.");
         demandeText.setTextAlignment(TextAlignment.CENTER);
         demandeText.setFill(Color.WHITE);
         demandeText.setFont(Font.font(14));
