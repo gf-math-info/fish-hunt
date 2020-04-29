@@ -1,4 +1,4 @@
-package fish.hunt.controleur;
+package fish.hunt.controleur.multijoueur;
 
 import java.io.BufferedReader;
 import java.io.IOException;
