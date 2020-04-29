@@ -19,10 +19,10 @@ public class PlanJeu {
 
     private double largeur, hauteur;
 
-    private final Partie partie;
-    private final ArrayList<Bulle> bulles;
-    private final ArrayList<Projectile> projectiles;
-    private final ArrayList<Poisson> poissons;
+    private Partie partie;
+    private ArrayList<Bulle> bulles;
+    private ArrayList<Projectile> projectiles;
+    private ArrayList<Poisson> poissons;
 
     private Random random;
     private boolean pretUnProjectileUnMort;
@@ -163,6 +163,14 @@ public class PlanJeu {
             deltaBulle = 0;
             ajouterBulles();
         }
+    }
+
+    /**
+     * Mutateur de la partie.
+     * @param partie    La partie du jeu.
+     */
+    public void setPartie(Partie partie) {
+        this.partie = partie;
     }
 
     /**
