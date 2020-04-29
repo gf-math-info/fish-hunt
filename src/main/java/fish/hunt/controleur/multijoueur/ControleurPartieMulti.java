@@ -1,5 +1,6 @@
 package fish.hunt.controleur;
 
+import fish.hunt.modele.PartieMulti;
 import fish.hunt.modele.Record;
 import fish.hunt.vue.Dessinable;
 import javafx.application.Platform;
@@ -35,13 +36,13 @@ public class ControleurPartieMulti extends ControleurPartie{
     /**
      * Construit un contrôleur de jeu avec la largeur et la hauteur du plan de
      * jeu, ainsi que la classe dessinable.
-     *
      * @param largeur    La largeur du plan de jeu.
      * @param hauteur    La hauteur du plan de jeu.
      * @param dessinable La classe dessinable.
      */
     public ControleurPartieMulti(double largeur, double hauteur, Dessinable dessinable) {
         super(largeur, hauteur, dessinable);
+        planJeu.setPartie(new PartieMulti(this));
         scores = new TreeSet<>();
         cadenas = new Object();
         erreurConnexionAlert = new Alert(Alert.AlertType.ERROR, "Un erreur de connexion s'est produit.");
@@ -188,10 +189,8 @@ public class ControleurPartieMulti extends ControleurPartie{
                     attaqueEnCours = false;
                 }
 
-                Platform.runLater(() -> {
-                    dessinable.dessinerMessageMultijoueur(nomAttaquant + " vient de vous envoyer un poisson" +
-                            (attaqueSpecial ? " spécial." : "."));
-                });
+                dessinable.dessinerMessageMultijoueur(nomAttaquant + " vient de vous envoyer un poisson" +
+                        (attaqueSpecial ? " spécial." : "."));
 
             } else if (deconnexionEnCours) {
 
@@ -201,9 +200,7 @@ public class ControleurPartieMulti extends ControleurPartie{
                     attaqueEnCours = false;
                 }
 
-                Platform.runLater(() -> {
-                    dessinable.dessinerMessageMultijoueur(nomDeconnexion + " vient de quitter la partie.");
-                });
+                dessinable.dessinerMessageMultijoueur(nomDeconnexion + " vient de quitter la partie.");
 
             } else if(scores.size() > 0) {
                 deltaScores += deltaTemps;
@@ -213,15 +210,23 @@ public class ControleurPartieMulti extends ControleurPartie{
                     indexScores %= scores.size();
                 }
 
-                Platform.runLater(() -> {
-                    synchronized (cadenas) {
-                        dessinable.dessinerMessageMultijoueur((indexScores + 1) + ". " + scores);
-                    }
-                });
+                dessinable.dessinerMessageMultijoueur((indexScores + 1) + ". " + scores);
 
             }
 
         }
+    }
+
+    public void attaquePoissonNormal() {
+        //TODO
+    }
+
+    public void attaquePoissonSpecial() {
+        //TODO
+    }
+
+    public void miseAJourScore() {
+        //TODO
     }
 
     /**

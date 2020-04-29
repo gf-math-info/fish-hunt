@@ -17,8 +17,8 @@ public class Partie {
     // les 2 constantes suivantes sont sous forme d'attribut pour
     // faciliter la tâche d'un programmeur qui voudrait les
     // modifier.
-    private final int NB_VIES_INIT = 3;
-    private final int NB_POISSONS_NIVEAU = 5;
+    protected final int NB_VIES_INIT = 3;
+    protected final int NB_POISSONS_NIVEAU = 5;
 
     /**
      * Contruit une partie.
@@ -84,6 +84,9 @@ public class Partie {
         perdue = --nbViesRestantes == 0;
     }
 
+    /**
+     * Remet à 0 le nombre de un-projectile-un-mort.
+     */
     public void initUnProjectileUnMort() {
         nbUnProjectileUnMort = 0;
     }
@@ -94,6 +97,14 @@ public class Partie {
      */
     public void setPerdue(boolean estPerdue) {
         this.perdue = estPerdue;
+    }
+
+    /**
+     * Accesseur de l'état de la partie.
+     * @return  L'état de la partie.
+     */
+    public boolean estPerdue() {
+        return perdue;
     }
 
     /**
@@ -112,13 +123,6 @@ public class Partie {
         return score;
     }
 
-    /**
-     * Accesseur de l'état de la partie.
-     * @return  L'état de la partie.
-     */
-    public boolean estPerdue() {
-        return perdue;
-    }
 
     /**
      * Accesseur du nombres de vies restantes.
