@@ -69,6 +69,7 @@ public class ControleurPartie {
             else {
                 augmenteNiveau = false;
                 deltaMessage = 0;
+                dernierNiveau = partie.getNiveau();
             }
 
         } else if(partiePerdue){
@@ -160,7 +161,6 @@ public class ControleurPartie {
      */
     public void incrementerNiveau() {
         partie.incrementerNiveau();
-        //this.deltaMessage = 0; // cette ligne ne fait absolument rien...
     }
 
     /**
