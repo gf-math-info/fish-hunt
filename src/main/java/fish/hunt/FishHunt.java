@@ -2,6 +2,7 @@ package fish.hunt;
 
 import fish.hunt.vue.VueAccueil;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -24,6 +25,10 @@ public class FishHunt extends Application {
         stage.setResizable(false);
         stage.setTitle("Fish Hunt");
         stage.getIcons().add(new Image("/images/star.png"));
+        stage.setOnCloseRequest((event) -> {
+            Platform.exit();
+            System.exit(0);
+        });
 
         Scene scene = new Scene(new VueAccueil(stage));
         stage.setScene(scene);

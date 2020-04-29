@@ -1,5 +1,6 @@
 package fish.hunt.vue;
 
+import fish.hunt.controleur.ConnexionServeur;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,21 +14,14 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
 
 public class VueConnexion extends VBox {
 
-    private Socket client;
+    private ConnexionServeur connexion;
     private boolean connecte;
 
-    private final String ADRESSE = "127.0.0.1";
-    private final int PORT = 1337;
-    private final int PSEUDO_ACCEPTE = 10;
-    private final int PSEUDO_REFUSE = 11;
+    private final int PSEUDO_ACCEPTE = 110;
 
     private Stage stagePrincipal;
     private Text informationsText;
@@ -88,7 +82,7 @@ public class VueConnexion extends VBox {
         new Thread(() -> {
 
             try {
-                client = new Socket(ADRESSE, PORT);
+                connexion = ConnexionServeur.getInstance();
                 Platform.runLater(() -> {
                     informationsText.setText("Serveur connecté.");
                     connecte = true;
@@ -116,14 +110,11 @@ public class VueConnexion extends VBox {
                     informationsText.setText("Vérification du pseudo...");
                 });
 
-                try (PrintWriter output = new PrintWriter(
-                        client.getOutputStream(), true);
-                     BufferedReader input = new BufferedReader(
-                             new InputStreamReader(client.getInputStream()))) {
+                try {
 
                     //Envoie du pseudo au serveur et attente de sa réponse.
-                    output.println(pseudoTextField.getText());
-                    int reponse = input.read();
+                    connexion.getOutput().println(pseudoTextField.getText());
+                    int reponse = connexion.getInput().read();
 
                     //On communique la réponse du server à l'utilisateur.
                     if(reponse == PSEUDO_ACCEPTE) {
@@ -138,24 +129,21 @@ public class VueConnexion extends VBox {
                         for(int i = 5; i > 0; i--) {
                             int nbSec = i;
                             Platform.runLater(() -> {
-                                informationsText.setText(
-                                        "La partie débute dans " + nbSec +
-                                                " seconde" +
-                                                ((nbSec > 1)?"s...":"..."));
+                                informationsText.setText("La partie débute dans " + nbSec + " seconde" +
+                                        ((nbSec > 1)?"s...":"..."));
                             });
                             Thread.sleep(1000);
                         }
 
-                        stagePrincipal.getScene().setRoot(
-                                new VueJeu(stagePrincipal, client));
+                        Platform.runLater(() -> {
+                            stagePrincipal.getScene().setRoot(new VueJeu(stagePrincipal, true));
+                        });
 
                     } else {
 
                         Platform.runLater(() -> {
-                            informationsText.setText(
-                                    "Pseudo refusé." + System.lineSeparator() +
-                                    "Choisissez un autre pseudo. " +
-                                    "Il se peut qu'il soit déjà choisi.");
+                            informationsText.setText("Pseudo refusé." + System.lineSeparator() +
+                                    "Choisissez un autre pseudo. Il se peut qu'il soit déjà choisi.");
                         });
 
                     }
@@ -168,27 +156,19 @@ public class VueConnexion extends VBox {
                     });
                 }
 
-                Platform.runLater(() ->
-                        getChildren().remove(progressIndicator));
+                Platform.runLater(() -> getChildren().remove(progressIndicator));
             }).start();
         });
 
         menuButton.setOnAction((event) -> {
-            if(client != null && client.isConnected()) {
-                try {
-                    client.close();
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                }
-            }
+            if(connexion != null)
+                connexion.ferme();
             stagePrincipal.getScene().setRoot(new VueAccueil(stagePrincipal));
         });
 
         pseudoTextField.setOnKeyReleased((event) -> {
-            validerButton.setDisable(
-                    pseudoTextField.getText().strip().length() == 0 ||
-                            pseudoTextField.getText().length() > 10 ||
-                            !connecte);
+            validerButton.setDisable(pseudoTextField.getText().strip().length() == 0 ||
+                    pseudoTextField.getText().length() > 10 || !connecte);
         });
     }
 }

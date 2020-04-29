@@ -247,7 +247,7 @@ public class PlanJeu {
      * Ajoute un poisson spécial au plan de jeu. Les attributs du poisson sont
      * choisis aléatoirement.
      */
-    private void ajouterPoissonSpecial() {
+    public void ajouterPoissonSpecial() {
         Poisson poisson;
         boolean versDroite = random.nextBoolean();
         double largeurPoisson, hauteurPoisson, x, y, vx;

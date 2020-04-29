@@ -40,13 +40,22 @@ public class Record implements Serializable, Comparable<Record> {
     }
 
     /**
+     * Mutateur du score du record.
+     * @param score Le score du record.
+     */
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    /**
      * Compare deux records entre eux. On compare les records entre eux.
      * @param record    L'autre record.
      * @return          La différence entre les deux records.
      */
     @Override
     public int compareTo(Record record) {
-        return record.score - score;
+        int diff = record.score - score;
+        return diff == 0 ? nom.compareTo(record.nom) : diff;
     }
 
     /**

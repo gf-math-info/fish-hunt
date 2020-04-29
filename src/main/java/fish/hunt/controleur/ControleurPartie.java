@@ -89,8 +89,6 @@ public class ControleurPartie {
             dessinerProjectiles();
             dessinerInformations();
 
-            dessinable.dessinerMessageMultijoueur("J'écris un long message avec beaucoup de mots.");
-
             if(partie.getNiveau() != dernierNiveau) {
                 dernierNiveau = partie.getNiveau();
                 augmenteNiveau = true;

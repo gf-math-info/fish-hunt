@@ -50,10 +50,10 @@ public class VueJeu extends Pane implements Dessinable{
      */
 
     public VueJeu(Stage stagePrincipal) {
-        this(stagePrincipal, null);
+        this(stagePrincipal, false);
     }
 
-    public VueJeu(Stage stagePrincipal, Socket client) {
+    public VueJeu(Stage stagePrincipal, boolean multijoueur) {
         this.stagePrincipal = stagePrincipal;
         largeur = stagePrincipal.getWidth();
         hauteur = stagePrincipal.getHeight();
@@ -63,24 +63,20 @@ public class VueJeu extends Pane implements Dessinable{
         graphicsContext = canvas.getGraphicsContext2D();
         getChildren().add(canvas);
 
-        if(client == null)
-            controleurPartie = new ControleurPartie(largeur, hauteur,
-                    this);
+        if(multijoueur)
+            controleurPartie = new ControleurPartieMulti(largeur, hauteur, this);
         else
-            controleurPartie = new ControleurPartieMulti(largeur, hauteur,
-                    this, client);
+            controleurPartie = new ControleurPartie(largeur, hauteur, this);
 
         initOutilsDessin();
         initListeners();
 
         timer = new AnimationTimer() {
             long dernierMoment = System.nanoTime();
-            final double MAX_DELTA_TEMPS = 0.003;
 
             @Override
             public void handle(long l) {
-                controleurPartie.actualiser(
-                        Math.max((l - dernierMoment) * 1e-9, MAX_DELTA_TEMPS));
+                controleurPartie.actualiser((l - dernierMoment) * 1e-9);
                 dessinerCible(cibleX, cibleY);
                 dernierMoment = l;
             }
