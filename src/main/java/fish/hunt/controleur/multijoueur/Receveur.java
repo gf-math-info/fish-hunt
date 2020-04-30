@@ -42,6 +42,7 @@ public class Receveur implements Runnable{
 
     @Override
     public void run() {
+        /*
 
         while(!partie.estPerdue()) {
 
@@ -130,5 +131,6 @@ public class Receveur implements Runnable{
                     break;
             }
         }
+        */
     }
 }

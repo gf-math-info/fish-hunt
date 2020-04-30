@@ -1,6 +1,6 @@
 package fish.hunt.vue;
 
-import fish.hunt.Record;
+import fish.hunt.modele.Record;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

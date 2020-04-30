@@ -1,4 +1,4 @@
-package fish.hunt;
+package fish.hunt.modele;
 
 import java.io.Serializable;
 
