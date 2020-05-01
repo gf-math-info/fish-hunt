@@ -36,7 +36,7 @@ public class Partie {
     }
 
     /**
-     * Incremente le nombre de poissons touchés.
+     * Incrémente le nombre de poissons touchés.
      * @param unProjectileUnMort    Vrai si le poisson a été touché d'un coup,
      *                              faux sinon.
      */
