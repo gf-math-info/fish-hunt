@@ -1,7 +1,6 @@
 package fish.hunt.controleur.multijoueur;
 
 import fish.hunt.modele.Partie;
-import fish.hunt.modele.Record;
 import javafx.application.Platform;
 
 import java.io.IOException;
