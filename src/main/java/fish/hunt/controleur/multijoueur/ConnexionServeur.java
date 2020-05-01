@@ -38,7 +38,7 @@ public class ConnexionServeur {
      * @return              La connexion vers le serveurs.
      * @throws IOException  Si un erreur se produit lors de la connexion.
      */
-    public static ConnexionServeur getInstance() throws IOException{
+    public static synchronized ConnexionServeur getInstance() throws IOException{
         if(instance == null)
             instance = new ConnexionServeur();
 
@@ -49,7 +49,7 @@ public class ConnexionServeur {
      * Mutateur du flux sortant de la connexion.
      * @return  Le flux sortant.
      */
-    public PrintWriter getOutput() {
+    public synchronized PrintWriter getOutput() {
         return output;
     }
 
@@ -57,14 +57,14 @@ public class ConnexionServeur {
      * Mutateur du flux entrant de la connexion.
      * @return  Le flux entrant.
      */
-    public BufferedReader getInput() {
+    public synchronized BufferedReader getInput() {
         return input;
     }
 
     /**
      * Ferme le flux de données.
      */
-    public void ferme() {
+    public synchronized void ferme() {
         try {
             input.close();
             output.close();
