@@ -25,13 +25,20 @@ public class ControleurPartieMulti extends ControleurPartie {
 
     private final Object cadenas = new Object();
     private Set<Record> scores;
+    private ConnexionServeur connexion;
 
+    /*
+    Variables utilisées pour l'affichage des messages en mode multijoueur.
+    */
     private boolean attaqueEnCours, deconnexionEnCours, attaqueSpeciale;
-    private double deltaAttaque, deltaDeconnexion, deltaScores;
+    private double deltaAttaque, deltaDeconnexion;
+
+    //Variables pour afficher le score des joueurs.
     private int indexScores;
     private Record scoreAffiche;
-    private Iterator<Record> itRecord;
-    private ConnexionServeur connexion;
+    private Iterator<Record> itScores;
+    private double deltaScores;
+
     private String nomAttaquant, nomDeconnexion;
     private Alert erreurConnexionAlert;
 
@@ -48,6 +55,7 @@ public class ControleurPartieMulti extends ControleurPartie {
         planJeu.setPartie(partie);
 
         scores = new TreeSet<>();
+        indexScores = 1;
         erreurConnexionAlert = new Alert(Alert.AlertType.ERROR, "Un erreur de connexion s'est produit.");
 
         new Thread(() -> {
@@ -58,24 +66,19 @@ public class ControleurPartieMulti extends ControleurPartie {
 
                 //On récupère le score des joueurs en ligne.
                 int nombreJoueurs = connexion.getInput().read();
-                if(nombreJoueurs == -1) {
-                    afficherErreur();
-                    return;
-                }
+                if(nombreJoueurs == -1)
+                    throw new IOException();
 
                 String pseudoJoueur;
                 int scoreJoueur;
                 for(int i = 0; i < nombreJoueurs; i++) {
                     pseudoJoueur = connexion.getInput().readLine();
-                    if(pseudoJoueur == null) {
-                        afficherErreur();
-                        return;
-                    }
+                    if(pseudoJoueur == null)
+                        throw new IOException();
+
                     scoreJoueur = connexion.getInput().read();
-                    if(scoreJoueur == -1) {
-                        afficherErreur();
-                        return;
-                    }
+                    if(scoreJoueur == -1)
+                        throw new IOException();
 
                     synchronized (cadenas) {
                         scores.add(new Record(pseudoJoueur, scoreJoueur));
@@ -83,10 +86,10 @@ public class ControleurPartieMulti extends ControleurPartie {
                 }
 
                 synchronized (cadenas) {
-
+                    //Il y a au moins un joueur de connecté : nous.
+                    itScores = scores.iterator();
+                    scoreAffiche = itScores.next();
                 }
-
-
 
             } catch (IOException ioException) {
                 afficherErreur();
@@ -126,10 +129,16 @@ public class ControleurPartieMulti extends ControleurPartie {
                 deltaScores += deltaTemps;
                 if (deltaScores >= TEMPS_MESSAGE_SCORES) {
                     deltaScores = 0;
-                    //TODO
+
+                    if(!itScores.hasNext()) {
+                        itScores = scores.iterator();
+                        indexScores = 1;
+                    }
+
+                    scoreAffiche = itScores.next();
                 }
 
-                dessinable.dessinerMessageMultijoueur((indexScores + 1) + ". " + scores);
+                dessinable.dessinerMessageMultijoueur(indexScores + ". " + scoreAffiche);
 
             }
 
