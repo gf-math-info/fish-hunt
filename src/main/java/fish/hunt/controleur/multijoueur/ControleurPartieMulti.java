@@ -19,9 +19,8 @@ public class ControleurPartieMulti extends ControleurPartie {
     private final int ATTAQUE_POISSON_SPECIAL_ENVOIE = 51;
     private final int MISE_A_JOUR_SCORE_ENVOIE = 60;
 
-    private final int TEMPS_MESSAGE_ATTAQUE = 1;
+    private final int TEMPS_MESSAGE_AUTRE = 1;
     private final int TEMPS_MESSAGE_SCORES = 1;
-    private final int TEMPS_MESSAGE_DECONNEXION = 1;
 
     private final Object cadenas = new Object();
     private Set<Record> scores;
@@ -30,8 +29,8 @@ public class ControleurPartieMulti extends ControleurPartie {
     /*
     Variables utilisées pour l'affichage des messages en mode multijoueur.
     */
-    private boolean attaqueEnCours, deconnexionEnCours, attaqueSpeciale;
-    private double deltaAttaque, deltaDeconnexion;
+    private boolean attaqueEnCours, deconnexionEnCours, attaqueSpeciale, lancementAttaque;
+    private double deltaMessage;
 
     //Variables pour afficher le score des joueurs.
     private int indexScores;
@@ -45,9 +44,6 @@ public class ControleurPartieMulti extends ControleurPartie {
     /**
      * Construit un contrôleur de jeu avec la largeur et la hauteur du plan de
      * jeu, ainsi que la classe dessinable.
-     * @param largeur    La largeur du plan de jeu.
-     * @param hauteur    La hauteur du plan de jeu.
-     * @param dessinable La classe dessinable.
      */
     public ControleurPartieMulti(double largeur, double hauteur, Dessinable dessinable) {
         super(largeur, hauteur, dessinable);
@@ -65,18 +61,18 @@ public class ControleurPartieMulti extends ControleurPartie {
                 connexion = ConnexionServeur.getInstance();
 
                 //On récupère le score des joueurs en ligne.
-                int nombreJoueurs = connexion.getInput().read();
+                int nombreJoueurs = connexion.lireInt();
                 if(nombreJoueurs == -1)
                     throw new IOException();
 
                 String pseudoJoueur;
                 int scoreJoueur;
                 for(int i = 0; i < nombreJoueurs; i++) {
-                    pseudoJoueur = connexion.getInput().readLine();
+                    pseudoJoueur = connexion.lireString();
                     if(pseudoJoueur == null)
                         throw new IOException();
 
-                    scoreJoueur = connexion.getInput().read();
+                    scoreJoueur = connexion.lireInt();
                     if(scoreJoueur == -1)
                         throw new IOException();
 
@@ -92,8 +88,8 @@ public class ControleurPartieMulti extends ControleurPartie {
                 }
 
             } catch (IOException ioException) {
+                connexion.ferme();
                 afficherErreur();
-                ioException.printStackTrace();
             }
         }).start();
     }
@@ -104,11 +100,22 @@ public class ControleurPartieMulti extends ControleurPartie {
 
         synchronized (cadenas) {
 
-            if (attaqueEnCours) {
+            if (lancementAttaque) {
 
-                deltaAttaque += deltaTemps;
-                if (deltaAttaque >= TEMPS_MESSAGE_ATTAQUE) {
-                    deltaAttaque = 0;
+                deltaMessage += deltaTemps;
+                if(deltaMessage >= TEMPS_MESSAGE_AUTRE) {
+                    deltaMessage = 0;
+                    lancementAttaque = false;
+                }
+
+                dessinable.dessinerMessageMultijoueur("Vous avez lancé une attaque" +
+                        (attaqueSpeciale ? " spécial." : "."));
+
+            } else if (attaqueEnCours) {
+
+                deltaMessage += deltaTemps;
+                if (deltaMessage >= TEMPS_MESSAGE_AUTRE) {
+                    deltaMessage = 0;
                     attaqueEnCours = false;
                 }
 
@@ -117,15 +124,16 @@ public class ControleurPartieMulti extends ControleurPartie {
 
             } else if (deconnexionEnCours) {
 
-                deltaDeconnexion += deltaTemps;
-                if (deltaDeconnexion >= TEMPS_MESSAGE_DECONNEXION) {
-                    deltaDeconnexion = 0;
-                    attaqueEnCours = false;
+                deltaMessage += deltaTemps;
+                if (deltaMessage >= TEMPS_MESSAGE_AUTRE) {
+                    deltaMessage = 0;
+                    deconnexionEnCours = false;
                 }
 
                 dessinable.dessinerMessageMultijoueur(nomDeconnexion + " vient de quitter la partie.");
 
             } else if(scores.size() > 0) {
+
                 deltaScores += deltaTemps;
                 if (deltaScores >= TEMPS_MESSAGE_SCORES) {
                     deltaScores = 0;
@@ -146,13 +154,35 @@ public class ControleurPartieMulti extends ControleurPartie {
     }
 
     public void attaquePoissonNormal() {
+        lancementAttaque = true;
+        attaqueSpeciale = false;
+
+        new Thread(() -> {
+
+            connexion.ecrireInt(ATTAQUE_POISSON_NORMAL_ENVOIE);
+
+        }).start();
     }
 
     public void attaquePoissonSpecial() {
+        lancementAttaque = true;
+        attaqueSpeciale = true;
+
+        new Thread(() -> {
+
+            connexion.ecrireInt(ATTAQUE_POISSON_SPECIAL_ENVOIE);
+
+        }).start();
     }
 
     public void miseAJourScore() {
-        //TODO
+        int scoreAEnvoyer = partie.getScore();
+        new Thread(() -> {
+
+            connexion.ecrireInt(MISE_A_JOUR_SCORE_ENVOIE);
+            connexion.ecrireInt(scoreAEnvoyer);
+
+        }).start();
     }
 
     public void attaquePoissonNormal(String pseudoAttaquant) {

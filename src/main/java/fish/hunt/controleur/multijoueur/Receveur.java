@@ -73,11 +73,11 @@ public class Receveur implements Runnable{
         try {
             while (estPartieEnCours()) {
 
-                switch (connexion.getInput().read()) {
+                switch (connexion.lireInt()) {
 
                     case ATTAQUE_POISSON_NORMAL_RECU:
 
-                        String attaquantNormal = connexion.getInput().readLine();
+                        String attaquantNormal = connexion.lireString();
                         if (attaquantNormal == null)
                             throw new IOException();
 
@@ -89,7 +89,7 @@ public class Receveur implements Runnable{
 
                     case ATTAQUE_POISSON_SPECIAL_RECU:
 
-                        String attaquantSpecial = connexion.getInput().readLine();
+                        String attaquantSpecial = connexion.lireString();
                         if (attaquantSpecial == null)
                             throw new IOException();
 
@@ -101,11 +101,11 @@ public class Receveur implements Runnable{
 
                     case MISE_A_JOUR_SCORE_RECU:
 
-                        String nomScore = connexion.getInput().readLine();
+                        String nomScore = connexion.lireString();
                         if (nomScore == null)
                             throw new IOException();
 
-                        int score = connexion.getInput().read();
+                        int score = connexion.lireInt();
                         if (score == -1)
                             throw new IOException();
 
@@ -116,7 +116,7 @@ public class Receveur implements Runnable{
                         break;
 
                     case DECONNEXION_JOUEUR_RECU:
-                        String nomJoueurDeconnexion = connexion.getInput().readLine();
+                        String nomJoueurDeconnexion = connexion.lireString();
                         if (nomJoueurDeconnexion == null)
                             throw new IOException();
 

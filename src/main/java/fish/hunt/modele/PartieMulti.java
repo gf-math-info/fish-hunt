@@ -19,18 +19,22 @@ public class PartieMulti extends Partie {
 
                 case 1:
                     score += 3;
+                    controleurPartieMulti.miseAJourScore();
                     break;
 
                 case 2:
                     controleurPartieMulti.attaquePoissonNormal();
+                    incrementerScore();
                     break;
 
                 case 3:
                     nbViesRestantes++;
+                    incrementerScore();
                     break;
 
                 case 4:
                     controleurPartieMulti.attaquePoissonSpecial();
+                    incrementerScore();
                     break;
 
             }

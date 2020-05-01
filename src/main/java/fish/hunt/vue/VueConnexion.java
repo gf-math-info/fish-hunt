@@ -113,8 +113,8 @@ public class VueConnexion extends VBox {
                 try {
 
                     //Envoie du pseudo au serveur et attente de sa réponse.
-                    connexion.getOutput().println(pseudoTextField.getText());
-                    int reponse = connexion.getInput().read();
+                    connexion.ecrireString(pseudoTextField.getText());
+                    int reponse = connexion.lireInt();
 
                     //On communique la réponse du server à l'utilisateur.
                     if(reponse == PSEUDO_ACCEPTE) {
