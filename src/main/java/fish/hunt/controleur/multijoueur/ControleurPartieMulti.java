@@ -56,46 +56,43 @@ public class ControleurPartieMulti extends ControleurPartie {
         erreurConnexionAlert = new Alert(Alert.AlertType.ERROR, "Un erreur de connexion s'est produit.");
         receveur = new Receveur(this);
 
-        new Thread(() -> {
+        try {
 
-            try {
+            connexion = ConnexionServeur.getInstance();
 
-                connexion = ConnexionServeur.getInstance();
+            //On récupère le score des joueurs en ligne.
+            int nombreJoueurs = connexion.lireInt();
+            if(nombreJoueurs == -1)
+                throw new IOException();
 
-                //On récupère le score des joueurs en ligne.
-                int nombreJoueurs = connexion.lireInt();
-                if(nombreJoueurs == -1)
+            String pseudoJoueur;
+            int scoreJoueur;
+            for(int i = 0; i < nombreJoueurs; i++) {
+                pseudoJoueur = connexion.lireString();
+                if(pseudoJoueur == null)
                     throw new IOException();
 
-                String pseudoJoueur;
-                int scoreJoueur;
-                for(int i = 0; i < nombreJoueurs; i++) {
-                    pseudoJoueur = connexion.lireString();
-                    if(pseudoJoueur == null)
-                        throw new IOException();
-
-                    scoreJoueur = connexion.lireInt();
-                    if(scoreJoueur == -1)
-                        throw new IOException();
-
-                    synchronized (cadenas) {
-                        scores.add(new Record(pseudoJoueur, scoreJoueur));
-                    }
-                }
+                scoreJoueur = connexion.lireInt();
+                if(scoreJoueur == -1)
+                    throw new IOException();
 
                 synchronized (cadenas) {
-                    //Il y a au moins un joueur de connecté : nous.
-                    itScores = scores.iterator();
-                    scoreAffiche = itScores.next();
+                    scores.add(new Record(pseudoJoueur, scoreJoueur));
                 }
-
-            } catch (IOException ioException) {
-                connexion.ferme();
-                afficherErreur();
             }
-        }).start();
 
-        //TODO
+            synchronized (cadenas) {
+                //Il y a au moins un joueur de connecté : nous.
+                itScores = scores.iterator();
+                scoreAffiche = itScores.next();
+            }
+
+        } catch (IOException ioException) {
+            connexion.ferme();
+            afficherErreur();
+        }
+
+        //new Thread(receveur).start();
     }
 
     @Override
@@ -193,7 +190,7 @@ public class ControleurPartieMulti extends ControleurPartie {
         }).start();
     }
 
-    public void attaquePoissonNormal(String pseudoAttaquant) {
+    public synchronized void attaquePoissonNormal(String pseudoAttaquant) {
         attaqueEnCours = true;
         attaqueSpeciale = false;
         nomAttaquant = pseudoAttaquant;
@@ -202,7 +199,7 @@ public class ControleurPartieMulti extends ControleurPartie {
         Platform.runLater(() -> planJeu.ajouterPoissonNormal());
     }
 
-    public void attaquePoissonSpecial(String pseudoAttaquant) {
+    public synchronized void attaquePoissonSpecial(String pseudoAttaquant) {
         attaqueEnCours = true;
         attaqueSpeciale = true;
         nomAttaquant = pseudoAttaquant;
@@ -211,7 +208,7 @@ public class ControleurPartieMulti extends ControleurPartie {
         Platform.runLater(() -> planJeu.ajouterPoissonSpecial());
     }
 
-    public void miseAJourScore(String pseudo, int score) {
+    public synchronized void miseAJourScore(String pseudo, int score) {
         Iterator<Record> recordIterator = scores.iterator();
         Record record;
         while(recordIterator.hasNext()) {
@@ -223,7 +220,7 @@ public class ControleurPartieMulti extends ControleurPartie {
         }
     }
 
-    public void deconnexionJoueur(String pseudo) {
+    public synchronized void deconnexionJoueur(String pseudo) {
         deconnexionEnCours = true;
         nomDeconnexion = pseudo;
         deltaMessage = 0;

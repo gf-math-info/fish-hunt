@@ -85,9 +85,7 @@ public class Receveur implements Runnable{
                         if (attaquantNormal == null)
                             throw new IOException();
 
-                        synchronized (cadenas) {
-                            controleur.attaquePoissonNormal(attaquantNormal);
-                        }
+                        controleur.attaquePoissonNormal(attaquantNormal);
 
                         break;
 
@@ -97,9 +95,7 @@ public class Receveur implements Runnable{
                         if (attaquantSpecial == null)
                             throw new IOException();
 
-                        synchronized (cadenas) {
-                            controleur.attaquePoissonSpecial(attaquantSpecial);
-                        }
+                        controleur.attaquePoissonSpecial(attaquantSpecial);
 
                         break;
 
@@ -113,9 +109,7 @@ public class Receveur implements Runnable{
                         if (score == -1)
                             throw new IOException();
 
-                        synchronized (cadenas) {
-                            controleur.miseAJourScore(nomScore, score);
-                        }
+                        controleur.miseAJourScore(nomScore, score);
 
                         break;
 
@@ -124,9 +118,7 @@ public class Receveur implements Runnable{
                         if (nomJoueurDeconnexion == null)
                             throw new IOException();
 
-                        synchronized (cadenas) {
-                            controleur.deconnexionJoueur(nomJoueurDeconnexion);
-                        }
+                        controleur.deconnexionJoueur(nomJoueurDeconnexion);
 
                         break;
                 }
