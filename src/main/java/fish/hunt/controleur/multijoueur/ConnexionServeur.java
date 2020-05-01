@@ -38,7 +38,7 @@ public class ConnexionServeur {
      * @return              La connexion vers le serveurs.
      * @throws IOException  Si un erreur se produit lors de la connexion.
      */
-    public static synchronized ConnexionServeur getInstance() throws IOException{
+    public static ConnexionServeur getInstance() throws IOException{
         if(instance == null)
             instance = new ConnexionServeur();
 
@@ -46,39 +46,19 @@ public class ConnexionServeur {
     }
 
     /**
-     * Lit un entier reçu du serveur et renvoie la valeur.
-     * @return              L'entier reçu par le serveur.
-     * @throws IOException  Lancé s'il y a un erreur de connexion.
+     * Accesseur de l'outil d'écriture vers le serveur.
+     * @return  L'outil d'écriture.
      */
-    public synchronized int lireInt() throws IOException {
-        return input.read();
+    public PrintWriter getOutput() {
+        return output;
     }
 
     /**
-     * Lit une chaîne de caractère reçue par le serveur et renvoie la valeur.
-     * @return              La chaîne de caractère reçue par le serveur.
-     * @throws IOException  Lancé s'il y a un erreur de connexion.
+     * Accesseur de l'outil de lecture du serveur.
+     * @return  L'outil de lecture.
      */
-    public synchronized String lireString() throws IOException {
-        return input.readLine();
-    }
-
-    /**
-     * Écrit un entier au serveur.
-     * @param envoie    L'entier à envoyer.
-     */
-    public synchronized void ecrireInt(int envoie) {
-        output.write(envoie);
-        output.flush();
-    }
-
-    /**
-     * Écrit une chaîne de caractère au serveur.
-     * @param envoie    La chaîne de caractère à envoyer.
-     */
-    public synchronized void ecrireString(String envoie) {
-        output.println(envoie);
-        output.flush();
+    public BufferedReader getInput() {
+        return input;
     }
 
     /**

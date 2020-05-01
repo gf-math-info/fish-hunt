@@ -14,7 +14,9 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 public class VueConnexion extends VBox {
 
@@ -106,6 +108,7 @@ public class VueConnexion extends VBox {
                 Platform.runLater(() -> {
                     //On signifie à l'utilisateur qu'on communique avec le
                     //serveur.
+                    validerButton.setDisable(true);
                     getChildren().add(1, progressIndicator);
                     informationsText.setText("Vérification du pseudo...");
                 });
@@ -113,8 +116,9 @@ public class VueConnexion extends VBox {
                 try {
 
                     //Envoie du pseudo au serveur et attente de sa réponse.
-                    connexion.ecrireString(pseudoTextField.getText());
-                    int reponse = connexion.lireInt();
+                    connexion.getOutput().println(pseudoTextField.getText());
+                    connexion.getOutput().flush();
+                    int reponse = connexion.getInput().read();
 
                     //On communique la réponse du server à l'utilisateur.
                     if(reponse == PSEUDO_ACCEPTE) {
@@ -156,7 +160,10 @@ public class VueConnexion extends VBox {
                     });
                 }
 
-                Platform.runLater(() -> getChildren().remove(progressIndicator));
+                Platform.runLater(() -> {
+                    getChildren().remove(progressIndicator);
+                    validerButton.setDisable(false);
+                });
             }).start();
         });
 

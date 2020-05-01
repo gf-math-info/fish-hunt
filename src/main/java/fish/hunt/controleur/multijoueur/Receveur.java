@@ -3,6 +3,7 @@ package fish.hunt.controleur.multijoueur;
 import fish.hunt.modele.Partie;
 import javafx.application.Platform;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 
 /**
@@ -18,9 +19,10 @@ public class Receveur implements Runnable{
     private final int DECONNEXION_JOUEUR_RECU = 190;
 
     private ControleurPartieMulti controleur;
-    private Object cadenas, cadenasDrapeau;
+    private Object cadenasDrapeau;
     private Partie partie;
     private ConnexionServeur connexion;
+    private BufferedReader input;
 
     //Drapeau signifiant si le thread doit continuer à écouter le serveur.
     private boolean partieEnCours;
@@ -31,12 +33,12 @@ public class Receveur implements Runnable{
     public Receveur(ControleurPartieMulti controleur) {
         this.controleur = controleur;
         partie = controleur.getPartie();
-        cadenas = controleur.getCadenas();
-        cadenasDrapeau = new Object();
         partieEnCours = true;
+        cadenasDrapeau = new Object();
 
         try {
             connexion = ConnexionServeur.getInstance();
+            input = connexion.getInput();
         } catch (IOException exception) {
             controleur.afficherErreur();
         }
@@ -70,18 +72,14 @@ public class Receveur implements Runnable{
     @Override
     public void run() {
 
-        int code;
-
         try {
             while (estPartieEnCours()) {
 
-                code = connexion.lireInt();
-
-                switch (code) {
+                switch (input.read()) {
 
                     case ATTAQUE_POISSON_NORMAL_RECU:
 
-                        String attaquantNormal = connexion.lireString();
+                        String attaquantNormal = input.readLine();
                         if (attaquantNormal == null)
                             throw new IOException();
 
@@ -91,7 +89,7 @@ public class Receveur implements Runnable{
 
                     case ATTAQUE_POISSON_SPECIAL_RECU:
 
-                        String attaquantSpecial = connexion.lireString();
+                        String attaquantSpecial = input.readLine();
                         if (attaquantSpecial == null)
                             throw new IOException();
 
@@ -101,11 +99,11 @@ public class Receveur implements Runnable{
 
                     case MISE_A_JOUR_SCORE_RECU:
 
-                        String nomScore = connexion.lireString();
+                        String nomScore = input.readLine();
                         if (nomScore == null)
                             throw new IOException();
 
-                        int score = connexion.lireInt();
+                        int score = input.read();
                         if (score == -1)
                             throw new IOException();
 
@@ -114,7 +112,8 @@ public class Receveur implements Runnable{
                         break;
 
                     case DECONNEXION_JOUEUR_RECU:
-                        String nomJoueurDeconnexion = connexion.lireString();
+
+                        String nomJoueurDeconnexion = input.readLine();
                         if (nomJoueurDeconnexion == null)
                             throw new IOException();
 

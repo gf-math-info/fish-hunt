@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -22,9 +23,10 @@ public class ControleurPartieMulti extends ControleurPartie {
     private final int TEMPS_MESSAGE_AUTRE = 1;
     private final int TEMPS_MESSAGE_SCORES = 1;
 
-    private final Object cadenas = new Object();
+    private final Object cadenasScore = new Object();
     private Set<Record> scores;
     private ConnexionServeur connexion;
+    private PrintWriter output;
     private Receveur receveur;
 
     /*
@@ -59,47 +61,44 @@ public class ControleurPartieMulti extends ControleurPartie {
         try {
 
             connexion = ConnexionServeur.getInstance();
+            output = connexion.getOutput();
 
             //On récupère le score des joueurs en ligne.
-            int nombreJoueurs = connexion.lireInt();
+            int nombreJoueurs = connexion.getInput().read();
             if(nombreJoueurs == -1)
                 throw new IOException();
 
             String pseudoJoueur;
             int scoreJoueur;
             for(int i = 0; i < nombreJoueurs; i++) {
-                pseudoJoueur = connexion.lireString();
+                pseudoJoueur = connexion.getInput().readLine();
                 if(pseudoJoueur == null)
                     throw new IOException();
 
-                scoreJoueur = connexion.lireInt();
+                scoreJoueur = connexion.getInput().read();
                 if(scoreJoueur == -1)
                     throw new IOException();
 
-                synchronized (cadenas) {
-                    scores.add(new Record(pseudoJoueur, scoreJoueur));
-                }
+                scores.add(new Record(pseudoJoueur, scoreJoueur));
             }
 
-            synchronized (cadenas) {
-                //Il y a au moins un joueur de connecté : nous.
-                itScores = scores.iterator();
-                scoreAffiche = itScores.next();
-            }
+            //Il y a au moins un joueur de connecté : nous.
+            itScores = scores.iterator();
+            scoreAffiche = itScores.next();
 
         } catch (IOException ioException) {
             connexion.ferme();
             afficherErreur();
         }
 
-        //new Thread(receveur).start();
+        new Thread(receveur).start();
     }
 
     @Override
     public void actualiser(double deltaTemps) {
         super.actualiser(deltaTemps);
 
-        synchronized (cadenas) {
+        synchronized (cadenasScore) {
 
             if (lancementAttaque) {
 
@@ -155,42 +154,36 @@ public class ControleurPartieMulti extends ControleurPartie {
     }
 
     public void attaquePoissonNormal() {
-        synchronized (cadenas) {
-            lancementAttaque = true;
-            attaqueSpeciale = false;
-        }
+        lancementAttaque = true;
+        attaqueSpeciale = false;
 
         new Thread(() -> {
-
-            connexion.ecrireInt(ATTAQUE_POISSON_NORMAL_ENVOIE);
-
+            output.write(ATTAQUE_POISSON_NORMAL_ENVOIE);
+            output.flush();
         }).start();
     }
 
     public void attaquePoissonSpecial() {
-        synchronized (cadenas) {
-            lancementAttaque = true;
-            attaqueSpeciale = true;
-        }
+        lancementAttaque = true;
+        attaqueSpeciale = true;
 
         new Thread(() -> {
-
-            connexion.ecrireInt(ATTAQUE_POISSON_SPECIAL_ENVOIE);
-
+            output.write(ATTAQUE_POISSON_SPECIAL_ENVOIE);
+            output.flush();
         }).start();
     }
 
     public void miseAJourScore() {
         int scoreAEnvoyer = partie.getScore();
+
         new Thread(() -> {
-
-            connexion.ecrireInt(MISE_A_JOUR_SCORE_ENVOIE);
-            connexion.ecrireInt(scoreAEnvoyer);
-
+            output.write(MISE_A_JOUR_SCORE_ENVOIE);
+            output.write(scoreAEnvoyer);
+            output.flush();
         }).start();
     }
 
-    public synchronized void attaquePoissonNormal(String pseudoAttaquant) {
+    public void attaquePoissonNormal(String pseudoAttaquant) {
         attaqueEnCours = true;
         attaqueSpeciale = false;
         nomAttaquant = pseudoAttaquant;
@@ -199,7 +192,7 @@ public class ControleurPartieMulti extends ControleurPartie {
         Platform.runLater(() -> planJeu.ajouterPoissonNormal());
     }
 
-    public synchronized void attaquePoissonSpecial(String pseudoAttaquant) {
+    public void attaquePoissonSpecial(String pseudoAttaquant) {
         attaqueEnCours = true;
         attaqueSpeciale = true;
         nomAttaquant = pseudoAttaquant;
@@ -208,14 +201,13 @@ public class ControleurPartieMulti extends ControleurPartie {
         Platform.runLater(() -> planJeu.ajouterPoissonSpecial());
     }
 
-    public synchronized void miseAJourScore(String pseudo, int score) {
-        Iterator<Record> recordIterator = scores.iterator();
-        Record record;
-        while(recordIterator.hasNext()) {
-            record = recordIterator.next();
-            if(record.getNom().equals(pseudo)) {
-                record.setScore(score);
-                break;
+    public void miseAJourScore(String pseudo, int score) {
+        synchronized (cadenasScore) {
+            for(Record nScore : scores) {
+                if(nScore.getNom().equals(pseudo)) {
+                    nScore.setScore(score);
+                    return;
+                }
             }
         }
     }
@@ -224,14 +216,14 @@ public class ControleurPartieMulti extends ControleurPartie {
         deconnexionEnCours = true;
         nomDeconnexion = pseudo;
         deltaMessage = 0;
-    }
-
-    /**
-     * Accesseur du cadenas.
-     * @return  Le cadenas pour modifier les attributs du controleur.
-     */
-    public Object getCadenas() {
-        return cadenas;
+        Record scoreARetirer = null;
+        for(Record score : scores) {
+            if(score.getNom().equals(pseudo)) {
+                scoreARetirer = score;
+                break;
+            }
+        }
+        scores.remove(scoreARetirer);
     }
 
     /**
