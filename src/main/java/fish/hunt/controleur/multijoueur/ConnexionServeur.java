@@ -46,19 +46,39 @@ public class ConnexionServeur {
     }
 
     /**
-     * Mutateur du flux sortant de la connexion.
-     * @return  Le flux sortant.
+     * Lit un entier reçu du serveur et renvoie la valeur.
+     * @return              L'entier reçu par le serveur.
+     * @throws IOException  Lancé s'il y a un erreur de connexion.
      */
-    public synchronized PrintWriter getOutput() {
-        return output;
+    public synchronized int lireInt() throws IOException {
+        return input.read();
     }
 
     /**
-     * Mutateur du flux entrant de la connexion.
-     * @return  Le flux entrant.
+     * Lit une chaîne de caractère reçue par le serveur et renvoie la valeur.
+     * @return              La chaîne de caractère reçue par le serveur.
+     * @throws IOException  Lancé s'il y a un erreur de connexion.
      */
-    public synchronized BufferedReader getInput() {
-        return input;
+    public synchronized String lireString() throws IOException {
+        return input.readLine();
+    }
+
+    /**
+     * Écrit un entier au serveur.
+     * @param envoie    L'entier à envoyer.
+     */
+    public synchronized void ecrireInt(int envoie) {
+        output.write(envoie);
+        output.flush();
+    }
+
+    /**
+     * Écrit une chaîne de caractère au serveur.
+     * @param envoie    La chaîne de caractère à envoyer.
+     */
+    public synchronized void ecrireString(String envoie) {
+        output.println(envoie);
+        output.flush();
     }
 
     /**
