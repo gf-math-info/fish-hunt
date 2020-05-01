@@ -1,5 +1,7 @@
 package fish.hunt.modele;
 
+import fish.hunt.controleur.ControleurPartie;
+
 /**
  * La partie en cours. La partie et le plan de jeu sont deux entités distinctes.
  * @see PlanJeu
@@ -7,12 +9,15 @@ package fish.hunt.modele;
  * @author Colson-Ratelle, Antoine
  */
 public class Partie {
+
     protected int score;
     protected int niveau;
     protected int nbPoissonsTouches;
     protected boolean perdue;
     protected int nbViesRestantes;
     protected int nbUnProjectileUnMort;
+
+    protected ControleurPartie controleurPartie;
 
     // les 2 constantes suivantes sont sous forme d'attribut pour
     // faciliter la tâche d'un programmeur qui voudrait les
@@ -23,9 +28,10 @@ public class Partie {
     /**
      * Contruit une partie.
      */
-    public Partie() {
+    public Partie(ControleurPartie controleurPartie) {
         this.niveau = 1;
         this.nbViesRestantes = NB_VIES_INIT;
+        this.controleurPartie = controleurPartie;
     }
 
     /**
@@ -33,6 +39,7 @@ public class Partie {
      */
     public void incrementerNiveau() {
         this.niveau++;
+        this.controleurPartie.augmenteNiveau();
     }
 
     /**

@@ -7,7 +7,7 @@ public class PartieMulti extends Partie {
     private ControleurPartieMulti controleurPartieMulti;
 
     public PartieMulti(ControleurPartieMulti controleurPartieMulti) {
-        super();
+        super(controleurPartieMulti);
         this.controleurPartieMulti = controleurPartieMulti;
     }
 

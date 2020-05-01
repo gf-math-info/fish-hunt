@@ -1,9 +1,9 @@
 package fish.hunt.controleur.multijoueur;
 
-import fish.hunt.Record;
 import fish.hunt.controleur.ControleurPartie;
 import fish.hunt.modele.Partie;
 import fish.hunt.modele.PartieMulti;
+import fish.hunt.modele.Record;
 import fish.hunt.vue.Dessinable;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;

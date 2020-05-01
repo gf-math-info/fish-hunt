@@ -29,7 +29,6 @@ public class ControleurPartie {
     private WeakHashMap<Poisson, Integer> poissonsImages;
     private boolean augmenteNiveau;
     private double deltaMessage;
-    private int dernierNiveau;
     private Random random;
     private final double TEMPS_MESSAGE = 3;
 
@@ -42,10 +41,27 @@ public class ControleurPartie {
      */
     public ControleurPartie(double largeur, double hauteur, Dessinable dessinable) {
         this.dessinable = dessinable;
-        partie = new Partie();
+        partie = new Partie(this);
         planJeu = new PlanJeu(largeur, hauteur, partie);
+
         augmenteNiveau = true;
-        dernierNiveau = partie.getNiveau();
+        poissonsImages = new WeakHashMap<>();
+        poissonsCouleurs = new WeakHashMap<>();
+        random = new Random();
+    }
+
+    /**
+     * Construit un contrôleur de jeu avec la vue dessinable, la partie en cours et le plan de jeu lié à la partie.
+     * @param dessinable    La vue dessinable.
+     * @param partie        La partie en cours.
+     * @param planJeu       Le plan de jeu lié à la partie en cours.
+     */
+    public ControleurPartie(Dessinable dessinable, Partie partie, PlanJeu planJeu) {
+        this.dessinable = dessinable;
+        this.partie = partie;
+        this.planJeu = planJeu;
+
+        augmenteNiveau = true;
         poissonsImages = new WeakHashMap<>();
         poissonsCouleurs = new WeakHashMap<>();
         random = new Random();
@@ -65,7 +81,6 @@ public class ControleurPartie {
             if(deltaMessage < TEMPS_MESSAGE)
                 dessinable.afficherNouveauNiveau(partie.getNiveau());
             else {
-                dernierNiveau = partie.getNiveau();
                 augmenteNiveau = false;
                 deltaMessage = 0;
             }
@@ -88,13 +103,17 @@ public class ControleurPartie {
             dessinerPoisson();
             dessinerProjectiles();
             dessinerInformations();
-
-            if(partie.getNiveau() != dernierNiveau) {
-                dernierNiveau = partie.getNiveau();
-                augmenteNiveau = true;
-            }
         }
     }
+
+    /**
+     * Méthode appelée par la partie pour signaler au contrôleur que le niveau de la partie vient d'augmenter.
+     */
+    public void augmenteNiveau() {
+        augmenteNiveau = true;
+    }
+
+    //Les méthodes suivantes sont utilisées par la vue pour les actions du joueur pour dessiner la partie.
 
     /**
      * Ajoute un projectile au plan de jeu.
@@ -134,6 +153,9 @@ public class ControleurPartie {
     public void partiePerdue() {
         partie.setPerdue(true);
     }
+
+
+    //Les méthodes suivantes sont utilisées par l'instance du contrôleur du jeu.
 
     /**
      * Demande à la vue de dessiner les bulles de la partie.
@@ -199,10 +221,5 @@ public class ControleurPartie {
 
         if(partie.getNbUnProjectileUnMort() > 0)
             dessinable.dessinerCombo(partie.getNbUnProjectileUnMort());
-
-        if(partie.getNiveau() != dernierNiveau) {
-            dernierNiveau = partie.getNiveau();
-            augmenteNiveau = true;
-        }
     }
 }
