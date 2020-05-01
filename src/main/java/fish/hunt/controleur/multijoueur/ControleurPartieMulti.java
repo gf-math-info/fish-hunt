@@ -25,6 +25,7 @@ public class ControleurPartieMulti extends ControleurPartie {
     private final Object cadenas = new Object();
     private Set<Record> scores;
     private ConnexionServeur connexion;
+    private Receveur receveur;
 
     /*
     Variables utilisées pour l'affichage des messages en mode multijoueur.
@@ -53,6 +54,7 @@ public class ControleurPartieMulti extends ControleurPartie {
         scores = new TreeSet<>();
         indexScores = 1;
         erreurConnexionAlert = new Alert(Alert.AlertType.ERROR, "Un erreur de connexion s'est produit.");
+        receveur = new Receveur(this);
 
         new Thread(() -> {
 
@@ -92,6 +94,8 @@ public class ControleurPartieMulti extends ControleurPartie {
                 afficherErreur();
             }
         }).start();
+
+        //TODO
     }
 
     @Override
@@ -154,8 +158,10 @@ public class ControleurPartieMulti extends ControleurPartie {
     }
 
     public void attaquePoissonNormal() {
-        lancementAttaque = true;
-        attaqueSpeciale = false;
+        synchronized (cadenas) {
+            lancementAttaque = true;
+            attaqueSpeciale = false;
+        }
 
         new Thread(() -> {
 
@@ -165,8 +171,10 @@ public class ControleurPartieMulti extends ControleurPartie {
     }
 
     public void attaquePoissonSpecial() {
-        lancementAttaque = true;
-        attaqueSpeciale = true;
+        synchronized (cadenas) {
+            lancementAttaque = true;
+            attaqueSpeciale = true;
+        }
 
         new Thread(() -> {
 
@@ -186,19 +194,39 @@ public class ControleurPartieMulti extends ControleurPartie {
     }
 
     public void attaquePoissonNormal(String pseudoAttaquant) {
-        //TODO
+        attaqueEnCours = true;
+        attaqueSpeciale = false;
+        nomAttaquant = pseudoAttaquant;
+        deltaMessage = 0;
+
+        Platform.runLater(() -> planJeu.ajouterPoissonNormal());
     }
 
     public void attaquePoissonSpecial(String pseudoAttaquant) {
-        //TODO
+        attaqueEnCours = true;
+        attaqueSpeciale = true;
+        nomAttaquant = pseudoAttaquant;
+        deltaMessage = 0;
+
+        Platform.runLater(() -> planJeu.ajouterPoissonSpecial());
     }
 
     public void miseAJourScore(String pseudo, int score) {
-        //TODO
+        Iterator<Record> recordIterator = scores.iterator();
+        Record record;
+        while(recordIterator.hasNext()) {
+            record = recordIterator.next();
+            if(record.getNom().equals(pseudo)) {
+                record.setScore(score);
+                break;
+            }
+        }
     }
 
     public void deconnexionJoueur(String pseudo) {
-        //TODO
+        deconnexionEnCours = true;
+        nomDeconnexion = pseudo;
+        deltaMessage = 0;
     }
 
     /**
@@ -222,6 +250,7 @@ public class ControleurPartieMulti extends ControleurPartie {
      */
     public void afficherErreur() {
         Platform.runLater(() -> {
+            receveur.setPartieEnCours(false);
             erreurConnexionAlert.showAndWait();
             dessinable.partieTermine(partie.getScore());
         });

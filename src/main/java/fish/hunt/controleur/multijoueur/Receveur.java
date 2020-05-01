@@ -70,10 +70,14 @@ public class Receveur implements Runnable{
     @Override
     public void run() {
 
+        int code;
+
         try {
             while (estPartieEnCours()) {
 
-                switch (connexion.lireInt()) {
+                code = connexion.lireInt();
+
+                switch (code) {
 
                     case ATTAQUE_POISSON_NORMAL_RECU:
 
@@ -129,9 +133,7 @@ public class Receveur implements Runnable{
             }
 
         } catch (IOException ioException) {
-            synchronized (cadenas) {
-                connexion.ferme();
-            }
+            connexion.ferme();
             Platform.runLater(() -> controleur.afficherErreur());
         }
 

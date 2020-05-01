@@ -37,6 +37,10 @@ public class PartieMulti extends Partie {
                     incrementerScore();
                     break;
 
+                default:
+                    nbUnProjectileUnMort = 1;
+                    score += 3;
+                    controleurPartieMulti.miseAJourScore();
             }
 
         } else

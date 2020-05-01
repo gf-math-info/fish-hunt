@@ -126,7 +126,7 @@ public class VueConnexion extends VBox {
                         //On laisse le temps à l'utilisateur de voir le message.
                         Thread.sleep(2000);
 
-                        for(int i = 5; i > 0; i--) {
+                        for(int i = 3; i > 0; i--) {
                             int nbSec = i;
                             Platform.runLater(() -> {
                                 informationsText.setText("La partie débute dans " + nbSec + " seconde" +

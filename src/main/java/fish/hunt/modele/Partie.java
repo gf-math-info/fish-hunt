@@ -60,7 +60,7 @@ public class Partie {
                     nbViesRestantes++;
                     break;
                 default:
-                    incrementerScore();
+                    score += 3;
                     nbUnProjectileUnMort = 1;
             }
         } else
