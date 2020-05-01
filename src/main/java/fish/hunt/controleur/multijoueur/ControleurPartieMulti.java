@@ -26,7 +26,7 @@ public class ControleurPartieMulti extends ControleurPartie {
     private final Object cadenas = new Object();
     private Set<Record> scores;
 
-    private boolean attaqueEnCours, deconnexionEnCours, attaqueSpecial;
+    private boolean attaqueEnCours, deconnexionEnCours, attaqueSpeciale;
     private double deltaAttaque, deltaDeconnexion, deltaScores;
     private int indexScores;
     private Record scoreAffiche;
@@ -110,7 +110,7 @@ public class ControleurPartieMulti extends ControleurPartie {
                 }
 
                 dessinable.dessinerMessageMultijoueur(nomAttaquant + " vient de vous envoyer un poisson" +
-                        (attaqueSpecial ? " spécial." : "."));
+                        (attaqueSpeciale ? " spécial." : "."));
 
             } else if (deconnexionEnCours) {
 
@@ -137,11 +137,9 @@ public class ControleurPartieMulti extends ControleurPartie {
     }
 
     public void attaquePoissonNormal() {
-        //TODO
     }
 
     public void attaquePoissonSpecial() {
-        //TODO
     }
 
     public void miseAJourScore() {

@@ -65,6 +65,7 @@ public class ControleurPartie {
             if(deltaMessage < TEMPS_MESSAGE)
                 dessinable.afficherNouveauNiveau(partie.getNiveau());
             else {
+                dernierNiveau = partie.getNiveau();
                 augmenteNiveau = false;
                 deltaMessage = 0;
             }
