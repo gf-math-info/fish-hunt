@@ -18,11 +18,13 @@ public class Receveur implements Runnable{
     private final int DECONNEXION_JOUEUR_RECU = 190;
 
     private ControleurPartieMulti controleur;
-    private Object cadenas;
+    private Object cadenas, cadenasDrapeau;
     private Partie partie;
     private ConnexionServeur connexion;
 
+    //Drapeau signifiant si le thread doit continuer à écouter le serveur.
     private boolean partieEnCours;
+
     /**
      * Construit le Receveur de commande avec le controleur de jeu.
      */
@@ -30,6 +32,7 @@ public class Receveur implements Runnable{
         this.controleur = controleur;
         partie = controleur.getPartie();
         cadenas = controleur.getCadenas();
+        cadenasDrapeau = new Object();
         partieEnCours = true;
 
         try {
@@ -39,97 +42,98 @@ public class Receveur implements Runnable{
         }
     }
 
+    /**
+     * Accesseur du drapeau signifiant si la partie est toujours en cours.
+     * @return  Vrai si la partie est en cours, faux, sinon.
+     */
+    public boolean estPartieEnCours() {
+        boolean retour;
+        synchronized (cadenasDrapeau) {
+            retour = partieEnCours;
+        }
+        return retour;
+    }
+
+    /**
+     * Mutateur du drapeau signifiant si la partie est toujours en cours.
+     * @param partieEnCours Vrai si la partie est en cours, faux, sinon.
+     */
+    public void setPartieEnCours(boolean partieEnCours) {
+        synchronized (cadenasDrapeau) {
+            this.partieEnCours = partieEnCours;
+        }
+    }
+
+    /**
+     * Méthode redéfini qui s'éxécute lorsque "Thread start".
+     */
     @Override
     public void run() {
-        /*
 
-        while(!partie.estPerdue()) {
+        try {
+            while (estPartieEnCours()) {
 
-            switch (connexion.getInput().read()) {
+                switch (connexion.getInput().read()) {
 
-                case ATTAQUE_POISSON_NORMAL_RECU:
-                    String attaquant = connexion.getInput().readLine();
-                    if(attaquant == null) {
-                        afficherErreur();
-                        return;
-                    }
+                    case ATTAQUE_POISSON_NORMAL_RECU:
 
-                    synchronized (cadenas) {
-                        nomAttaquant = attaquant;
-                        attaqueEnCours = true;
-                        attaqueSpecial = false;
-                        deltaAttaque = 0;
-                    }
+                        String attaquantNormal = connexion.getInput().readLine();
+                        if (attaquantNormal == null)
+                            throw new IOException();
 
-                    Platform.runLater(() -> {
-                        planJeu.ajouterPoissonNormal();
-                    });
-                    break;
+                        synchronized (cadenas) {
+                            controleur.attaquePoissonNormal(attaquantNormal);
+                        }
 
-                case ATTAQUE_POISSON_SPECIAL_RECU:
-                    String attaquantSpecial = connexion.getInput().readLine();
-                    if(attaquantSpecial == null) {
-                        afficherErreur();
-                        return;
-                    }
+                        break;
 
-                    synchronized (cadenas) {
-                        nomAttaquant = attaquantSpecial;
-                        attaqueEnCours = true;
-                        attaqueSpecial = true;
-                        deltaAttaque = 0;
-                    }
+                    case ATTAQUE_POISSON_SPECIAL_RECU:
 
-                    Platform.runLater(() -> {
-                        planJeu.ajouterPoissonSpecial();
-                    });
+                        String attaquantSpecial = connexion.getInput().readLine();
+                        if (attaquantSpecial == null)
+                            throw new IOException();
 
-                case MISE_A_JOUR_SCORE_RECU:
-                    String nomScore = connexion.getInput().readLine();
-                    if(nomScore == null) {
-                        afficherErreur();
-                        return;
-                    }
+                        synchronized (cadenas) {
+                            controleur.attaquePoissonSpecial(attaquantSpecial);
+                        }
 
-                    int score = connexion.getInput().read();
-                    if(score == -1) {
-                        afficherErreur();
-                        return;
-                    }
+                        break;
 
-                    synchronized (cadenas) {
-                        Record recordMiseAJour = null;
-                        for(Record record : scores)
-                            if(record.getNom().equals(nomScore))
-                                recordMiseAJour = record;
+                    case MISE_A_JOUR_SCORE_RECU:
 
-                        if(recordMiseAJour == null)
-                            scores.add(new Record(nomScore, score));
-                        else
-                            recordMiseAJour.setScore(score);
+                        String nomScore = connexion.getInput().readLine();
+                        if (nomScore == null)
+                            throw new IOException();
 
+                        int score = connexion.getInput().read();
+                        if (score == -1)
+                            throw new IOException();
 
-                    }
-                    break;
+                        synchronized (cadenas) {
+                            controleur.miseAJourScore(nomScore, score);
+                        }
 
-                case DECONNEXION_JOUEUR_RECU:
-                    String nomJoueurDeconnexion = connexion.getInput().readLine();
-                    if(nomJoueurDeconnexion == null) {
-                        afficherErreur();
-                        return;
-                    }
+                        break;
 
-                    synchronized (cadenas) {
-                        nomDeconnexion = nomJoueurDeconnexion;
-                        deconnexionEnCours = true;
-                        deltaDeconnexion = 0;
-                        scores.stream()
-                                .filter(record -> record.getNom().equals(nomJoueurDeconnexion))
-                                .findFirst().ifPresent(recordARetirer -> scores.remove(recordARetirer));
-                    }
-                    break;
+                    case DECONNEXION_JOUEUR_RECU:
+                        String nomJoueurDeconnexion = connexion.getInput().readLine();
+                        if (nomJoueurDeconnexion == null)
+                            throw new IOException();
+
+                        synchronized (cadenas) {
+                            controleur.deconnexionJoueur(nomJoueurDeconnexion);
+                        }
+
+                        break;
+                }
             }
+
+        } catch (IOException ioException) {
+            synchronized (cadenas) {
+                connexion.ferme();
+            }
+            Platform.runLater(() -> controleur.afficherErreur());
         }
-        */
+
     }
 }
