@@ -138,7 +138,5 @@ public class Receveur implements Runnable{
             connexion.ferme();
             Platform.runLater(() -> controleur.afficherErreur());
         }
-
-        System.out.println("Termine le thread de Receveur");//TODO
     }
 }
