@@ -23,7 +23,7 @@ public class ControleurPartieMulti extends ControleurPartie {
     private final int TEMPS_MESSAGE_AUTRE = 1;
     private final int TEMPS_MESSAGE_SCORES = 1;
 
-    private final Object cadenasScore = new Object();
+    private final Object cadenasDonneesAffichage = new Object();
     private Set<Record> scores;
     private ConnexionServeur connexion;
     private PrintWriter output;
@@ -32,7 +32,7 @@ public class ControleurPartieMulti extends ControleurPartie {
     /*
     Variables utilisées pour l'affichage des messages en mode multijoueur.
     */
-    private boolean attaqueEnCours, deconnexionEnCours, attaqueSpeciale, lancementAttaque;
+    private boolean attaqueEnCours, deconnexionEnCours, connexionEnCours, attaqueSpeciale, lancementAttaque;
     private double deltaMessage;
 
     //Variables pour afficher le score des joueurs.
@@ -41,7 +41,7 @@ public class ControleurPartieMulti extends ControleurPartie {
     private Iterator<Record> itScores;
     private double deltaScores;
 
-    private String nomAttaquant, nomDeconnexion;
+    private String nomAttaquant, nomDeconnexion, nomConnexion;
     private Alert erreurConnexionAlert;
 
     /**
@@ -96,66 +96,109 @@ public class ControleurPartieMulti extends ControleurPartie {
 
     @Override
     public void actualiser(double deltaTemps) {
-        super.actualiser(deltaTemps);
+        dessinable.viderPlan();
+        if(augmenteNiveau) { // si le message Level X est en affichage.
 
-        synchronized (cadenasScore) {
-
-            if (lancementAttaque) {
-
-                deltaMessage += deltaTemps;
-                if(deltaMessage >= TEMPS_MESSAGE_AUTRE) {
-                    deltaMessage = 0;
-                    lancementAttaque = false;
-                }
-
-                dessinable.dessinerMessageMultijoueur("Vous avez lancé une attaque" +
-                        (attaqueSpeciale ? " spécial." : "."));
-
-            } else if (attaqueEnCours) {
-
-                deltaMessage += deltaTemps;
-                if (deltaMessage >= TEMPS_MESSAGE_AUTRE) {
-                    deltaMessage = 0;
-                    attaqueEnCours = false;
-                }
-
-                dessinable.dessinerMessageMultijoueur(nomAttaquant + " vient de vous envoyer un poisson" +
-                        (attaqueSpeciale ? " spécial." : "."));
-
-            } else if (deconnexionEnCours) {
-
-                deltaMessage += deltaTemps;
-                if (deltaMessage >= TEMPS_MESSAGE_AUTRE) {
-                    deltaMessage = 0;
-                    deconnexionEnCours = false;
-                }
-
-                dessinable.dessinerMessageMultijoueur(nomDeconnexion + " vient de quitter la partie.");
-
-            } else if(scores.size() > 0) {
-
-                deltaScores += deltaTemps;
-                if (deltaScores >= TEMPS_MESSAGE_SCORES) {
-                    deltaScores = 0;
-
-                    if(!itScores.hasNext()) {
-                        itScores = scores.iterator();
-                        indexScores = 1;
-                    }
-
-                    scoreAffiche = itScores.next();
-                }
-
-                dessinable.dessinerMessageMultijoueur(indexScores + ". " + scoreAffiche);
-
+            deltaMessage += deltaTemps;
+            if(deltaMessage < TEMPS_MESSAGE)
+                dessinable.afficherNouveauNiveau(partie.getNiveau());
+            else {
+                augmenteNiveau = false;
+                deltaMessage = 0;
             }
 
+        } else if(partie.estPerdue()){
+
+            deltaMessage += deltaTemps;
+            if(deltaMessage < TEMPS_MESSAGE)
+                dessinable.afficheFinPartie();
+            else {
+                receveur.setPartieEnCours(false);
+                connexion.ferme();
+                dessinable.partieTermine(partie.getScore());
+            }
+
+        } else {
+
+            //On actualise la partie et on l'affiche.
+            planJeu.actualiser(deltaTemps);
+
+            dessinerBulles();
+            dessinerPoisson();
+            dessinerProjectiles();
+            dessinerInformations();
+
+            synchronized (cadenasDonneesAffichage) {
+
+                if (lancementAttaque) {
+
+                    deltaMessage += deltaTemps;
+                    if(deltaMessage >= TEMPS_MESSAGE_AUTRE) {
+                        deltaMessage = 0;
+                        lancementAttaque = false;
+                    }
+
+                    dessinable.dessinerMessageMultijoueur("Vous avez lancé une attaque" +
+                            (attaqueSpeciale ? " spécial." : "."));
+
+                } else if (attaqueEnCours) {
+
+                    deltaMessage += deltaTemps;
+                    if (deltaMessage >= TEMPS_MESSAGE_AUTRE) {
+                        deltaMessage = 0;
+                        attaqueEnCours = false;
+                    }
+
+                    dessinable.dessinerMessageMultijoueur(nomAttaquant + " vient de vous envoyer un poisson" +
+                            (attaqueSpeciale ? " spécial." : "."));
+
+                } else if (deconnexionEnCours) {
+
+                    deltaMessage += deltaTemps;
+                    if (deltaMessage >= TEMPS_MESSAGE_AUTRE) {
+                        deltaMessage = 0;
+                        deconnexionEnCours = false;
+                    }
+
+                    dessinable.dessinerMessageMultijoueur(nomDeconnexion + " vient de quitter la partie.");
+
+                } else if (connexionEnCours) {
+
+                    deltaMessage += deltaTemps;
+                    if(deltaMessage >= TEMPS_MESSAGE_AUTRE) {
+                        deltaMessage = 0;
+                        connexionEnCours = false;
+                    }
+
+                    dessinable.dessinerMessageMultijoueur(nomConnexion + " vient de se connecter à la partie.");
+
+                }else if(scores.size() > 0) {
+
+                    deltaScores += deltaTemps;
+                    if (deltaScores >= TEMPS_MESSAGE_SCORES) {
+                        deltaScores = 0;
+
+                        if(!itScores.hasNext()) {
+                            itScores = scores.iterator();
+                            indexScores = 1;
+                        }
+
+                        scoreAffiche = itScores.next();
+                    }
+
+                    dessinable.dessinerMessageMultijoueur(indexScores + ". " + scoreAffiche);
+
+                }
+
+            }
         }
     }
 
     public void attaquePoissonNormal() {
-        lancementAttaque = true;
-        attaqueSpeciale = false;
+        synchronized (cadenasDonneesAffichage) {
+            lancementAttaque = true;
+            attaqueSpeciale = false;
+        }
 
         new Thread(() -> {
             output.write(ATTAQUE_POISSON_NORMAL_ENVOIE);
@@ -164,8 +207,10 @@ public class ControleurPartieMulti extends ControleurPartie {
     }
 
     public void attaquePoissonSpecial() {
-        lancementAttaque = true;
-        attaqueSpeciale = true;
+        synchronized (cadenasDonneesAffichage) {
+            lancementAttaque = true;
+            attaqueSpeciale = true;
+        }
 
         new Thread(() -> {
             output.write(ATTAQUE_POISSON_SPECIAL_ENVOIE);
@@ -184,25 +229,29 @@ public class ControleurPartieMulti extends ControleurPartie {
     }
 
     public void attaquePoissonNormal(String pseudoAttaquant) {
-        attaqueEnCours = true;
-        attaqueSpeciale = false;
-        nomAttaquant = pseudoAttaquant;
-        deltaMessage = 0;
+        synchronized (cadenasDonneesAffichage) {
+            attaqueEnCours = true;
+            attaqueSpeciale = false;
+            nomAttaquant = pseudoAttaquant;
+            deltaMessage = 0;
+        }
 
         Platform.runLater(() -> planJeu.ajouterPoissonNormal());
     }
 
     public void attaquePoissonSpecial(String pseudoAttaquant) {
-        attaqueEnCours = true;
-        attaqueSpeciale = true;
-        nomAttaquant = pseudoAttaquant;
-        deltaMessage = 0;
+        synchronized (cadenasDonneesAffichage) {
+            attaqueEnCours = true;
+            attaqueSpeciale = true;
+            nomAttaquant = pseudoAttaquant;
+            deltaMessage = 0;
+        }
 
         Platform.runLater(() -> planJeu.ajouterPoissonSpecial());
     }
 
     public void miseAJourScore(String pseudo, int score) {
-        synchronized (cadenasScore) {
+        synchronized (cadenasDonneesAffichage) {
             for(Record nScore : scores) {
                 if(nScore.getNom().equals(pseudo)) {
                     nScore.setScore(score);
@@ -212,18 +261,29 @@ public class ControleurPartieMulti extends ControleurPartie {
         }
     }
 
-    public synchronized void deconnexionJoueur(String pseudo) {
-        deconnexionEnCours = true;
-        nomDeconnexion = pseudo;
-        deltaMessage = 0;
-        Record scoreARetirer = null;
-        for(Record score : scores) {
-            if(score.getNom().equals(pseudo)) {
-                scoreARetirer = score;
-                break;
+    public void deconnexionJoueur(String pseudo) {
+        synchronized (cadenasDonneesAffichage) {
+            deconnexionEnCours = true;
+            nomDeconnexion = pseudo;
+            deltaMessage = 0;
+            Record scoreARetirer = null;
+            for(Record score : scores) {
+                if(score.getNom().equals(pseudo)) {
+                    scoreARetirer = score;
+                    break;
+                }
             }
+            scores.remove(scoreARetirer);
         }
-        scores.remove(scoreARetirer);
+    }
+
+    public void connexionJoueur(String pseudo) {
+        synchronized (cadenasDonneesAffichage) {
+            connexionEnCours = true;
+            nomConnexion = pseudo;
+            deltaMessage = 0;
+            scores.add(new Record(pseudo, 0));
+        }
     }
 
     /**

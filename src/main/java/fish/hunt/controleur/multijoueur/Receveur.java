@@ -17,6 +17,7 @@ public class Receveur implements Runnable{
     private final int ATTAQUE_POISSON_SPECIAL_RECU = 151;
     private final int MISE_A_JOUR_SCORE_RECU = 160;
     private final int DECONNEXION_JOUEUR_RECU = 190;
+    private final int CONNEXION_JOUEUR_RECU = 191;
 
     private ControleurPartieMulti controleur;
     private Object cadenasDrapeau;
@@ -120,6 +121,16 @@ public class Receveur implements Runnable{
                         controleur.deconnexionJoueur(nomJoueurDeconnexion);
 
                         break;
+
+                    case CONNEXION_JOUEUR_RECU:
+
+                        String pseudoNouveauJoueur = input.readLine();
+                        if(pseudoNouveauJoueur == null)
+                            throw new IOException();
+
+                        controleur.connexionJoueur(pseudoNouveauJoueur);
+
+                        break;
                 }
             }
 
@@ -128,5 +139,6 @@ public class Receveur implements Runnable{
             Platform.runLater(() -> controleur.afficherErreur());
         }
 
+        System.out.println("Termine le thread de Receveur");//TODO
     }
 }

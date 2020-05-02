@@ -27,10 +27,10 @@ public class ControleurPartie {
 
     private WeakHashMap<Poisson, Integer> poissonsCouleurs;
     private WeakHashMap<Poisson, Integer> poissonsImages;
-    private boolean augmenteNiveau;
-    private double deltaMessage;
-    private Random random;
-    private final double TEMPS_MESSAGE = 3;
+    protected boolean augmenteNiveau;
+    protected double deltaMessage;
+    protected Random random;
+    protected final double TEMPS_MESSAGE = 3;
 
     /**
      * Construit un contrôleur de jeu avec la largeur et la hauteur du plan de
@@ -43,23 +43,6 @@ public class ControleurPartie {
         this.dessinable = dessinable;
         partie = new Partie(this);
         planJeu = new PlanJeu(largeur, hauteur, partie);
-
-        augmenteNiveau = true;
-        poissonsImages = new WeakHashMap<>();
-        poissonsCouleurs = new WeakHashMap<>();
-        random = new Random();
-    }
-
-    /**
-     * Construit un contrôleur de jeu avec la vue dessinable, la partie en cours et le plan de jeu lié à la partie.
-     * @param dessinable    La vue dessinable.
-     * @param partie        La partie en cours.
-     * @param planJeu       Le plan de jeu lié à la partie en cours.
-     */
-    public ControleurPartie(Dessinable dessinable, Partie partie, PlanJeu planJeu) {
-        this.dessinable = dessinable;
-        this.partie = partie;
-        this.planJeu = planJeu;
 
         augmenteNiveau = true;
         poissonsImages = new WeakHashMap<>();
