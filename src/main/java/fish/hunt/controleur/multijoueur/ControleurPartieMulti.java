@@ -6,13 +6,10 @@ import fish.hunt.modele.PartieMulti;
 import fish.hunt.modele.Record;
 import fish.hunt.vue.Dessinable;
 import javafx.application.Platform;
-import javafx.scene.control.Alert;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class ControleurPartieMulti extends ControleurPartie {
 
@@ -20,11 +17,12 @@ public class ControleurPartieMulti extends ControleurPartie {
     private final int ATTAQUE_POISSON_SPECIAL_ENVOIE = 51;
     private final int MISE_A_JOUR_SCORE_ENVOIE = 60;
 
-    private final int TEMPS_MESSAGE_AUTRE = 1;
+    private final int TEMPS_MESSAGE_AUTRE = 2;
     private final int TEMPS_MESSAGE_SCORES = 1;
 
     private final Object cadenasDonneesAffichage = new Object();
-    private Set<Record> scores;
+    private ArrayList<Record> scores;
+    private Comparator<Record> comparator;
     private ConnexionServeur connexion;
     private PrintWriter output;
     private Receveur receveur;
@@ -32,17 +30,15 @@ public class ControleurPartieMulti extends ControleurPartie {
     /*
     Variables utilisées pour l'affichage des messages en mode multijoueur.
     */
-    private boolean attaqueEnCours, deconnexionEnCours, connexionEnCours, attaqueSpeciale, lancementAttaque;
+    private boolean erreurConnexion, attaqueEnCours, deconnexionEnCours, connexionEnCours, attaqueSpeciale,
+            lancementAttaque;
     private double deltaMessage;
 
     //Variables pour afficher le score des joueurs.
     private int indexScores;
-    private Record scoreAffiche;
-    private Iterator<Record> itScores;
     private double deltaScores;
 
     private String nomAttaquant, nomDeconnexion, nomConnexion;
-    private Alert erreurConnexionAlert;
 
     /**
      * Construit un contrôleur de jeu avec la largeur et la hauteur du plan de
@@ -53,9 +49,15 @@ public class ControleurPartieMulti extends ControleurPartie {
         partie = new PartieMulti(this);
         planJeu.setPartie(partie);
 
-        scores = new TreeSet<>();
-        indexScores = 1;
-        erreurConnexionAlert = new Alert(Alert.AlertType.ERROR, "Un erreur de connexion s'est produit.");
+        scores = new ArrayList<>();
+        indexScores = 0;
+        comparator = new Comparator<Record>() {
+            @Override
+            public int compare(Record record1, Record record2) {
+                return record2.compareTo(record1);
+            }
+        };
+
         receveur = new Receveur(this);
 
         try {
@@ -82,9 +84,7 @@ public class ControleurPartieMulti extends ControleurPartie {
                 scores.add(new Record(pseudoJoueur, scoreJoueur));
             }
 
-            //Il y a au moins un joueur de connecté : nous.
-            itScores = scores.iterator();
-            scoreAffiche = itScores.next();
+            scores.sort(comparator);
 
         } catch (IOException ioException) {
             connexion.ferme();
@@ -97,7 +97,18 @@ public class ControleurPartieMulti extends ControleurPartie {
     @Override
     public void actualiser(double deltaTemps) {
         dessinable.viderPlan();
-        if(augmenteNiveau) { // si le message Level X est en affichage.
+
+        if(erreurConnexion) {
+
+            deltaMessage += deltaTemps;
+            if(deltaMessage < TEMPS_MESSAGE) {
+                dessinable.dessinerErreurConnexionMultijoueur();
+            } else {
+                dessinable.partieTermine(partie.getScore());
+            }
+
+
+        }else if(augmenteNiveau) { // si le message Level X est en affichage.
 
             deltaMessage += deltaTemps;
             if(deltaMessage < TEMPS_MESSAGE)
@@ -177,16 +188,13 @@ public class ControleurPartieMulti extends ControleurPartie {
                     deltaScores += deltaTemps;
                     if (deltaScores >= TEMPS_MESSAGE_SCORES) {
                         deltaScores = 0;
+                        indexScores++;
 
-                        if(!itScores.hasNext()) {
-                            itScores = scores.iterator();
-                            indexScores = 1;
-                        }
-
-                        scoreAffiche = itScores.next();
+                        if(indexScores >= scores.size())
+                            indexScores = 0;
                     }
 
-                    dessinable.dessinerMessageMultijoueur(indexScores + ". " + scoreAffiche);
+                    dessinable.dessinerMessageMultijoueur((indexScores + 1) + ". " + scores.get(indexScores));
 
                 }
 
@@ -258,6 +266,7 @@ public class ControleurPartieMulti extends ControleurPartie {
                     return;
                 }
             }
+            scores.sort(comparator);
         }
     }
 
@@ -274,6 +283,8 @@ public class ControleurPartieMulti extends ControleurPartie {
                 }
             }
             scores.remove(scoreARetirer);
+            indexScores = 0;
+            scores.sort(comparator);
         }
     }
 
@@ -283,6 +294,8 @@ public class ControleurPartieMulti extends ControleurPartie {
             nomConnexion = pseudo;
             deltaMessage = 0;
             scores.add(new Record(pseudo, 0));
+            indexScores = 0;
+            scores.sort(comparator);
         }
     }
 
@@ -299,9 +312,10 @@ public class ControleurPartieMulti extends ControleurPartie {
      */
     public void afficherErreur() {
         Platform.runLater(() -> {
+            erreurConnexion = true;
+            deltaMessage = 0;
             receveur.setPartieEnCours(false);
-            erreurConnexionAlert.showAndWait();
-            dessinable.partieTermine(partie.getScore());
+            connexion.ferme();
         });
     }
 }

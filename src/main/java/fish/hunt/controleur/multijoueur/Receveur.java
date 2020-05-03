@@ -76,6 +76,10 @@ public class Receveur implements Runnable{
         try {
             while (estPartieEnCours()) {
 
+                int code = input.read();
+                if(code == -1)
+                    throw new IOException();
+
                 switch (input.read()) {
 
                     case ATTAQUE_POISSON_NORMAL_RECU:

@@ -102,6 +102,11 @@ public interface Dessinable {
     void dessinerMessageMultijoueur(String message);
 
     /**
+     * Dessine un message signifiant aux utilisateurs que la connexion est rompue.
+     */
+    void dessinerErreurConnexionMultijoueur();
+
+    /**
      * Accesseur du nombre d'images de poissons disponibles.
      * @return  Le nombre d'images de poissons disponibles.
      */

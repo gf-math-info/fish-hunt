@@ -14,9 +14,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 public class VueConnexion extends VBox {
 
@@ -63,6 +61,7 @@ public class VueConnexion extends VBox {
 
         validerButton = new Button("Valider");
         validerButton.setDisable(true);
+        validerButton.setDefaultButton(true);
 
         menuButton = new Button("Menu");
         menuButton.prefWidthProperty().bind(validerButton.widthProperty());
@@ -91,6 +90,7 @@ public class VueConnexion extends VBox {
                 });
             } catch (IOException ioException) {
                 Platform.runLater(() -> {
+                    validerButton.setDisable(true);
                     informationsText.setText("Erreur de connexion.");
                 });
             }
@@ -102,16 +102,15 @@ public class VueConnexion extends VBox {
     
     private void initListener() {
         validerButton.setOnAction((event) -> {
+            //On signifie à l'utilisateur qu'on communique avec le
+            //serveur.
+            validerButton.setDisable(true);
+            menuButton.setDisable(true);
+            connecte = false;
+            getChildren().add(1, progressIndicator);
+            informationsText.setText("Vérification du pseudo...");
 
             new Thread(() -> {
-
-                Platform.runLater(() -> {
-                    //On signifie à l'utilisateur qu'on communique avec le
-                    //serveur.
-                    validerButton.setDisable(true);
-                    getChildren().add(1, progressIndicator);
-                    informationsText.setText("Vérification du pseudo...");
-                });
 
                 try {
 
@@ -119,6 +118,8 @@ public class VueConnexion extends VBox {
                     connexion.getOutput().println(pseudoTextField.getText());
                     connexion.getOutput().flush();
                     int reponse = connexion.getInput().read();
+                    if(reponse == -1)
+                        throw new IOException();
 
                     //On communique la réponse du server à l'utilisateur.
                     if(reponse == PSEUDO_ACCEPTE) {
@@ -162,7 +163,7 @@ public class VueConnexion extends VBox {
 
                 Platform.runLater(() -> {
                     getChildren().remove(progressIndicator);
-                    validerButton.setDisable(false);
+                    menuButton.setDisable(false);
                 });
             }).start();
         });

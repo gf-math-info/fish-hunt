@@ -344,6 +344,24 @@ public class VueJeu extends Pane implements Dessinable{
     }
 
     /**
+     * Dessine un message signifiant aux utilisateurs que la connexion est rompue.
+     */
+    @Override
+    public void dessinerErreurConnexionMultijoueur() {
+        Font font = Font.font(18);
+        graphicsContext.setFill(msgColor);
+        graphicsContext.setFont(font);
+
+        String msg = "Une erreur de connexion vient de se produire.";
+        Text text = new Text(msg);
+        text.setFont(font);
+
+        graphicsContext.fillText(msg,
+                (largeur - text.getLayoutBounds().getWidth()) / 2,
+                (hauteur - text.getLayoutBounds().getHeight()) / 2);
+    }
+
+    /**
      * Accesseur du nombre d'images de poissons disponibles.
      * @return  Le nombre d'images de poissons disponibles.
      */
