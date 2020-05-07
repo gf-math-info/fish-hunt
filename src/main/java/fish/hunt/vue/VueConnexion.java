@@ -3,9 +3,11 @@ package fish.hunt.vue;
 import fish.hunt.controleur.multijoueur.ConnexionServeur;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -19,15 +21,15 @@ import java.io.IOException;
 public class VueConnexion extends VBox {
 
     private ConnexionServeur connexion;
-    private boolean connecte;
 
     private final int PSEUDO_ACCEPTE = 110;
 
     private Stage stagePrincipal;
     private Text informationsText;
-    private TextField pseudoTextField;
-    private Button validerButton, menuButton;
+    private TextField pseudoTextField, adresseTextField, portTextField;
+    private Button validerButton, menuButton, connexionButton;
     private ProgressIndicator progressIndicator;
+    private HBox connexionHBox;
 
     public VueConnexion(Stage stagePrincipal) {
         this.stagePrincipal = stagePrincipal;
@@ -39,10 +41,24 @@ public class VueConnexion extends VBox {
         progressIndicator = new ProgressIndicator();
         progressIndicator.setPrefWidth(25);
 
-        informationsText = new Text("Connexion au serveur...");
+        informationsText = new Text();
         informationsText.setTextAlignment(TextAlignment.CENTER);
         informationsText.setFont(Font.font(18));
         informationsText.setFill(Color.WHITE);
+
+        connexionHBox = new HBox();
+        connexionHBox.setAlignment(Pos.CENTER);
+        Text adresseText = new Text("Adresse :");
+        adresseText.setFill(Color.WHITE);
+        adresseTextField = new TextField(ConnexionServeur.getAdresse());
+        Separator separator1 = new Separator(Orientation.VERTICAL);
+        Text portText = new Text("Port :");
+        portText.setFill(Color.WHITE);
+        portTextField = new TextField(String.valueOf(ConnexionServeur.getPort()));
+        Separator separator2 = new Separator(Orientation.VERTICAL);
+        connexionButton = new Button("Connexion");
+        connexionHBox.getChildren().addAll(adresseText, adresseTextField, separator1,
+                portText, portTextField, separator2, connexionButton);
 
         Text demandeText = new Text("Veuillez entrer votre pseudonyme." +
                 System.lineSeparator() + "Il doit contenir au moins un " +
@@ -53,8 +69,8 @@ public class VueConnexion extends VBox {
         demandeText.setFont(Font.font(14));
 
         pseudoTextField = new TextField("Votre pseudonyme");
-        pseudoTextField.selectAll();
         pseudoTextField.setMaxWidth(200);
+        pseudoTextField.setDisable(true);
 
         HBox buttonHBox = new HBox();
         buttonHBox.setAlignment(Pos.TOP_CENTER);
@@ -74,48 +90,79 @@ public class VueConnexion extends VBox {
         VBox.setMargin(pseudoTextField, margin);
         HBox.setMargin(validerButton, margin);
         HBox.setMargin(menuButton, margin);
+        HBox.setMargin(separator1, margin);
+        HBox.setMargin(separator2, margin);
 
-        getChildren().addAll(informationsText, progressIndicator, demandeText,
+        getChildren().addAll(informationsText, connexionHBox, demandeText,
                 pseudoTextField, buttonHBox);
 
         initListener();
-
-        new Thread(() -> {
-
-            try {
-                connexion = ConnexionServeur.getInstance();
-                Platform.runLater(() -> {
-                    informationsText.setText("Serveur connecté.");
-                    connecte = true;
-                });
-            } catch (IOException ioException) {
-                Platform.runLater(() -> {
-                    validerButton.setDisable(true);
-                    informationsText.setText("Erreur de connexion.");
-                });
-            }
-            
-            Platform.runLater(() -> getChildren().remove(progressIndicator));
-
-        }).start();
     }
     
     private void initListener() {
+        connexionButton.setOnAction((event) -> {
+            connexionButton.setDisable(true);
+
+            String adresse = adresseTextField.getText();
+            int port;
+            try {
+                port = Integer.parseInt(portTextField.getText());
+                portTextField.setBorder(Border.EMPTY);
+            }catch(NumberFormatException e) {
+
+                portTextField.setBorder(new Border(
+                        new BorderStroke(Color.RED, BorderStrokeStyle.SOLID,
+                                CornerRadii.EMPTY, new BorderWidths(1.5))));
+                connexionButton.setDisable(false);
+                return;
+
+            }
+
+            informationsText.setText("Connexion en cours...");
+            getChildren().add(1, progressIndicator);
+            ConnexionServeur.setAdresse(adresse);
+            ConnexionServeur.setPort(port);
+
+            new Thread(() -> {
+
+                try {
+
+                    connexion = ConnexionServeur.getInstance();
+                    Platform.runLater(() -> {
+                        informationsText.setText("Connecté.");
+                        getChildren().remove(progressIndicator);
+                        pseudoTextField.setDisable(false);
+                    });
+
+                } catch (IOException ioException) {
+
+                    Platform.runLater(() -> {
+                        informationsText.setText("Erreur de connexion.");
+                        getChildren().remove(progressIndicator);
+                        connexionButton.setDisable(false);
+                    });
+
+                }
+
+            }).start();
+        });
+
         validerButton.setOnAction((event) -> {
             //On signifie à l'utilisateur qu'on communique avec le
             //serveur.
             validerButton.setDisable(true);
             menuButton.setDisable(true);
-            connecte = false;
             getChildren().add(1, progressIndicator);
             informationsText.setText("Vérification du pseudo...");
+
+            String pseudo = pseudoTextField.getText();
 
             new Thread(() -> {
 
                 try {
 
                     //Envoie du pseudo au serveur et attente de sa réponse.
-                    connexion.getOutput().println(pseudoTextField.getText());
+                    connexion.getOutput().println(pseudo);
                     connexion.getOutput().flush();
                     int reponse = connexion.getInput().read();
                     if(reponse == -1)
@@ -154,9 +201,11 @@ public class VueConnexion extends VBox {
                     }
 
                 } catch (IOException | InterruptedException ioException) {
-                    connecte = false;
                     //On communique qu'il y a un erreur de connexion.
+                    connexion.ferme();
                     Platform.runLater(() -> {
+                        pseudoTextField.setDisable(true);
+                        connexionButton.setDisable(false);
                         informationsText.setText("Erreur de connexion.");
                     });
                 }
@@ -176,7 +225,7 @@ public class VueConnexion extends VBox {
 
         pseudoTextField.setOnKeyReleased((event) -> {
             validerButton.setDisable(pseudoTextField.getText().strip().length() == 0 ||
-                    pseudoTextField.getText().length() > 10 || !connecte);
+                    pseudoTextField.getText().length() > 10);
         });
     }
 }

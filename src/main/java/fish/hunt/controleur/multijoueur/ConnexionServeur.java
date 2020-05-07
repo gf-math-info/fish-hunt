@@ -14,8 +14,8 @@ import java.net.Socket;
  */
 public class ConnexionServeur {
 
-    private int PORT = 1337;
-    private String ADRESSE = "127.0.0.1";
+    private static int port = 1337;
+    private static String adresse = "127.0.0.1";
 
     private Socket client;
     private PrintWriter output;
@@ -28,7 +28,7 @@ public class ConnexionServeur {
      * @throws IOException  Si un erreur se produit lors de la connexion.
      */
     private ConnexionServeur() throws IOException{
-        client = new Socket(ADRESSE, PORT);
+        client = new Socket(adresse, port);
         output = new PrintWriter(client.getOutputStream(), true);
         input = new BufferedReader(new InputStreamReader(client.getInputStream()));
     }
@@ -59,6 +59,38 @@ public class ConnexionServeur {
      */
     public BufferedReader getInput() {
         return input;
+    }
+
+    /**
+     * Accesseur de l'adresse de connexion.
+     * @return  L'adresse de connexion.
+     */
+    public static String getAdresse() {
+        return ConnexionServeur.adresse;
+    }
+
+    /**
+     * Mutateur de l'adresse de connexion.
+     * @param adresse   L'adresse de connexion.
+     */
+    public static void setAdresse(String adresse) {
+        ConnexionServeur.adresse = adresse;
+    }
+
+    /**
+     * Accesseur du port de connexion.
+     * @return  Le port de connexion.
+     */
+    public static int getPort() {
+        return ConnexionServeur.port;
+    }
+
+    /**
+     * Mutateur du port de connexion.
+     * @param port  Le port de connexion
+     */
+    public static void setPort(int port) {
+        ConnexionServeur.port = port;
     }
 
     /**
