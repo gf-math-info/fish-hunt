@@ -11,6 +11,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
+/**
+ * Cette classe représente le contrôleur d'une partie en mode multijoueur.
+ * @author Fortin-Leblanc, Gabriel
+ * @author Colson-Ratelle, Antoine
+ */
 public class ControleurPartieMulti extends ControleurPartie {
 
     private final int ATTAQUE_POISSON_NORMAL_ENVOIE = 50;
@@ -94,6 +99,12 @@ public class ControleurPartieMulti extends ControleurPartie {
         new Thread(receveur).start();
     }
 
+    /**
+     * Actualise la partie. Le contrôleur dicte également à la
+     * classe dessinable quoi dessiner.
+     * @param deltaTemps    L'intervalle de temps depuis la dernière
+     *                      actualisation.
+     */
     @Override
     public void actualiser(double deltaTemps) {
         dessinable.viderPlan();
@@ -202,6 +213,9 @@ public class ControleurPartieMulti extends ControleurPartie {
         }
     }
 
+    /**
+     * Envoie au serveur un signal signifiant que le joueur "attaque" les autres joueurs avec un poisson normal.
+     */
     public void attaquePoissonNormal() {
         synchronized (cadenasDonneesAffichage) {
             lancementAttaque = true;
@@ -214,6 +228,9 @@ public class ControleurPartieMulti extends ControleurPartie {
         }).start();
     }
 
+    /**
+     * Envoie au serveur um signal signifiant que le joueur "attque" les autres joueurs avec un poisson spécial.
+     */
     public void attaquePoissonSpecial() {
         synchronized (cadenasDonneesAffichage) {
             lancementAttaque = true;
@@ -226,6 +243,9 @@ public class ControleurPartieMulti extends ControleurPartie {
         }).start();
     }
 
+    /**
+     * Envoie un signal au serveur signifiant que le score du joueur a changé.
+     */
     public void miseAJourScore() {
         int scoreAEnvoyer = partie.getScore();
 
@@ -236,6 +256,10 @@ public class ControleurPartieMulti extends ControleurPartie {
         }).start();
     }
 
+    /**
+     * Signal au contrôleur de la partie que le joueur se fait "attaquer" par un autre joueur avec un poisson normal.
+     * @param pseudoAttaquant   Le pseudo de l'attaquant.
+     */
     public void attaquePoissonNormal(String pseudoAttaquant) {
         synchronized (cadenasDonneesAffichage) {
             attaqueEnCours = true;
@@ -247,6 +271,10 @@ public class ControleurPartieMulti extends ControleurPartie {
         Platform.runLater(() -> planJeu.ajouterPoissonNormal());
     }
 
+    /**
+     * Signal au contrôleur de la partie que le joueur se fait "attaquer" par un autre joueur avec un poisson spécial.
+     * @param pseudoAttaquant   Le pseudo de l'attaquant.
+     */
     public void attaquePoissonSpecial(String pseudoAttaquant) {
         synchronized (cadenasDonneesAffichage) {
             attaqueEnCours = true;
@@ -258,6 +286,11 @@ public class ControleurPartieMulti extends ControleurPartie {
         Platform.runLater(() -> planJeu.ajouterPoissonSpecial());
     }
 
+    /**
+     * Signal au contrôleur de la partie que le score d'un joueur a changé.
+     * @param pseudo    Le joueur pour lequel le score a changé.
+     * @param score     Le nouveau score du joueur.
+     */
     public void miseAJourScore(String pseudo, int score) {
         synchronized (cadenasDonneesAffichage) {
             for(Record nScore : scores) {
@@ -270,6 +303,10 @@ public class ControleurPartieMulti extends ControleurPartie {
         }
     }
 
+    /**
+     * Signal au contrôleur de la partie qu'un joueur vient de se déconnecter.
+     * @param pseudo    Le pseudo du joueur qui vient de se déconnecter.
+     */
     public void deconnexionJoueur(String pseudo) {
         synchronized (cadenasDonneesAffichage) {
             deconnexionEnCours = true;
@@ -288,6 +325,10 @@ public class ControleurPartieMulti extends ControleurPartie {
         }
     }
 
+    /**
+     * Signal au contrôleur de la partie qu'un joueur vient de se connecter.
+     * @param pseudo    Le pseudo du joueur qui vient de se connecter.
+     */
     public void connexionJoueur(String pseudo) {
         synchronized (cadenasDonneesAffichage) {
             connexionEnCours = true;

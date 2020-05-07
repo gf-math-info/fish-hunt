@@ -26,7 +26,8 @@ public class Partie {
     protected final int NB_POISSONS_NIVEAU = 5;
 
     /**
-     * Contruit une partie.
+     * Contruit une partie avec le contrôleur de la partie.
+     * @param controleurPartie  Le contrôleur de la partie.
      */
     public Partie(ControleurPartie controleurPartie) {
         this.niveau = 1;

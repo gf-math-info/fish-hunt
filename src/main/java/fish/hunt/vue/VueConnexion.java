@@ -18,6 +18,12 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * Cette classe représente la page de connexion avant de lancer une partie en mode multijoueur. Elle permet à
+ * l'utilisateur de se connecter au serveur.
+ * @author Fortin-Leblanc, Gabriel
+ * @author Colson-Ratelle, Antoine
+ */
 public class VueConnexion extends VBox {
 
     private ConnexionServeur connexion;
@@ -31,6 +37,10 @@ public class VueConnexion extends VBox {
     private ProgressIndicator progressIndicator;
     private HBox connexionHBox;
 
+    /**
+     * Construit la vue de la page de connexion avec le stage principal de l'application.
+     * @param stagePrincipal    Le stage principal de l'application.
+     */
     public VueConnexion(Stage stagePrincipal) {
         this.stagePrincipal = stagePrincipal;
         setBackground(new Background(
@@ -46,6 +56,7 @@ public class VueConnexion extends VBox {
         informationsText.setFont(Font.font(18));
         informationsText.setFill(Color.WHITE);
 
+        //Création de la section avec le bouton de connexion.
         connexionHBox = new HBox();
         connexionHBox.setAlignment(Pos.CENTER);
         Text adresseText = new Text("Adresse :");
@@ -60,6 +71,7 @@ public class VueConnexion extends VBox {
         connexionHBox.getChildren().addAll(adresseText, adresseTextField, separator1,
                 portText, portTextField, separator2, connexionButton);
 
+        //Création de la section avec le champ de texte pour entrer le pseudo.
         Text demandeText = new Text("Veuillez entrer votre pseudonyme." +
                 System.lineSeparator() + "Il doit contenir au moins un " +
                 System.lineSeparator() +
@@ -84,6 +96,7 @@ public class VueConnexion extends VBox {
 
         buttonHBox.getChildren().addAll(validerButton, menuButton);
 
+        //Ajout de margins.
         Insets margin = new Insets(10);
         VBox.setMargin(informationsText, margin);
         VBox.setMargin(demandeText, margin);
@@ -98,7 +111,10 @@ public class VueConnexion extends VBox {
 
         initListener();
     }
-    
+
+    /**
+     * Initialise les écouteurs.
+     */
     private void initListener() {
         connexionButton.setOnAction((event) -> {
             connexionButton.setDisable(true);

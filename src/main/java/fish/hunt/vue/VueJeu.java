@@ -52,11 +52,16 @@ public class VueJeu extends Pane implements Dessinable{
      * Construit la fenêtre de jeu avec le stage principal de l'application.
      * @param stagePrincipal    Le stage principal de l'application.
      */
-
     public VueJeu(Stage stagePrincipal) {
         this(stagePrincipal, false);
     }
 
+    /**
+     * Construit une fenêtre de jeu avec le stage principal et un drapeau qui est vrai si la partie est en mode
+     * multijoueur.
+     * @param stagePrincipal    Le stage principal de l'application.
+     * @param multijoueur       Vrai, si la partie est en mode multijoueur, faux, sinon.
+     */
     public VueJeu(Stage stagePrincipal, boolean multijoueur) {
         this.stagePrincipal = stagePrincipal;
         largeur = stagePrincipal.getWidth();
@@ -161,6 +166,11 @@ public class VueJeu extends Pane implements Dessinable{
         poissonsAleatoiresImagesDroites = new ArrayBlockingQueue<>(2);
         poissonsAleatoiresImagesGauches = new ArrayBlockingQueue<>(2);
 
+        /*
+        Ce thread s'assure qu'il y a toujours des images de poissons, regardant vers la droite, qui ont été choisies
+        aléatoirement et qui ont été coloriées avec une couleur choisie aléatoirement, dans la file
+        poissonsAleatoiresImagesDroites.
+         */
         constructeurImagesAleatoiresDroites = new Thread(() -> {
 
             Random random = new Random();
@@ -182,6 +192,7 @@ public class VueJeu extends Pane implements Dessinable{
 
         });
 
+        //Idem que constructeurImagesAleatoiresDroites, mais pour les images de poissons regardant vers la gauche.
         constructeurImagesAleatoiresGauches = new Thread(() -> {
             Random random = new Random();
 

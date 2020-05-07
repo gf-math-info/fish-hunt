@@ -2,15 +2,29 @@ package fish.hunt.modele;
 
 import fish.hunt.controleur.multijoueur.ControleurPartieMulti;
 
+/**
+ * Cette classe représente une partie en mode multijoueur.
+ * @author Fortin-Leblanc, Gabriel
+ * @author Colson-Ratelle, Antoine
+ */
 public class PartieMulti extends Partie {
 
     private ControleurPartieMulti controleurPartieMulti;
 
+    /**
+     * Construit une partie en mode multijoueur avec le contrôleur de la partie.
+     * @param controleurPartieMulti Le contrôleur de la partie.
+     */
     public PartieMulti(ControleurPartieMulti controleurPartieMulti) {
         super(controleurPartieMulti);
         this.controleurPartieMulti = controleurPartieMulti;
     }
 
+    /**
+     * Incrémente le nombre de poissons touchés.
+     * @param unProjectileUnMort    Vrai si le poisson a été touché d'un coup,
+     *                              faux sinon.
+     */
     @Override
     public void incrementerNbPoissonsTouches(boolean unProjectileUnMort) {
         if(unProjectileUnMort) {
@@ -51,6 +65,9 @@ public class PartieMulti extends Partie {
 
     }
 
+    /**
+     * Incrémente le score de la partie.
+     */
     @Override
     public void incrementerScore() {
         super.incrementerScore();

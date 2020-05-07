@@ -9,9 +9,6 @@ import fish.hunt.modele.entite.poisson.EtoileMer;
 import fish.hunt.modele.entite.poisson.Poisson;
 import fish.hunt.vue.Dessinable;
 
-import java.util.Random;
-import java.util.WeakHashMap;
-
 /**
  * Cette classe est le contrôleur de jeu. La vue dit au controleur qu'elle
  * est prête à se mettre à jour, le contrôleur met à jour la partie et dicte

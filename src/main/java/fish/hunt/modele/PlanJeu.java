@@ -288,7 +288,7 @@ public class PlanJeu {
                     (Poisson.POISSON_Y_MAX_RATIO - Poisson.POISSON_Y_MIN_RATIO)*
                     (hauteur - largeurPoisson) +
                     Poisson.POISSON_Y_MIN_RATIO * hauteur;
-            vx = 100 * Math.pow(partie.getNiveau(), 1/3.0) + 200;
+            vx = vitesseLevel(partie.getNiveau());
 
             if(!versDroite)
                 vx = -vx;

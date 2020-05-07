@@ -21,7 +21,6 @@ public class Projectile extends Entite {
         super(GRANDEUR_DEFAUT, GRANDEUR_DEFAUT, x, y, 0, 0);
     }
 
-    //TODO : Implémenter les tests de Projectile.intersecte(Poisson)
     /**
      * Vérifie si le projectile est en contact avec le poisson.
      * @param poisson   Le poisson à évaluer.
@@ -35,7 +34,6 @@ public class Projectile extends Entite {
                 y <= poisson.getY() + poisson.getHauteur();
     }
 
-    //TODO : Implémenter les tests de Projectile.actualiser(double).
     /**
      * Actualise le déplacement du projectile selon l'intervalle de temps depuis
      * la dernière actualisation.
