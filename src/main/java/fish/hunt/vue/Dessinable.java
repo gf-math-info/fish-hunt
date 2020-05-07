@@ -1,5 +1,7 @@
 package fish.hunt.vue;
 
+import fish.hunt.modele.entite.poisson.Poisson;
+
 /**
  * Cette interface doit être implémentée pour représenter le jeu.
  * Le contrôleur ou la vue appelleront ces méthodes pour animer le jeu.
@@ -46,19 +48,11 @@ public interface Dessinable {
     void dessinerBulle(double x, double y, double diametre);
 
     /**
-     * Dessine un poisson à une certaine position et d'une certaine dimension.
-     * @param x             La position horizontale.
-     * @param y             La position verticale.
-     * @param largeur       La largeur.
-     * @param hauteur       La hauteur.
-     * @param versDroite    Vrai si le poisson se dirige vers la droite,
-     *                      faux sinon.
-     * @param numCouleur    Le numéro de la couleur du poisson.
-     * @param numImage      Le numéro de l'image du poisson.
+     * Dessine le poisson. Dans ce cas particulier, pour une augmentation considérable de la performance, on passe le
+     * poisson en paramètre à la vue. C'est le seul endroit que la vue est en contact avec le modèle.
+     * @param poisson   Le poisson à dessiner.
      */
-    void dessinerPoisson(double x, double y,
-                         double largeur, double hauteur, boolean versDroite,
-                         int numImage, int numCouleur);
+    void dessinerPoisson(Poisson poisson);
 
     /**
      * Dessine une étoile de mer à une certaine position et d'une certaine
@@ -105,16 +99,4 @@ public interface Dessinable {
      * Dessine un message signifiant aux utilisateurs que la connexion est rompue.
      */
     void dessinerErreurConnexionMultijoueur();
-
-    /**
-     * Accesseur du nombre d'images de poissons disponibles.
-     * @return  Le nombre d'images de poissons disponibles.
-     */
-    int getNombreImagesPoissons();
-
-    /**
-     * Accesseur du nombre de couleurs disponibles pour les différents poissons.
-     * @return  Le nombre de couleurs disponibles pour les différents poissons.
-     */
-    int getNombreCouleurPoisson();
 }

@@ -25,11 +25,8 @@ public class ControleurPartie {
     protected PlanJeu planJeu;
     protected Dessinable dessinable;
 
-    private WeakHashMap<Poisson, Integer> poissonsCouleurs;
-    private WeakHashMap<Poisson, Integer> poissonsImages;
     protected boolean augmenteNiveau;
     protected double deltaMessage;
-    protected Random random;
     protected final double TEMPS_MESSAGE = 3;
 
     /**
@@ -45,9 +42,6 @@ public class ControleurPartie {
         planJeu = new PlanJeu(largeur, hauteur, partie);
 
         augmenteNiveau = true;
-        poissonsImages = new WeakHashMap<>();
-        poissonsCouleurs = new WeakHashMap<>();
-        random = new Random();
     }
 
     /**
@@ -155,34 +149,18 @@ public class ControleurPartie {
     protected void dessinerPoisson() {
         for(Poisson poisson : planJeu.getPoissons()) {
 
-            if(poisson instanceof EtoileMer) {
+            if(poisson instanceof EtoileMer)
 
                 dessinable.dessinerEtoileMer(poisson.getX(), poisson.getY(),
                         poisson.getLargeur(), poisson.getHauteur());
 
-            } else if(poisson instanceof Crabe) {
+            else if(poisson instanceof Crabe)
 
-                dessinable.dessinerCrabe(poisson.getX(), poisson.getY(),
-                        poisson.getLargeur(), poisson.getHauteur());
+                dessinable.dessinerCrabe(poisson.getX(), poisson.getY(), poisson.getLargeur(), poisson.getHauteur());
 
-            } else {
+            else
 
-                    if(!poissonsCouleurs.containsKey(poisson)) {
-                    /*Si c'est un nouveau poisson normal, on lui attribue un
-                    numéro d'images et un numéro de couleurs.*/
-                    poissonsImages.put(poisson,random.nextInt(
-                            dessinable.getNombreImagesPoissons()));
-                    poissonsCouleurs.put(poisson, random.nextInt(
-                            dessinable.getNombreCouleurPoisson()));
-                }
-
-                dessinable.dessinerPoisson(poisson.getX(), poisson.getY(),
-                        poisson.getLargeur(), poisson.getHauteur(),
-                        poisson.getVx() > 0,
-                        poissonsImages.get(poisson),
-                        poissonsCouleurs.get(poisson));
-
-            }
+                dessinable.dessinerPoisson(poisson);
         }
     }
 

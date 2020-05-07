@@ -2,6 +2,7 @@ package fish.hunt.vue;
 
 import fish.hunt.controleur.ControleurPartie;
 import fish.hunt.controleur.multijoueur.ControleurPartieMulti;
+import fish.hunt.modele.entite.poisson.Poisson;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -12,7 +13,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.util.HashMap;
+import java.util.Random;
+import java.util.WeakHashMap;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * Cette classe représente la fenêtre de jeu. Elle est dessinable par le
@@ -32,14 +35,18 @@ public class VueJeu extends Pane implements Dessinable{
 
     private ControleurPartie controleurPartie;
     private AnimationTimer timer;
+    private Thread constructeurImagesAleatoiresDroites, constructeurImagesAleatoiresGauches;
 
     private Image poissonScoreImage, cibleImage, etoileImage, crabeImage;
-    private Image[] poissonImages;
     private Color fondColor, scoreColor, msgColor, bulleColor,
             projectileColor;
-    private Color[] poissonCouleurs;
     private Font msgFont, scoreFont, msgMultiFont;
-    private HashMap<Integer, Image> idImages;
+
+    private Object cadenasTabImgsCouleurs;
+    private Image[] poissonImages;
+    private Color[] poissonCouleurs;
+    private ArrayBlockingQueue<Image> poissonsAleatoiresImagesDroites, poissonsAleatoiresImagesGauches;
+    private WeakHashMap<Poisson, Image> couplesPoissonsImages;
 
     /**
      * Construit la fenêtre de jeu avec le stage principal de l'application.
@@ -78,7 +85,8 @@ public class VueJeu extends Pane implements Dessinable{
                 dernierMoment = l;
             }
         };
-
+        constructeurImagesAleatoiresDroites.start();
+        constructeurImagesAleatoiresGauches.start();
         timer.start();
     }
 
@@ -132,7 +140,6 @@ public class VueJeu extends Pane implements Dessinable{
 
         poissonScoreImage = poissonImages[0];
 
-        idImages = new HashMap<>();
         cibleImage = new Image("/images/cible.png");
         crabeImage = new Image("/images/crabe.png");
         etoileImage = new Image("/images/star.png");
@@ -148,6 +155,51 @@ public class VueJeu extends Pane implements Dessinable{
                 Color.SALMON, Color.GREENYELLOW, Color.GREY, Color.LIGHTSALMON,
                 Color.LIGHTPINK, Color.LIGHTSTEELBLUE, Color.PINK,
                 Color.LIMEGREEN, Color.ORANGE, Color.WHITESMOKE};
+
+        cadenasTabImgsCouleurs = new Object();
+        couplesPoissonsImages = new WeakHashMap<>();
+        poissonsAleatoiresImagesDroites = new ArrayBlockingQueue<>(2);
+        poissonsAleatoiresImagesGauches = new ArrayBlockingQueue<>(2);
+
+        constructeurImagesAleatoiresDroites = new Thread(() -> {
+
+            Random random = new Random();
+
+            while(true) {
+
+                Image poissonImage = null;
+                synchronized (cadenasTabImgsCouleurs) {
+                    poissonImage = poissonImages[random.nextInt(poissonImages.length)];
+                    poissonImage = ImageHelpers.colorize(poissonImage,
+                            poissonCouleurs[random.nextInt(poissonCouleurs.length)]);
+                }
+
+                try {
+                    poissonsAleatoiresImagesDroites.put(poissonImage);
+                } catch (InterruptedException e) {}
+
+            }
+
+        });
+
+        constructeurImagesAleatoiresGauches = new Thread(() -> {
+            Random random = new Random();
+
+            while(true) {
+
+                Image poissonImage = null;
+                synchronized (cadenasTabImgsCouleurs) {
+                    poissonImage = poissonImages[random.nextInt(poissonImages.length)];
+                    poissonImage = ImageHelpers.colorize(poissonImage,
+                            poissonCouleurs[random.nextInt(poissonCouleurs.length)]);
+                }
+                poissonImage = ImageHelpers.flop(poissonImage);
+                try {
+                    poissonsAleatoiresImagesGauches.put(poissonImage);
+                } catch (InterruptedException e) {}
+
+            }
+        });
 
         msgFont = Font.font(60);
         scoreFont = Font.font(25);
@@ -207,6 +259,8 @@ public class VueJeu extends Pane implements Dessinable{
     @Override
     public void partieTermine(int score) {
         timer.stop();
+        constructeurImagesAleatoiresDroites.interrupt();
+        constructeurImagesAleatoiresGauches.interrupt();
         stagePrincipal.getScene().setRoot(new VueScore(stagePrincipal, score));
     }
 
@@ -266,24 +320,29 @@ public class VueJeu extends Pane implements Dessinable{
     }
 
     /**
-     * Dessine un poisson à une certaine position et d'une certaine dimension.
-     * @param x         La position horizontale.
-     * @param y         La position verticale.
-     * @param largeur   La largeur.
-     * @param hauteur   La hauteur.
+     * Dessine le poisson. Dans ce cas particulier, pour une augmentation considérable de la performance, on passe le
+     * poisson en paramètre à la vue. C'est le seul endroit que la vue est en contact avec le modèle.
+     * @param poisson   Le poisson à dessiner.
      */
     @Override
-    public void dessinerPoisson(double x, double y,
-                                double largeur, double hauteur,
-                                boolean versDroite,
-                                int numImage, int numCouleur) {
-        Image img = poissonImages[numImage];
+    public void dessinerPoisson(Poisson poisson) {
 
-        img = ImageHelpers.colorize(img, poissonCouleurs[numCouleur]);
-        if(!versDroite)
-            img = ImageHelpers.flop(img);
+        if(!couplesPoissonsImages.containsKey(poisson)) {
+            Image poissonImage = null;
+            try {
 
-        graphicsContext.drawImage(img, x, y, largeur, hauteur);
+                if(poisson.getVx() > 0)
+                    poissonImage = poissonsAleatoiresImagesDroites.take();
+                else
+                    poissonImage = poissonsAleatoiresImagesGauches.take();
+
+            } catch (InterruptedException e) {}
+            couplesPoissonsImages.put(poisson, poissonImage);
+        }
+
+        graphicsContext.drawImage(couplesPoissonsImages.get(poisson), poisson.getX(), poisson.getY(),
+                poisson.getLargeur(), poisson.getHauteur());
+
     }
 
     /**
@@ -359,24 +418,6 @@ public class VueJeu extends Pane implements Dessinable{
         graphicsContext.fillText(msg,
                 (largeur - text.getLayoutBounds().getWidth()) / 2,
                 (hauteur - text.getLayoutBounds().getHeight()) / 2);
-    }
-
-    /**
-     * Accesseur du nombre d'images de poissons disponibles.
-     * @return  Le nombre d'images de poissons disponibles.
-     */
-    @Override
-    public int getNombreImagesPoissons() {
-        return poissonImages.length;
-    }
-
-    /**
-     * Accesseur du nombre de couleurs disponibles pour les différents poissons.
-     * @return  Le nombre de couleurs disponibles pour les différents poissons.
-     */
-    @Override
-    public int getNombreCouleurPoisson() {
-        return poissonCouleurs.length;
     }
 
     /**
