@@ -27,7 +27,6 @@ public class ControleurPartieMulti extends ControleurPartie {
 
     private final Object cadenasDonneesAffichage = new Object();
     private ArrayList<Record> scores;
-    private Comparator<Record> comparator;
     private ConnexionServeur connexion;
     private PrintWriter output;
     private Receveur receveur;
@@ -56,12 +55,6 @@ public class ControleurPartieMulti extends ControleurPartie {
 
         scores = new ArrayList<>();
         indexScores = 0;
-        comparator = new Comparator<Record>() {
-            @Override
-            public int compare(Record record1, Record record2) {
-                return record2.compareTo(record1);
-            }
-        };
 
         receveur = new Receveur(this);
 
@@ -88,8 +81,6 @@ public class ControleurPartieMulti extends ControleurPartie {
 
                 scores.add(new Record(pseudoJoueur, scoreJoueur));
             }
-
-            scores.sort(comparator);
 
         } catch (IOException ioException) {
             connexion.ferme();
@@ -205,7 +196,7 @@ public class ControleurPartieMulti extends ControleurPartie {
                             indexScores = 0;
                     }
 
-                    dessinable.dessinerMessageMultijoueur((indexScores + 1) + ". " + scores.get(indexScores));
+                    dessinable.dessinerMessageMultijoueur(scores.get(indexScores).toString());
 
                 }
 
@@ -299,7 +290,6 @@ public class ControleurPartieMulti extends ControleurPartie {
                     return;
                 }
             }
-            scores.sort(comparator);
         }
     }
 
@@ -321,7 +311,6 @@ public class ControleurPartieMulti extends ControleurPartie {
             }
             scores.remove(scoreARetirer);
             indexScores = 0;
-            scores.sort(comparator);
         }
     }
 
@@ -336,7 +325,6 @@ public class ControleurPartieMulti extends ControleurPartie {
             deltaMessage = 0;
             scores.add(new Record(pseudo, 0));
             indexScores = 0;
-            scores.sort(comparator);
         }
     }
 
