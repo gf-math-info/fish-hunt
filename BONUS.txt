@@ -1,0 +1,52 @@
+
+Bienvenue dans notre TP3!
+— Gabriel et Antoine
+
+
+Pour le premier 5% bonus, voici les améliorations que
+nous avons apportées au jeu.
+
+BULLES DE LA MORT
+    Lorsqu'un poisson est touché, de petites bulles
+    apparaissent derrière lui après sa disparition.
+    Pour y arriver, nous avons ajouté une méthode
+    supplémentaire dans PlanJeu. Lorsqu'un poisson est
+    touché, plusieurs petites bulles disposées aléatoirement
+    apparaissent directement en-dessous de la surface
+    où les poisson était situé.
+
+TIR PARFAIT
+    Lorsqu'un poisson est frappé du premier coup, la
+    mention "Tir parfait!" apparait en haut à droite de
+    l'écran. Autrement dit, un tir parfait est un
+    one-shot-kill.
+    Un ensemble de méthodes a été ajouté. Si le joueur
+    tire un seul projectile et réussit à toucher un poisson
+    sans erreur, alors ce tire est considéré comme parfait
+    et la série est incrémentée. Si un projectile n'atteint
+    pas sa cible, alors le tir suivant est considéré comme
+    non parfait et la série est remise à zéro.
+
+SÉRIE DE TIRS PARFAITS
+    N'avoir que 3 vies raccourcit trop le jeu. Pour améliorer
+    la jouabilité, nous avons implémenté une façon d'obtenir
+    des vies supplémentaires: les séries de tirs parfaits.
+    Le nombre de tirs parfaits de suite est gardé
+    en mémoire. 
+    * Le 1er donne 3 points au joueur, 
+    * Le 2e donne 5 points
+    * Le 3e donne une vie bonus.
+    Après une suite de 3, on redescend à 1.
+
+SÉRIE DE TIRS PARFAITS EN MODE MULTIJOUEURS
+    * Le 1er donne 3 points au joueur,
+    * Le 2e envoie une attaque de poisson normal aux
+      adversaires et ajoute 1 point à l'attaquant.
+    * Le 3e donne 1 vie et un point au joueur.
+    * Le 4e envoie une attaque de poisson spécial aux
+      adversaires et ajoute 1 point à l'attaquant.
+
+AFFICHAGE DES VIES
+    Si un joueur a 5 vies ou plus, alors ses vies sont
+    affichées sous le format "N × [00.png]".
+
